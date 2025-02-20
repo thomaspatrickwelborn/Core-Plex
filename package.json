@@ -1,0 +1,36 @@
+{
+  "name": "core-plex",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/thomaspatrickwelborn/Core-Plex#readme",
+  "bugs": {
+    "url": "https://github.com/thomaspatrickwelborn/Core-Plex/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thomaspatrickwelborn/Core-Plex.git"
+  },
+  "license": "ISC",
+  "author": "Thomas Patrick Welborn",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "demonstrate:start": "concurrently \"npm run start --workspace development\" \"npm run start --workspace demonstrament\"",
+    "demonstrate:restart": "concurrently \"npm run restart --workspace development\" \"npm run restart --workspace demonstrament\"",
+    "demonstrate:stop": "concurrently \"npm run stop --workspace development\" \"npm run stop --workspace demonstrament\"",
+    "demonstrate:delete": "concurrently \"npm run delete --workspace development\" \"npm run delete --workspace demonstrament\"",
+    "develop:start": "npm run start --workspace development",
+    "develop:restart": "npm run restart --workspace development",
+    "develop:stop": "npm run stop --workspace development",
+    "develop:delete": "npm run delete --workspace development",
+    "distribute": "npm run distribute --workspace development"
+  },
+  "workspaces": [
+    "demonstrament",
+    "development"
+  ],
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "pm2": "^5.4.3"
+  }
+}
