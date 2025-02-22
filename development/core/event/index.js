@@ -1,4 +1,4 @@
-// import Content from '../../model/content/index.js'
+// import { match } from 'path-to-regexp'
 export default class CoreEvent {
   #settings
   #enable = false
@@ -11,6 +11,7 @@ export default class CoreEvent {
   get path() { return this.#settings.path }
   get target() {
     let target = this.#context
+    console.log()
     const pathKeys = this.path.split('.')
     let pathKeysIndex = 0
     iterateTargetPathKeys: 
@@ -20,12 +21,16 @@ export default class CoreEvent {
       if(pathKeysIndex === 0 && pathKey === ':scope') {
         break iterateTargetPathKeys
       }
-      // if(target.classToString === Content.toString()) {
-      //   target = target.get(pathKey)
-      // }
-      // else {
-        target = target[pathKey]
-      // }
+      iterateTargetAccessors: 
+      for(const $TargetAccessor of this.#propertyClassEvents.TargetAccessors) {
+        if($TargetAccessor === '[]') {
+          target = target[pathKey]
+        }
+        else if($TargetAccessor === 'get') {
+          target = target?.get(pathKey)
+        }
+        if(target !== undefined) { break iterateTargetAccessors }
+      }
       pathKeysIndex++
     }
     return target

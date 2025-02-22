@@ -2,6 +2,7 @@ import { expandEvents, impandEvents } from './pandEvents/index.js'
 import { expandTree, impandTree } from './pandTree/index.js'
 import keytree from './keytree/index.js'
 import * as path from './path/index.js'
+import pathkeyTree from './pathkeyTree/index.js'
 import recursiveAssign from './recursiveAssign/index.js'
 import recursiveAssignConcat from './recursiveAssignConcat/index.js'
 import regularExpressions from './regularExpressions/index.js'
@@ -15,6 +16,7 @@ export {
   expandTree, impandTree, 
   keytree,
   path, 
+  pathkeyTree, 
   recursiveAssign, 
   recursiveAssignConcat, 
   regularExpressions, 

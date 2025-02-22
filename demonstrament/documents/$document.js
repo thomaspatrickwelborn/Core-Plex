@@ -54,7 +54,10 @@ export default {
       output: 'index.js',
       inputOptions: {
         logLevel: 'silent', 
-        external: ['/dependencies/mvc-framework.js'],
+        external: [
+          '/dependencies/core-plex.js',
+          '/coutil/index.js',
+        ],
       },
       outputOptions: {
         format: 'es',
