@@ -1,4 +1,3 @@
-// import { match } from 'path-to-regexp'
 export default class CoreEvent {
   #settings
   #enable = false
@@ -11,7 +10,6 @@ export default class CoreEvent {
   get path() { return this.#settings.path }
   get target() {
     let target = this.#context
-    console.log()
     const pathKeys = this.path.split('.')
     let pathKeysIndex = 0
     iterateTargetPathKeys: 

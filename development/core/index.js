@@ -1,4 +1,5 @@
-import { expandEvents, recursiveAssign, typedObjectLiteral, typeOf } from '../coutil/index.js'
+import { match } from 'path-to-regexp'
+import { expandEvents, recursiveAssign, typedObjectLiteral, typeOf, pathkeyTree } from '../coutil/index.js'
 import PropertyClass from './propertyClass/index.js'
 import Events from './propertyClass/events/index.js'
 import { Instate, Deinstate } from './propertyClass/states/index.js'
@@ -23,6 +24,7 @@ export default class Core extends EventTarget {
     this.#assign(...this.options.assign)
     if(this.options.enableEvents) this.enableEvents(this.options.enableEvents) 
   }
+  get #propertyDirectory() { return pathkeyTree(this) }
   get #propertyClassEvents() {
     if(this.#_propertyClassEvents !== undefined) return this.#_propertyClassEvents
     this.#_propertyClassEvents = {}
@@ -47,7 +49,7 @@ export default class Core extends EventTarget {
     return this.#_events
   }
   get #propertyClasses() { return this.#_propertyClasses }
-  getPropertyClass() {
+  #getPropertyClass() {
     const { ID, Name } = arguments[0]
     let propertyClass
     iteratePropertyClasses: 
@@ -60,6 +62,7 @@ export default class Core extends EventTarget {
     return propertyClass
   }
   #addProperties() {
+    iteratePropertyClasses: 
     for(const $propertyClass of this.#propertyClasses) {
       const { Name, Names, Definition } = $propertyClass
       if(Definition.Object !== undefined) {
@@ -105,12 +108,10 @@ export default class Core extends EventTarget {
         Definition,
       } = $propertyClass
       let propertyValue
-      if([
-        [], {},
-        'Array', 'Object', 'array', 'object',
-        Array, Object, 
-        '[]', '{},'
-      ].includes(Definition.Object)) {
+      if(
+        Definition.Object === "Array" || 
+        Definition.Object === "Object"
+      ) {
         Object.defineProperties(this, {
           // Property Class Instances
           [Name]: {
@@ -143,16 +144,21 @@ export default class Core extends EventTarget {
           },
           // Add Property Class Instances
           [`${Names.Minister.Ad.Nonformal}${Names.Multiple.Formal}`]: {
-            configurable: true, enumerable: true, writable: false, 
+            configurable: true, enumerable: false, writable: false, 
             value: function() {
               const $arguments = [...arguments]
               if($arguments.length === 1) {
                 const [$values] = $arguments
-                if(Array.isArray($values)) {
-                  $this[Name] = Object.fromEntries($values)
+                if(Definition.Object === "Array") {
+                  $this[Name] = Object.entries($values)
                 }
                 else {
-                  $this[Name] = $values
+                  if(Array.isArray($values)) {
+                    $this[Name] = Object.fromEntries($values)
+                  }
+                  else {
+                    $this[Name] = $values
+                  }
                 }
               }
               else if($arguments.length === 2) {
@@ -164,7 +170,7 @@ export default class Core extends EventTarget {
           },
           // Remove Property Class Instances
           [`${Names.Minister.Dead.Nonformal}${Names.Multiple.Formal}`]: {
-            configurable: true, enumerable: true, writable: false, 
+            configurable: true, enumerable: false, writable: false, 
             value: function() {
               const [$removeKeys] = [...arguments]
               const removeKeys = []
@@ -225,7 +231,7 @@ export default class Core extends EventTarget {
     }
     iterateRemovePropertyClasses: 
     for(const $removePropertyClassName of removePropertyClasses) {
-      const { Names, Definition } = this.getPropertyClass({ Name: $removePropertyClassName })
+      const { Names, Definition } = this.#getPropertyClass({ Name: $removePropertyClassName })
       const propertyClassInstances = this[Names.Multiple.Nonformal]
       iteratePropertyClassInstances: 
       for(const [

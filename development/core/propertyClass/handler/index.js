@@ -11,8 +11,17 @@ export default class Handler {
   }
   get set() {
     const Instate = this.#propertyClass.States.Instate || States.Instate
+    const Definition = this.#propertyClass.Definition
     return function set($target, $property, $value) {
-      $target[$property] = Instate(this.#propertyClass, $property, $value)
+      if(
+        Definition.Object === "Array" && 
+        $property === 'length'
+      ) {
+        $target[$property] = $value
+      }
+      else {
+        $target[$property] = Instate(this.#propertyClass, $property, $value)
+      }
       return true
     }
   }
