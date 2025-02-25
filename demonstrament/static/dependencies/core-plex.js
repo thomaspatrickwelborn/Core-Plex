@@ -690,6 +690,7 @@ class Core extends EventTarget {
                 const [$key, $value] = $arguments;
                 $this[Name] = { [$key]: $value };
               }
+              return $this
             }
           },
           // Remove Property Class Instances
@@ -710,6 +711,7 @@ class Core extends EventTarget {
               for(const $removeKey of $removeKeys) {
                 delete $this[Name][$removeKey];
               }
+              return $this
             }
           },
         });
@@ -823,22 +825,21 @@ class Core extends EventTarget {
     return this
   }
   removeEvents() {
-    const { events } = this;
     let $events;
-    if(arguments.length === 0) { $events = events; }
+    if(arguments.length === 0) { $events = this.getEvents(); }
     else if(arguments.length === 1) {
       $events = this.getEvents(arguments[0]);
     }
     if($events.length === 0) return this
-    let eventsIndex = events.length - 1;
+    let eventsIndex = $events.length - 1;
     while(eventsIndex > -1) {
-      const event = events[eventsIndex];
-      const removeEventIndex = $events.findIndex(
+      const event = $events[eventsIndex];
+      const removeEventIndex = this.#events.findIndex(
         ($event) => $event === event
       );
       if(removeEventIndex !== -1) {
         event.enable = false;
-        events.splice(eventsIndex, 1);
+        this.#events.splice(eventsIndex, 1);
       }
       eventsIndex--;
     }

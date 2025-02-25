@@ -4,7 +4,7 @@ export default {
   path: '/',
   source: 'documents',
   target: 'localhost',
-  ignore: ['static-cms', 'test'],
+  ignore: [],
   main: 'index.html',
   pilers: {
     sans: [{
