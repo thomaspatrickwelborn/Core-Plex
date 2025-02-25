@@ -5,7 +5,7 @@
 > Use At Own Risk  
 
 > [!NOTE]  
-> Interested in MVC Framework? 
+> Interested in Core-Plex? 
 > thomas.patrick.welborn@outlook.com
 
 
