@@ -12,7 +12,41 @@ const core = new Core({
     { name: 'serializableClassInstance03' },
     { name: 'serializableClassInstance04' },
   ],
-  events: {},
+  events: {
+    'serializableClassInstances.* start': eventLog,
+    'serializableClassInstances.* stop': eventLog,
+  },
 }, { enableEvents: true })
 core.serializableClassInstances.push({ name: 'serializableClassInstance05' })
 console.log(core)
+for(const $serializableClassInstance of core.serializableClassInstances) {
+  $serializableClassInstance.start()
+}
+for(const $serializableClassInstance of core.serializableClassInstances) {
+  $serializableClassInstance.stop()
+}
+core.disableEvents({
+  path: 'serializableClassInstances.*'
+})
+for(const $serializableClassInstance of core.serializableClassInstances) {
+  $serializableClassInstance.start()
+}
+for(const $serializableClassInstance of core.serializableClassInstances) {
+  $serializableClassInstance.stop()
+}
+core.serializableClassInstances.push(
+  { name: 'serializableClassInstance06' },
+  { name: 'serializableClassInstance07' },
+  { name: 'serializableClassInstance08' },
+  { name: 'serializableClassInstance09' },
+  { name: 'serializableClassInstance10' },
+)
+core.enableEvents({
+  path: 'serializableClassInstances.*'
+})
+for(const $serializableClassInstance of core.serializableClassInstances) {
+  $serializableClassInstance.start()
+}
+for(const $serializableClassInstance of core.serializableClassInstances) {
+  $serializableClassInstance.stop()
+}

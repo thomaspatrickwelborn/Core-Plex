@@ -1,4 +1,3 @@
-import { match } from 'path-to-regexp'
 import { expandEvents, recursiveAssign, typedObjectLiteral, typeOf, pathkeyTree } from '../coutil/index.js'
 import PropertyClass from './propertyClass/index.js'
 import Events from './propertyClass/events/index.js'
@@ -24,7 +23,7 @@ export default class Core extends EventTarget {
     this.#assign(...this.options.assign)
     if(this.options.enableEvents) this.enableEvents(this.options.enableEvents) 
   }
-  get #propertyDirectory() { return pathkeyTree(this) }
+  get propertyDirectory() { return pathkeyTree(this) }
   get #propertyClassEvents() {
     if(this.#_propertyClassEvents !== undefined) return this.#_propertyClassEvents
     this.#_propertyClassEvents = {}
@@ -282,6 +281,7 @@ export default class Core extends EventTarget {
     if(arguments[0] === undefined) { return this }
     const $events = expandEvents(arguments[0])
     const events = this.#events
+    iterateEvents: 
     for(let $event of $events) {
       const propertyClassName = $event.path.split('.').shift()
       const propertyClassEvents = Object.assign(
