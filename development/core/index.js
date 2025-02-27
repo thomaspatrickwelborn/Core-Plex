@@ -49,15 +49,22 @@ export default class Core extends EventTarget {
   }
   get #propertyClasses() { return this.#_propertyClasses }
   #getPropertyClasses() {
-    const $getPropertyClasses = [...arguments]
+    let $getPropertyClasses
+    if(arguments.length === 0) $getPropertyClasses = this.#propertyClasses
+    else { $getPropertyClasses = [].concat(...arguments) }
     const getPropertyClasses = []
+    let propertyClassIndex = 0
     iteratePropertyClasses: 
     for(const $propertyClass of this.#propertyClasses) {
       for(const $getPropertyClass of $getPropertyClasses) {
         if($propertyClass.Name === $getPropertyClass.Name) {
-          getPropertyClasses.push($propertyClass)
+          getPropertyClasses.push({
+            propertyClassIndex: propertyClassIndex,
+            propertyClass: $propertyClass
+          })
         }
       }
+      propertyClassIndex++
     }
     return getPropertyClasses
   }
@@ -65,6 +72,7 @@ export default class Core extends EventTarget {
     iteratePropertyClasses: 
     for(const $propertyClass of this.#propertyClasses) {
       const { Name, Names, Definition } = $propertyClass
+      if(this.settings[Name] === undefined) { continue iteratePropertyClasses }
       if(Definition.Object !== undefined) {
         this[`${Names.Minister.Ad.Nonformal}${Names.Multiple.Formal}`](this.settings[Name])
       }
@@ -76,28 +84,22 @@ export default class Core extends EventTarget {
   }
   addPropertyClasses() {
     const $this = this
-    let $propertyClasses = (arguments.length === 0)
+    let $addPropertyClasses = (arguments.length === 0)
       ? this.settings.propertyClasses
-      : arguments[0]
-    if(
-      !Array.isArray($propertyClasses) &&
-      typeof $propertyClasses === 'object'
-    ) {
-      $propertyClasses = Object.values(arguments[0])
-    }
+      : [].concat(...arguments)
     const propertyClasses = this.#propertyClasses
     iteratePropertyClasses: 
-    for(const $propertyClass of $propertyClasses) {
+    for(const $addPropertyClass of $addPropertyClasses) {
       // Class States
-      $propertyClass.States = $propertyClass.States || {}
-      $propertyClass.Definition = $propertyClass.Definition || {}
+      $addPropertyClass.States = $addPropertyClass.States || {}
+      $addPropertyClass.Definition = $addPropertyClass.Definition || {}
       // Class Instate
-      if($propertyClass.States.Instate === undefined) {
-        $propertyClass.States.Instate = Instate 
+      if($addPropertyClass.States.Instate === undefined) {
+        $addPropertyClass.States.Instate = Instate 
       }
       // Class Deinstate
-      if($propertyClass.States.Deinstate === undefined) {
-        $propertyClass.States.Deinstate = Deinstate 
+      if($addPropertyClass.States.Deinstate === undefined) {
+        $addPropertyClass.States.Deinstate = Deinstate 
       }
       const {
         Name,
@@ -105,7 +107,7 @@ export default class Core extends EventTarget {
         Events,
         States,
         Definition,
-      } = $propertyClass
+      } = $addPropertyClass
       let propertyValue
       if(
         Definition.Object === "Array" || 
@@ -119,7 +121,7 @@ export default class Core extends EventTarget {
               if(propertyValue !== undefined) {
                 return propertyValue
               }
-              propertyValue = new PropertyClass($propertyClass, $this)
+              propertyValue = new PropertyClass($addPropertyClass, $this)
               return propertyValue
             },
             set($propertyClassInstances) {
@@ -199,28 +201,30 @@ export default class Core extends EventTarget {
             set($propertyClassInstance) {
               propertyValue = States.Instate(Object.assign({
                 core: this
-              }, $propertyClass), Name, $propertyClassInstance)
+              }, $addPropertyClass), Name, $propertyClassInstance)
             }
           },
         })
       }
-      propertyClasses.push($propertyClass)
+      propertyClasses.push($addPropertyClass)
     }
     return this
   }
   removePropertyClasses() {
     const removePropertyClasses = this.#getPropertyClasses(...arguments)
+    let removePropertyClassIndex = removePropertyClasses.length - 1
     iterateRemovePropertyClasses: 
-    for(const $removePropertyClass of removePropertyClasses) {
-      const { Names, Definition } = $removePropertyClass
+    while(removePropertyClassIndex > -1) {
+      const { propertyClassIndex, propertyClass } = removePropertyClasses[removePropertyClassIndex]
+      const { Names, Definition } = propertyClass
       const propertyClassInstances = this[Names.Multiple.Nonformal]
       if(Definition.Object) {
         if(Definition.Object === "Array") {
-          let propertyClassIndex = propertyClassInstances.length
+          let propertyClassInstanceIndex = propertyClassInstances.length - 1
           iteratePropertyClassInstances: 
-          while(propertyClassIndex > -1) {
-            propertyClassInstances.splice(propertyClassIndex, 1)
-            propertyClassIndex--
+          while(propertyClassInstanceIndex > -1) {
+            propertyClassInstances.splice(propertyClassInstanceIndex, 1)
+            propertyClassInstanceIndex--
           }
         }
         else if(Definition.Object === "Object") {
@@ -247,6 +251,8 @@ export default class Core extends EventTarget {
           value: undefined
         })
       }
+      this.#propertyClasses.splice(propertyClassIndex, 1)
+      removePropertyClassIndex--
     }
     return this
   }
@@ -339,6 +345,11 @@ export default class Core extends EventTarget {
     if(arguments.length === 0) { $events = this.#events }
     else { $events = this.getEvents(arguments[0]) }
     return this.#toggleEventAbility('Deassign', $events)
+  }
+  reenableEvents() {
+    return this
+    .disableEvents(...arguments)
+    .enableEvents(...arguments)
   }
   #assign() {
     Object.assign(this, ...arguments)

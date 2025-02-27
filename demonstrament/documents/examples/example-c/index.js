@@ -1,7 +1,7 @@
 import { Core } from '/dependencies/core-plex.js'
 import PropertyClasses from './property-classes/index.js'
 function eventLog($event) {
-  // console.log($event.type, $event.detail.settings.name)
+  console.log($event.type, $event.detail.settings.name)
 }
 const core = new Core({
   propertyClasses: PropertyClasses,
@@ -59,4 +59,10 @@ core.serializableClassInstances.splice(0)
 core.removePropertyClasses({
   Name: 'serializableClassInstances'
 })
-console.log(core)
+console.log(core.serializableClassInstances)
+console.log(core.addSerializableClassInstances)
+console.log(core.removeSerializableClassInstances)
+core.addPropertyClasses(PropertyClasses)
+console.log(core.serializableClassInstances)
+console.log(core.addSerializableClassInstances)
+console.log(core.removeSerializableClassInstances)

@@ -3,15 +3,15 @@ export default class CoreEvent {
   #settings
   #enable = false
   #_boundListener
-  #target = []
+  #_targets = []
   constructor($settings) { 
     this.#settings = $settings
     this.enable = this.#settings.enable
   }
   get type() { return this.#settings.type }
   get path() { return this.#settings.path }
-  get target() {
-    const pretargets = this.#target
+  get #targets() {
+    const pretargets = this.#_targets
     const propertyDirectory = this.#context.propertyDirectory
     const targetPaths = []
     const targets = []
@@ -27,31 +27,31 @@ export default class CoreEvent {
       )
       let target
       let targetElement
-      if(pretargetElement !== undefined) { targetElement = pretargetElement }
-      else {
-        target = this.#context
-        const pathKeys = $targetPath.split('.')
-        let pathKeysIndex = 0
-        iterateTargetPathKeys: 
-        while(pathKeysIndex < pathKeys.length) {
-          let pathKey = pathKeys[pathKeysIndex]
-          if(pathKeysIndex === 0 && pathKey === ':scope') {
-            break iterateTargetPathKeys
-          }
-          iterateTargetAccessors: 
-          for(const $TargetAccessor of this.#propertyClassEvents.TargetAccessors) {
-            if($TargetAccessor === '[]') {
-              target = target[pathKey]
-            }
-            else if($TargetAccessor === 'get') {
-              target = target?.get(pathKey)
-            }
-            if(target !== undefined) { break iterateTargetAccessors }
-          }
-          pathKeysIndex++
+      target = this.#context
+      const pathKeys = $targetPath.split('.')
+      let pathKeysIndex = 0
+      iterateTargetPathKeys: 
+      while(pathKeysIndex < pathKeys.length) {
+        let pathKey = pathKeys[pathKeysIndex]
+        if(pathKeysIndex === 0 && pathKey === ':scope') {
+          break iterateTargetPathKeys
         }
+        iterateTargetAccessors: 
+        for(const $TargetAccessor of this.#propertyClassEvents.TargetAccessors) {
+          if($TargetAccessor === '[]') {
+            target = target[pathKey]
+          }
+          else if($TargetAccessor === 'get') {
+            target = target?.get(pathKey)
+          }
+          if(target !== undefined) { break iterateTargetAccessors }
+        }
+        pathKeysIndex++
       }
-      if(target !== undefined) {
+      if(target === pretargetElement?.target) {
+        targetElement = pretargetElement
+      }
+      else {
         targetElement = {
           path: $targetPath,
           target: target,
@@ -60,24 +60,21 @@ export default class CoreEvent {
       }
       targets.push(targetElement)
     }
-    this.#target = targets
-    return this.#target
+    this.#_targets = targets
+    return this.#_targets
   }
   get listener() { return this.#settings.listener }
   get options() { return this.#settings.options }
   get enable() { return this.#enable }
   set enable($enable) {
-    if(
-      $enable === this.#enable ||
-      this.target.length === 0
-    ) { return }
+    if(this.#targets.length === 0) { return }
     const eventAbility = (
       $enable === true
     ) ? this.#propertyClassEvents.Assign
       : this.#propertyClassEvents.Deassign
 
     iterateTargets: 
-    for(const { path, target, enable } of this.target) {
+    for(const { path, target, enable } of this.#targets) {
       if(enable === eventAbility) { continue iterateTargets }
       try {
         target[eventAbility](this.type, this.#boundListener, this.options)

@@ -3,7 +3,7 @@ function Instate(
 ) { return $value }
 function Deinstate(
   $propertyClass, $property
-) { return $propertyClass.target[$property] }
+) { return $propertyClass.core[$property] }
 export {
   Instate,
   Deinstate,

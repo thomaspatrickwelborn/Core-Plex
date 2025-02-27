@@ -359,7 +359,7 @@ function Instate(
 ) { return $value }
 function Deinstate(
   $propertyClass, $property
-) { return $propertyClass.target[$property] }
+) { return $propertyClass.core[$property] }
 
 class Handler {
   #propertyClass
@@ -2498,15 +2498,15 @@ class CoreEvent {
   #settings
   #enable = false
   #_boundListener
-  #target = []
+  #_targets = []
   constructor($settings) { 
     this.#settings = $settings;
     this.enable = this.#settings.enable;
   }
   get type() { return this.#settings.type }
   get path() { return this.#settings.path }
-  get target() {
-    const pretargets = this.#target;
+  get #targets() {
+    const pretargets = this.#_targets;
     const propertyDirectory = this.#context.propertyDirectory;
     const targetPaths = [];
     const targets = [];
@@ -2520,31 +2520,31 @@ class CoreEvent {
       );
       let target;
       let targetElement;
-      if(pretargetElement !== undefined) { targetElement = pretargetElement; }
-      else {
-        target = this.#context;
-        const pathKeys = $targetPath.split('.');
-        let pathKeysIndex = 0;
-        iterateTargetPathKeys: 
-        while(pathKeysIndex < pathKeys.length) {
-          let pathKey = pathKeys[pathKeysIndex];
-          if(pathKeysIndex === 0 && pathKey === ':scope') {
-            break iterateTargetPathKeys
-          }
-          iterateTargetAccessors: 
-          for(const $TargetAccessor of this.#propertyClassEvents.TargetAccessors) {
-            if($TargetAccessor === '[]') {
-              target = target[pathKey];
-            }
-            else if($TargetAccessor === 'get') {
-              target = target?.get(pathKey);
-            }
-            if(target !== undefined) { break iterateTargetAccessors }
-          }
-          pathKeysIndex++;
+      target = this.#context;
+      const pathKeys = $targetPath.split('.');
+      let pathKeysIndex = 0;
+      iterateTargetPathKeys: 
+      while(pathKeysIndex < pathKeys.length) {
+        let pathKey = pathKeys[pathKeysIndex];
+        if(pathKeysIndex === 0 && pathKey === ':scope') {
+          break iterateTargetPathKeys
         }
+        iterateTargetAccessors: 
+        for(const $TargetAccessor of this.#propertyClassEvents.TargetAccessors) {
+          if($TargetAccessor === '[]') {
+            target = target[pathKey];
+          }
+          else if($TargetAccessor === 'get') {
+            target = target?.get(pathKey);
+          }
+          if(target !== undefined) { break iterateTargetAccessors }
+        }
+        pathKeysIndex++;
       }
-      if(target !== undefined) {
+      if(target === pretargetElement?.target) {
+        targetElement = pretargetElement;
+      }
+      else {
         targetElement = {
           path: $targetPath,
           target: target,
@@ -2553,24 +2553,21 @@ class CoreEvent {
       }
       targets.push(targetElement);
     }
-    this.#target = targets;
-    return this.#target
+    this.#_targets = targets;
+    return this.#_targets
   }
   get listener() { return this.#settings.listener }
   get options() { return this.#settings.options }
   get enable() { return this.#enable }
   set enable($enable) {
-    if(
-      $enable === this.#enable ||
-      this.target.length === 0
-    ) { return }
+    if(this.#targets.length === 0) { return }
     const eventAbility = (
       $enable === true
     ) ? this.#propertyClassEvents.Assign
       : this.#propertyClassEvents.Deassign;
 
     iterateTargets: 
-    for(const { path, target, enable } of this.target) {
+    for(const { path, target, enable } of this.#targets) {
       if(enable === eventAbility) { continue iterateTargets }
       try {
         target[eventAbility](this.type, this.#boundListener, this.options);
@@ -2670,20 +2667,29 @@ class Core extends EventTarget {
   }
   get #propertyClasses() { return this.#_propertyClasses }
   #getPropertyClasses() {
-    const $getPropertyClasses = [...arguments];
+    let $getPropertyClasses;
+    if(arguments.length === 0) $getPropertyClasses = this.#propertyClasses;
+    else { $getPropertyClasses = [].concat(...arguments); }
     const getPropertyClasses = [];
+    let propertyClassIndex = 0;
     for(const $propertyClass of this.#propertyClasses) {
       for(const $getPropertyClass of $getPropertyClasses) {
         if($propertyClass.Name === $getPropertyClass.Name) {
-          getPropertyClasses.push($propertyClass);
+          getPropertyClasses.push({
+            propertyClassIndex: propertyClassIndex,
+            propertyClass: $propertyClass
+          });
         }
       }
+      propertyClassIndex++;
     }
     return getPropertyClasses
   }
   #addProperties() {
+    iteratePropertyClasses: 
     for(const $propertyClass of this.#propertyClasses) {
       const { Name, Names, Definition } = $propertyClass;
+      if(this.settings[Name] === undefined) { continue iteratePropertyClasses }
       if(Definition.Object !== undefined) {
         this[`${Names.Minister.Ad.Nonformal}${Names.Multiple.Formal}`](this.settings[Name]);
       }
@@ -2695,27 +2701,21 @@ class Core extends EventTarget {
   }
   addPropertyClasses() {
     const $this = this;
-    let $propertyClasses = (arguments.length === 0)
+    let $addPropertyClasses = (arguments.length === 0)
       ? this.settings.propertyClasses
-      : arguments[0];
-    if(
-      !Array.isArray($propertyClasses) &&
-      typeof $propertyClasses === 'object'
-    ) {
-      $propertyClasses = Object.values(arguments[0]);
-    }
+      : [].concat(...arguments);
     const propertyClasses = this.#propertyClasses;
-    for(const $propertyClass of $propertyClasses) {
+    for(const $addPropertyClass of $addPropertyClasses) {
       // Class States
-      $propertyClass.States = $propertyClass.States || {};
-      $propertyClass.Definition = $propertyClass.Definition || {};
+      $addPropertyClass.States = $addPropertyClass.States || {};
+      $addPropertyClass.Definition = $addPropertyClass.Definition || {};
       // Class Instate
-      if($propertyClass.States.Instate === undefined) {
-        $propertyClass.States.Instate = Instate; 
+      if($addPropertyClass.States.Instate === undefined) {
+        $addPropertyClass.States.Instate = Instate; 
       }
       // Class Deinstate
-      if($propertyClass.States.Deinstate === undefined) {
-        $propertyClass.States.Deinstate = Deinstate; 
+      if($addPropertyClass.States.Deinstate === undefined) {
+        $addPropertyClass.States.Deinstate = Deinstate; 
       }
       const {
         Name,
@@ -2723,7 +2723,7 @@ class Core extends EventTarget {
         Events,
         States,
         Definition,
-      } = $propertyClass;
+      } = $addPropertyClass;
       let propertyValue;
       if(
         Definition.Object === "Array" || 
@@ -2737,7 +2737,7 @@ class Core extends EventTarget {
               if(propertyValue !== undefined) {
                 return propertyValue
               }
-              propertyValue = new PropertyClass($propertyClass, $this);
+              propertyValue = new PropertyClass($addPropertyClass, $this);
               return propertyValue
             },
             set($propertyClassInstances) {
@@ -2816,26 +2816,28 @@ class Core extends EventTarget {
             set($propertyClassInstance) {
               propertyValue = States.Instate(Object.assign({
                 core: this
-              }, $propertyClass), Name, $propertyClassInstance);
+              }, $addPropertyClass), Name, $propertyClassInstance);
             }
           },
         });
       }
-      propertyClasses.push($propertyClass);
+      propertyClasses.push($addPropertyClass);
     }
     return this
   }
   removePropertyClasses() {
     const removePropertyClasses = this.#getPropertyClasses(...arguments);
-    for(const $removePropertyClass of removePropertyClasses) {
-      const { Names, Definition } = $removePropertyClass;
+    let removePropertyClassIndex = removePropertyClasses.length - 1;
+    while(removePropertyClassIndex > -1) {
+      const { propertyClassIndex, propertyClass } = removePropertyClasses[removePropertyClassIndex];
+      const { Names, Definition } = propertyClass;
       const propertyClassInstances = this[Names.Multiple.Nonformal];
       if(Definition.Object) {
         if(Definition.Object === "Array") {
-          let propertyClassIndex = propertyClassInstances.length;
-          while(propertyClassIndex > -1) {
-            propertyClassInstances.splice(propertyClassIndex, 1);
-            propertyClassIndex--;
+          let propertyClassInstanceIndex = propertyClassInstances.length - 1;
+          while(propertyClassInstanceIndex > -1) {
+            propertyClassInstances.splice(propertyClassInstanceIndex, 1);
+            propertyClassInstanceIndex--;
           }
         }
         else if(Definition.Object === "Object") {
@@ -2861,6 +2863,8 @@ class Core extends EventTarget {
           value: undefined
         });
       }
+      this.#propertyClasses.splice(propertyClassIndex, 1);
+      removePropertyClassIndex--;
     }
     return this
   }
@@ -2950,6 +2954,11 @@ class Core extends EventTarget {
     if(arguments.length === 0) { $events = this.#events; }
     else { $events = this.getEvents(arguments[0]); }
     return this.#toggleEventAbility('Deassign', $events)
+  }
+  reenableEvents() {
+    return this
+    .disableEvents(...arguments)
+    .enableEvents(...arguments)
   }
   #assign() {
     Object.assign(this, ...arguments);
