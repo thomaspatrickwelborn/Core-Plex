@@ -22,11 +22,11 @@ export default [{
   },
   States: {
     Instate: function Instate($propertyClass, $property, $value) {
-      return new SerializableClass($value).start()
+      return new SerializableClass($value)
     },
     Deinstate: function Deinstate($propertyClass, $property) {
       const { core, Name } = $propertyClass
-      return core[Name][$property].stop()
+      return core[Name][$property]
     },
   },
   Definition: {

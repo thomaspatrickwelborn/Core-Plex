@@ -48,17 +48,18 @@ export default class Core extends EventTarget {
     return this.#_events
   }
   get #propertyClasses() { return this.#_propertyClasses }
-  #getPropertyClass() {
-    const { ID, Name } = arguments[0]
-    let propertyClass
+  #getPropertyClasses() {
+    const $getPropertyClasses = [...arguments]
+    const getPropertyClasses = []
     iteratePropertyClasses: 
     for(const $propertyClass of this.#propertyClasses) {
-      if(
-        ID && $propertyClass.ID === ID ||
-        Name && $propertyClass.Name === Name
-      ) { propertyClass = $propertyClass }
+      for(const $getPropertyClass of $getPropertyClasses) {
+        if($propertyClass.Name === $getPropertyClass.Name) {
+          getPropertyClasses.push($propertyClass)
+        }
+      }
     }
-    return propertyClass
+    return getPropertyClasses
   }
   #addProperties() {
     iteratePropertyClasses: 
@@ -99,7 +100,6 @@ export default class Core extends EventTarget {
         $propertyClass.States.Deinstate = Deinstate 
       }
       const {
-        ID,
         Name,
         Names,
         Events,
@@ -209,43 +209,44 @@ export default class Core extends EventTarget {
     return this
   }
   removePropertyClasses() {
-    let removePropertyClasses = []
-    if(arguments.length === 0) { removePropertyClasses = removePropertyClasses.concat(
-      Object.keys(this.#propertyClasses)
-    ) }
-    else if(arguments.length === 1) {
-      const $removePropertyClasses = arguments[0]
-      const typeofRemovePropertyClasses = typeOf($removePropertyClasses)
-      if(
-        typeofRemovePropertyClasses === 'string'
-      ) {
-        removePropertyClasses = removePropertyClasses.concat($removePropertyClasses)
-      }
-      else if(typeofRemovePropertyClasses === 'array') {
-        removePropertyClasses = removePropertyClasses.concat($removePropertyClasses)
-      }
-      else if(typeofRemovePropertyClasses === 'object') {
-        removePropertyClasses = removePropertyClasses.concat(Object.keys($removePropertyClasses))
-      }
-    }
+    const removePropertyClasses = this.#getPropertyClasses(...arguments)
     iterateRemovePropertyClasses: 
-    for(const $removePropertyClassName of removePropertyClasses) {
-      const { Names, Definition } = this.#getPropertyClass({ Name: $removePropertyClassName })
+    for(const $removePropertyClass of removePropertyClasses) {
+      const { Names, Definition } = $removePropertyClass
       const propertyClassInstances = this[Names.Multiple.Nonformal]
-      iteratePropertyClassInstances: 
-      for(const [
-        $propertyClassInstanceName, $propertyClassInstance
-      ] of Object.entries(this[Names.Multiple.Nonformal])) {
-        delete propertyClassInstances[$propertyClassInstanceName]
+      if(Definition.Object) {
+        if(Definition.Object === "Array") {
+          let propertyClassIndex = propertyClassInstances.length
+          iteratePropertyClassInstances: 
+          while(propertyClassIndex > -1) {
+            propertyClassInstances.splice(propertyClassIndex, 1)
+            propertyClassIndex--
+          }
+        }
+        else if(Definition.Object === "Object") {
+          iteratePropertyClassInstances: 
+          for(const [
+            $propertyClassInstanceName, $propertyClassInstance
+          ] of Object.entries(this[Names.Multiple.Nonformal])) {
+            delete propertyClassInstances[$propertyClassInstanceName]
+          }
+        }
+        delete this[`_${Names.Multiple.Nonformal}`]
+        Object.defineProperty(this, Names.Multiple.Nonformal, {
+          configurable: true, enumerable: false, writable: true, 
+          value: undefined
+        })
+        delete this[Names.Multiple.Nonformal]
+        delete this[`${Names.Minister.Ad.Nonformal}${Names.Multiple.Formal}`]
+        delete this[`${Names.Minister.Dead.Nonformal}${Names.Multiple.Formal}`]
       }
-      delete this[`_${Names.Multiple.Nonformal}`]
-      Object.defineProperty(this, Names.Multiple.Nonformal, {
-        configurable: true, enumerable: false, writable: true, 
-        value: undefined
-      })
-      delete this[Names.Multiple.Nonformal]
-      delete this[`${Names.Minister.Ad.Nonformal}${Names.Multiple.Formal}`]
-      delete this[`${Names.Minister.Dead.Nonformal}${Names.Multiple.Formal}`]
+      else {
+        delete this[Names.Monople.Nonformal]
+        Object.defineProperty(this, Names.Monople.Nonformal, {
+          configurable: true, enumerable: false, writable: true, 
+          value: undefined
+        })
+      }
     }
     return this
   }
