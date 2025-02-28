@@ -12,7 +12,7 @@
     "stop": "pm2 stop ecosystem.config.cjs",
     "delete": "pm2 delete ecosystem.config.cjs"
   },
-  "devDependencies": {
+  "dependencies": {
     "document-process-manager": "^1.1.22"
   }
 }
