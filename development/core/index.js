@@ -19,8 +19,6 @@ export default class Core extends EventTarget {
     this.addPropertyClasses(this.settings.propertyClasses)
     this.#addProperties(this.settings)
     this.addEvents(this.settings.events)
-    this.#defineProperties(this.options.defineProperties)
-    this.#assign(...this.options.assign)
     if(this.options.enableEvents) this.enableEvents(this.options.enableEvents) 
   }
   get propertyDirectory() { return pathkeyTree(this) }
@@ -124,15 +122,15 @@ export default class Core extends EventTarget {
               propertyValue = new PropertyClass($addPropertyClass, $this)
               return propertyValue
             },
-            set($propertyClassInstances) {
+            set($propertyValue) {
               const propertyClassInstances = $this[Name]
               let propertyClassInstancesEntries
-              if($propertyClassInstances) {
-                if(Array.isArray($propertyClassInstances)) {
-                  propertyClassInstancesEntries = $propertyClassInstances
+              if($propertyValue) {
+                if(Array.isArray($propertyValue)) {
+                  propertyClassInstancesEntries = $propertyValue
                 }
                 else {
-                  propertyClassInstancesEntries = Object.entries($propertyClassInstances)
+                  propertyClassInstancesEntries = Object.entries($propertyValue)
                 }
               } else { propertyClassInstancesEntries = [] }
               iteratePropertyClassInstances: 
@@ -198,11 +196,11 @@ export default class Core extends EventTarget {
             get() {
               return propertyValue
             },
-            set($propertyClassInstance) {
+            set($propertyValue) {
               propertyValue = States.Instate(Object.assign({
                 core: this
-              }, $addPropertyClass), Name, $propertyClassInstance)
-            }
+              }, $addPropertyClass), Name, $propertyValue)
+              }
           },
         })
       }
@@ -351,21 +349,12 @@ export default class Core extends EventTarget {
     .disableEvents(...arguments)
     .enableEvents(...arguments)
   }
-  #assign() {
-    Object.assign(this, ...arguments)
-    return this
-  }
-  #defineProperties() {
-    Object.defineProperties(this, arguments[0])
-    return this
-  }
   #toggleEventAbility($eventListenerMethod, $events) {
     let enability
     if($eventListenerMethod === 'Assign') { enability = true }
     else if($eventListenerMethod === 'Deassign') { enability = false }
     else { return this }
-    iterateEvents:
-    for(const $event of $events) { $event.enable = enability }
+    iterateEvents: for(const $event of $events) { $event.enable = enability }
     return this
   }
 }

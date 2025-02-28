@@ -11,5 +11,8 @@
     "restart": "pm2 restart ecosystem.config.cjs",
     "stop": "pm2 stop ecosystem.config.cjs",
     "delete": "pm2 delete ecosystem.config.cjs"
+  },
+  "devDependencies": {
+    "document-process-manager": "^1.1.22"
   }
 }

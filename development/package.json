@@ -14,8 +14,10 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.2",
     "@rollup/plugin-node-resolve": "^16.0.0",
-    "minimatch": "^10.0.1",
-    "path-to-regexp": "^8.2.0",
     "rollup": "^4.34.8"
+  },
+  "dependencies": {
+    "minimatch": "^10.0.1",
+    "path-to-regexp": "^8.2.0"
   }
 }
