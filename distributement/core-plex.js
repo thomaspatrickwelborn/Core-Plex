@@ -2683,11 +2683,11 @@ class Core extends EventTarget {
     }
     return getPropertyClasses
   }
-  #addProperties() {
+  #addProperties($properties) {
     iteratePropertyClasses: 
     for(const $propertyClass of this.#propertyClasses) {
       const { Name, Names, Definition } = $propertyClass;
-      if(this.settings[Name] === undefined) { continue iteratePropertyClasses }
+      if($properties[Name] === undefined) { continue iteratePropertyClasses }
       if(Definition.Object !== undefined) {
         this[`${Names.Minister.Ad.Nonformal}${Names.Multiple.Formal}`](this.settings[Name]);
       }
@@ -2815,7 +2815,7 @@ class Core extends EventTarget {
               propertyValue = States.Instate(Object.assign({
                 core: this
               }, $addPropertyClass), Name, $propertyValue);
-            }
+              }
           },
         });
       }

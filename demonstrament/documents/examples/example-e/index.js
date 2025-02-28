@@ -1,4 +1,5 @@
-import { Core } from '/dependencies/core-plex.js'
+import { Core, Coutil } from '/dependencies/core-plex.js'
+const { recursiveAssignConcat } = Coutil
 
 class Body extends Core {
   static propertyClasses = [{
@@ -6,12 +7,19 @@ class Body extends Core {
     Names: {
       Monople: { Formal: 'Element', Nonformal: 'element' },
     },
+    Events: {
+      Assign: 'addEventListener',
+      Deassign: 'removeEventListener',
+      TargetAccessors: ['[]'],
+    },
     States: {
       Instate: function Instate($propertyClass, $property, $value) {
+        console.log(document.querySelector('body'))
         return document.querySelector('body')
       },
       Deinstate: function Deinstate($propertyClass, $property) {},
     },
+    Definition: {}
   }, {
     Name: 'elements',
     Names: {
@@ -45,12 +53,32 @@ class Body extends Core {
       Object: 'Object'
     },
   }]
-  static events = []
+  static events = [{
+    path: 'elements.*',
+    type: 'click',
+    listener: function($event) { console.log($event.type, $event.currentTarget) },
+  }]
   constructor($settings, $options) {
-    super(...arguments)
-    this.addPropertyClasses(Body.propertyClasses)
-    this.addEvents(Body.events)
+    super(recursiveAssignConcat({
+      propertyClasses: Body.propertyClasses,
+      events: Body.events,
+    }, $settings), $options)
   }
 }
-const body = new Body()
-console.log('body.element', body.element)
+const body = new Body({
+  element: 'body'
+})
+body.elements["division"] = "div"
+body.elements["section"] = "section"
+body.enableEvents()
+body.elements.division.dispatchEvent(new CustomEvent('click'))
+body.elements.section.dispatchEvent(new CustomEvent('click'))
+console.log('body', body)
+console.log('body.elements.division', body.elements.division)
+console.log('body.elements.section', body.elements.section)
+body.disableEvents()
+body.elements.division.dispatchEvent(new CustomEvent('click'))
+body.elements.section.dispatchEvent(new CustomEvent('click'))
+body.enableEvents()
+body.elements.division.dispatchEvent(new CustomEvent('click'))
+body.elements.section.dispatchEvent(new CustomEvent('click'))
