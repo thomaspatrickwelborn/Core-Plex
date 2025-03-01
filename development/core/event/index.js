@@ -37,11 +37,11 @@ export default class CoreEvent {
           break iterateTargetPathKeys
         }
         iterateTargetAccessors: 
-        for(const $TargetAccessor of this.#propertyClassEvents.TargetAccessors) {
-          if($TargetAccessor === '[]') {
+        for(const $targetAccessor of this.#settings.target.accessors) {
+          if($targetAccessor === '[]') {
             target = target[pathKey]
           }
-          else if($TargetAccessor === 'get') {
+          else if($targetAccessor === 'get') {
             target = target?.get(pathKey)
           }
           if(target !== undefined) { break iterateTargetAccessors }
@@ -70,9 +70,8 @@ export default class CoreEvent {
     if(this.#targets.length === 0) { return }
     const eventAbility = (
       $enable === true
-    ) ? this.#propertyClassEvents.Assign
-      : this.#propertyClassEvents.Deassign
-
+    ) ? this.#settings.target.assign
+      : this.#settings.target.deassign
     iterateTargets: 
     for(const { path, target, enable } of this.#targets) {
       if(enable === eventAbility) { continue iterateTargets }
@@ -83,7 +82,6 @@ export default class CoreEvent {
     }
     this.#enable = $enable
   }
-  get #propertyClassEvents() { return this.#settings.propertyClassEvents }
   get #context() { return this.#settings.context }
   get #boundListener() {
     if(this.#_boundListener !== undefined) { return this.#_boundListener }

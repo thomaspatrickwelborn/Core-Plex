@@ -1,35 +1,28 @@
 import SerializableClass from '../serializable-class/index.js'
 export default [{
-  Name: 'serializableClassInstances',
-  Names: {
-    Monople: {
-      Formal: 'SerializableClassInstance',
-      Nonformal: 'serializableClassInstance',
+  name: 'serializableClassInstances',
+  names: {
+    monople: {
+      formal: 'SerializableClassInstance',
+      nonformal: 'serializableClassInstance',
     },
-    Multiple: {
-      Formal: 'SerializableClassInstances',
-      Nonformal: 'serializableClassInstances',
+    multiple: {
+      formal: 'SerializableClassInstances',
+      nonformal: 'serializableClassInstances',
     },
-    Minister: {
-      Ad: { Formal: 'Add', Nonformal: 'add' },
-      Dead: { Formal: 'Remove', Nonformal: 'remove' },
+    minister: {
+      ad: { formal: 'Add', nonformal: 'add' },
+      dead: { formal: 'Remove', nonformal: 'remove' },
     },
   },
-  Events: {
-    Assign: 'addEventListener',
-    Deassign: 'removeEventListener',
-    TargetAccessors: ['[]'],
-  },
-  States: {
-    Instate: function Instate($propertyClass, $property, $value) {
+  states: {
+    instate: function instate($propertyClass, $property, $value) {
       return new SerializableClass($value)
     },
-    Deinstate: function Deinstate($propertyClass, $property) {
-      const { core, Name } = $propertyClass
-      return core[Name][$property].stop()
+    deinstate: function deinstate($propertyClass, $property) {
+      const { core, name } = $propertyClass
+      return core[name][$property].stop()
     },
   },
-  Definition: {
-    Object: "Object",
-  },
+  definition: { object: "Object" },
 }]

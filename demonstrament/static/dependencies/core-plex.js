@@ -354,10 +354,10 @@ var index = /*#__PURE__*/Object.freeze({
   variables: index$3
 });
 
-function Instate(
+function instate(
   $propertyClass, $property, $value
 ) { return $value }
-function Deinstate(
+function deinstate(
   $propertyClass, $property
 ) { return $propertyClass.core[$property] }
 
@@ -372,25 +372,25 @@ class Handler {
     }
   }
   get set() {
-    const Instate$1 = this.#propertyClass.States.Instate || Instate;
-    const Definition = this.#propertyClass.Definition;
+    const instate = this.#propertyClass.states.instate || states.instate;
+    const definition = this.#propertyClass.definition;
     return function set($target, $property, $value) {
       if(
-        Definition.Object === "Array" && 
+        definition.object === "Array" && 
         $property === 'length'
       ) {
         $target[$property] = $value;
       }
       else {
-        $target[$property] = Instate$1(this.#propertyClass, $property, $value);
+        $target[$property] = instate(this.#propertyClass, $property, $value);
       }
       return true
     }
   }
   get deleteProperty() {
-    const Deinstate$1 = this.#propertyClass.States.Deinstate || Deinstate;
+    const deinstate = this.#propertyClass.states.deinstate || states.deinstate;
     return function deleteProperty($target, $property) {
-      Deinstate$1(this.#propertyClass, $property);
+      deinstate(this.#propertyClass, $property);
       delete $target[$property];
       return true
     }
@@ -410,7 +410,7 @@ class PropertyClass {
   }
   get #target() {
     if(this.#_target !== undefined) { return this.#_target }
-    this.#_target = typedObjectLiteral(this.Definition.Object);
+    this.#_target = typedObjectLiteral(this.definition.object);
     return this.#_target
   }
   get #handler() {
@@ -424,12 +424,11 @@ class PropertyClass {
     return this.#_proxy
   }
   get core() { return this.#core }
-  get ID() { return this.#settings.ID }
-  get Name() { return this.#settings.Name }
-  get Names() { return this.#settings.Names }
-  get Events() { return this.#settings.Events }
-  get States() { return this.#settings.States }
-  get Definition() { return this.#settings.Definition }
+  get id() { return this.#settings.id }
+  get name() { return this.#settings.name }
+  get names() { return this.#settings.names }
+  get states() { return this.#settings.states }
+  get definition() { return this.#settings.definition }
 }
 
 function getDefaultExportFromCjs (x) {
@@ -2530,11 +2529,11 @@ class CoreEvent {
           break iterateTargetPathKeys
         }
         iterateTargetAccessors: 
-        for(const $TargetAccessor of this.#propertyClassEvents.TargetAccessors) {
-          if($TargetAccessor === '[]') {
+        for(const $targetAccessor of this.#settings.target.accessors) {
+          if($targetAccessor === '[]') {
             target = target[pathKey];
           }
-          else if($TargetAccessor === 'get') {
+          else if($targetAccessor === 'get') {
             target = target?.get(pathKey);
           }
           if(target !== undefined) { break iterateTargetAccessors }
@@ -2563,9 +2562,8 @@ class CoreEvent {
     if(this.#targets.length === 0) { return }
     const eventAbility = (
       $enable === true
-    ) ? this.#propertyClassEvents.Assign
-      : this.#propertyClassEvents.Deassign;
-
+    ) ? this.#settings.target.assign
+      : this.#settings.target.deassign;
     iterateTargets: 
     for(const { path, target, enable } of this.#targets) {
       if(enable === eventAbility) { continue iterateTargets }
@@ -2576,7 +2574,6 @@ class CoreEvent {
     }
     this.#enable = $enable;
   }
-  get #propertyClassEvents() { return this.#settings.propertyClassEvents }
   get #context() { return this.#settings.context }
   get #boundListener() {
     if(this.#_boundListener !== undefined) { return this.#_boundListener }
@@ -2586,33 +2583,36 @@ class CoreEvent {
 }
 
 var Settings = {
-  events: [/* {
+  events: [/*{
     type: "click",
-    target "views.",
-  } */],
+    path "views.",
+    listener: function listener($event) {},
+    enable: false,
+    target: {
+      accessors: ["[]", "get"], 
+      assign: "addEventListener", 
+      deassign: "removeEventListener", 
+    }
+    targetAccessors: [],
+  }*/],
   propertyClasses: [/* {
-    ID: "VIEW",
-    Name: "views",
-    Class: View,
-    Names: {
-      Monople: { Formal: "View", Nonformal: "view" },
-      Multiple: { Formal: "Views", Nonformal: "views" },
-      Minister: {
-        Ad: { Formal: "Add", Nonformal: "add" },
-        Dead: { Formal: "Remove", Nonformal: "remove" },
+    id: "VIEW",
+    name: "views",
+    class: View,
+    names: {
+      monople: { formal: "View", nonformal: "view" },
+      multiple: { formal: "Views", nonformal: "views" },
+      minister: {
+        ad: { formal: "Add", nonformal: "add" },
+        dead: { formal: "Remove", nonformal: "remove" },
       },
     },
-    Events: {
-      Assign: "addEventListener", // "on",
-      Deassign: "removeEventListener", // "off",
-      TargetAccessors: ["[]", "get"],
+    states: {
+      instate: function instate($propertyClass, $property, $value) {},
+      deinstate: function deinstate($propertyClass, $property) {},
     },
-    States: {
-      Instate: function Instate($propertyClass, $property, $value) {},
-      Deinstate: function Deinstate($propertyClass, $property) {},
-    },
-    Definition: {
-      Object: Array, // Object, // undefined,
+    definition: {
+      object: Array, // Object, // undefined,
     }
   } */],
 };
@@ -2627,7 +2627,6 @@ class Core extends EventTarget {
   #settings
   #options
   #_events
-  #_propertyClassEvents
   #_propertyClasses = []
   static propertyClasses = []
   constructor($settings = {}, $options = {}) {
@@ -2640,14 +2639,6 @@ class Core extends EventTarget {
     if(this.options.enableEvents) this.enableEvents(this.options.enableEvents); 
   }
   get propertyDirectory() { return pathkeyTree(this) }
-  get #propertyClassEvents() {
-    if(this.#_propertyClassEvents !== undefined) return this.#_propertyClassEvents
-    this.#_propertyClassEvents = {};
-    for(const $propertyClass of this.#propertyClasses) {
-      this.#_propertyClassEvents[$propertyClass.Name] = $propertyClass.Events;
-    }
-    return this.#_propertyClassEvents
-  }
   get settings() { return this.#settings }
   set settings($settings) {
     if(this.#settings !== undefined) returnd;
@@ -2672,7 +2663,7 @@ class Core extends EventTarget {
     let propertyClassIndex = 0;
     for(const $propertyClass of this.#propertyClasses) {
       for(const $getPropertyClass of $getPropertyClasses) {
-        if($propertyClass.Name === $getPropertyClass.Name) {
+        if($propertyClass.name === $getPropertyClass.name) {
           getPropertyClasses.push({
             propertyClassIndex: propertyClassIndex,
             propertyClass: $propertyClass
@@ -2686,14 +2677,14 @@ class Core extends EventTarget {
   #addProperties($properties) {
     iteratePropertyClasses: 
     for(const $propertyClass of this.#propertyClasses) {
-      const { Name, Names, Definition } = $propertyClass;
-      if(!Definition) { continue iteratePropertyClasses }
-      if($properties[Name] === undefined) { continue iteratePropertyClasses }
-      if(Definition.Object !== undefined) {
-        this[`${Names.Minister.Ad.Nonformal}${Names.Multiple.Formal}`](this.settings[Name]);
+      const { name, names, definition } = $propertyClass;
+      if(!definition) { continue iteratePropertyClasses }
+      if($properties[name] === undefined) { continue iteratePropertyClasses }
+      if(definition.object !== undefined) {
+        this[`${names.minister.ad.nonformal}${names.multiple.formal}`](this.settings[name]);
       }
-      else if(this.settings[Name] !== undefined) {
-        this[Name] = this.settings[Name];
+      else if(this.settings[name] !== undefined) {
+        this[name] = this.settings[name];
       }
     }
     return this
@@ -2706,36 +2697,35 @@ class Core extends EventTarget {
     const propertyClasses = this.#propertyClasses;
     iteratePropertyClasses: 
     for(const $addPropertyClass of $addPropertyClasses) {
-      if(!$addPropertyClass.Definition) {
+      if(!$addPropertyClass.definition) {
         propertyClasses.push($addPropertyClass);
         continue iteratePropertyClasses
       }
       // Class States
-      $addPropertyClass.States = $addPropertyClass.States || {};
-      $addPropertyClass.Definition = $addPropertyClass.Definition || {};
-      // Class Instate
-      if($addPropertyClass?.States.Instate === undefined) {
-        $addPropertyClass.States.Instate = Instate; 
+      $addPropertyClass.states = $addPropertyClass.states || {};
+      $addPropertyClass.definition = $addPropertyClass.definition || {};
+      // Class instate
+      if($addPropertyClass?.states.instate === undefined) {
+        $addPropertyClass.states.instate = instate; 
       }
-      // Class Deinstate
-      if($addPropertyClass.States.Deinstate === undefined) {
-        $addPropertyClass.States.Deinstate = Deinstate; 
+      // Class deinstate
+      if($addPropertyClass.states.deinstate === undefined) {
+        $addPropertyClass.states.deinstate = deinstate; 
       }
       const {
-        Name,
-        Names,
-        Events,
-        States,
-        Definition,
+        name,
+        names,
+        states,
+        definition,
       } = $addPropertyClass;
       let propertyValue;
       if(
-        Definition.Object === "Array" || 
-        Definition.Object === "Object"
+        definition.object === 'Array' || 
+        definition.object === 'Object'
       ) {
         Object.defineProperties(this, {
           // Property Class Instances
-          [Name]: {
+          [name]: {
             configurable: true, enumerable: true,  
             get() {
               if(propertyValue !== undefined) {
@@ -2745,7 +2735,7 @@ class Core extends EventTarget {
               return propertyValue
             },
             set($propertyValue) {
-              const propertyClassInstances = $this[Name];
+              const propertyClassInstances = $this[name];
               let propertyClassInstancesEntries;
               if($propertyValue) {
                 if(Array.isArray($propertyValue)) {
@@ -2763,33 +2753,33 @@ class Core extends EventTarget {
             }
           },
           // Add Property Class Instances
-          [`${Names.Minister.Ad.Nonformal}${Names.Multiple.Formal}`]: {
+          [`${names.minister.ad.nonformal}${names.multiple.formal}`]: {
             configurable: true, enumerable: false, writable: false, 
             value: function() {
               const $arguments = [...arguments];
               if($arguments.length === 1) {
                 const [$values] = $arguments;
-                if(Definition.Object === "Array") {
-                  $this[Name] = Object.entries($values);
+                if(definition.object === 'Array') {
+                  $this[name] = Object.entries($values);
                 }
                 else {
                   if(Array.isArray($values)) {
-                    $this[Name] = Object.fromEntries($values);
+                    $this[name] = Object.fromEntries($values);
                   }
                   else {
-                    $this[Name] = $values;
+                    $this[name] = $values;
                   }
                 }
               }
               else if($arguments.length === 2) {
                 const [$key, $value] = $arguments;
-                $this[Name] = { [$key]: $value };
+                $this[name] = { [$key]: $value };
               }
               return $this
             }
           },
           // Remove Property Class Instances
-          [`${Names.Minister.Dead.Nonformal}${Names.Multiple.Formal}`]: {
+          [`${names.minister.dead.nonformal}${names.multiple.formal}`]: {
             configurable: true, enumerable: false, writable: false, 
             value: function() {
               const [$removeKeys] = [...arguments];
@@ -2801,10 +2791,10 @@ class Core extends EventTarget {
                 else { removeKeys.push(...Object.keys($removeKeys)); }
               }
               else if(typeofRemoveKeys === 'undefined') {
-                removeKeys.push(...Object.keys($this[Name]));
+                removeKeys.push(...Object.keys($this[name]));
               }
               for(const $removeKey of $removeKeys) {
-                delete $this[Name][$removeKey];
+                delete $this[name][$removeKey];
               }
               return $this
             }
@@ -2812,18 +2802,18 @@ class Core extends EventTarget {
         });
       }
       else if(
-        Definition !== undefined &&
-        Names?.Monople.Nonformal !== undefined
+        definition !== undefined &&
+        names?.monople.nonformal !== undefined
       ) {
         Object.defineProperties(this, {
-          [Names.Monople.Nonformal]: {
+          [names.monople.nonformal]: {
             get() {
               return propertyValue
             },
             set($propertyValue) {
-              propertyValue = States.Instate(Object.assign({
+              propertyValue = states.instate(Object.assign({
                 core: this
-              }, $addPropertyClass), Name, $propertyValue);
+              }, $addPropertyClass), name, $propertyValue);
               }
           },
         });
@@ -2837,35 +2827,35 @@ class Core extends EventTarget {
     let removePropertyClassIndex = removePropertyClasses.length - 1;
     while(removePropertyClassIndex > -1) {
       const { propertyClassIndex, propertyClass } = removePropertyClasses[removePropertyClassIndex];
-      const { Names, Definition } = propertyClass;
-      const propertyClassInstances = this[Names.Multiple.Nonformal];
-      if(Definition.Object) {
-        if(Definition.Object === "Array") {
+      const { names, definition } = propertyClass;
+      const propertyClassInstances = this[names.multiple.nonformal];
+      if(definition.object) {
+        if(definition.object === 'Array') {
           let propertyClassInstanceIndex = propertyClassInstances.length - 1;
           while(propertyClassInstanceIndex > -1) {
             propertyClassInstances.splice(propertyClassInstanceIndex, 1);
             propertyClassInstanceIndex--;
           }
         }
-        else if(Definition.Object === "Object") {
+        else if(definition.object === 'Object') {
           for(const [
             $propertyClassInstanceName, $propertyClassInstance
-          ] of Object.entries(this[Names.Multiple.Nonformal])) {
+          ] of Object.entries(this[names.multiple.nonformal])) {
             delete propertyClassInstances[$propertyClassInstanceName];
           }
         }
-        delete this[`_${Names.Multiple.Nonformal}`];
-        Object.defineProperty(this, Names.Multiple.Nonformal, {
+        delete this[`_${names.multiple.nonformal}`];
+        Object.defineProperty(this, names.multiple.nonformal, {
           configurable: true, enumerable: false, writable: true, 
           value: undefined
         });
-        delete this[Names.Multiple.Nonformal];
-        delete this[`${Names.Minister.Ad.Nonformal}${Names.Multiple.Formal}`];
-        delete this[`${Names.Minister.Dead.Nonformal}${Names.Multiple.Formal}`];
+        delete this[names.multiple.nonformal];
+        delete this[`${names.minister.ad.nonformal}${names.multiple.formal}`];
+        delete this[`${names.minister.dead.nonformal}${names.multiple.formal}`];
       }
       else {
-        delete this[Names.Monople.Nonformal];
-        Object.defineProperty(this, Names.Monople.Nonformal, {
+        delete this[names.monople.nonformal];
+        Object.defineProperty(this, names.monople.nonformal, {
           configurable: true, enumerable: false, writable: true, 
           value: undefined
         });
@@ -2907,19 +2897,16 @@ class Core extends EventTarget {
     const $events = expandEvents(arguments[0]);
     const events = this.#events;
     for(let $event of $events) {
-      const propertyClassName = $event.path.split('.').shift();
-      const propertyClassEvents = Object.assign(
-        {}, 
-        this.#propertyClassEvents[propertyClassName],
-        $event?.sign, 
-      );
       $event = Object.assign(
-        {}, 
-        $event,
         {
-          context: this,
-          propertyClassEvents,
-        }
+          target: {
+            assign: 'addEventListener',
+            deassign: 'removeEventListener',
+            accessors: ['[]', 'get']
+          },
+          context: this
+        }, 
+        $event,
       );
       const coreEvent = new CoreEvent($event);
       events.push(coreEvent);

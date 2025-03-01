@@ -57,7 +57,7 @@ for(const $serializableClassInstance of core.serializableClassInstances) {
 }
 core.serializableClassInstances.splice(0)
 core.removePropertyClasses({
-  Name: 'serializableClassInstances'
+  name: 'serializableClassInstances'
 })
 console.log(core.serializableClassInstances)
 console.log(core.addSerializableClassInstances)

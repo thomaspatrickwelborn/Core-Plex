@@ -3,54 +3,44 @@ const { recursiveAssignConcat } = Coutil
 
 class Body extends Core {
   static propertyClasses = [{
-    Name: 'element',
-    Names: {
-      Monople: { Formal: 'Element', Nonformal: 'element' },
+    name: 'element',
+    names: {
+      monople: { formal: 'Element', nonformal: 'element' },
     },
-    Events: {
-      Assign: 'addEventListener',
-      Deassign: 'removeEventListener',
-      TargetAccessors: ['[]'],
-    },
-    States: {
-      Instate: function Instate($propertyClass, $property, $value) {
+    states: {
+      instate: function instate($propertyClass, $property, $value) {
         console.log(document.querySelector('body'))
         return document.querySelector('body')
       },
-      Deinstate: function Deinstate($propertyClass, $property) {},
+      deinstate: function deinstate($propertyClass, $property) {},
     },
-    Definition: {}
+    definition: {}
   }, {
-    Name: 'elements',
-    Names: {
-      Monople: { Formal: 'Element' , Nonformal: 'element' },
-      Multiple: { Formal: 'Elements' , Nonformal: 'elements' },
-      Minister: {
-        Ad: { Formal: 'Add', Nonformal: 'add' },
-        Dead: { Formal: 'Remove', Nonformal: 'remove' },
+    name: 'elements',
+    names: {
+      monople: { formal: 'Element' , nonformal: 'element' },
+      multiple: { formal: 'Elements' , nonformal: 'elements' },
+      minister: {
+        ad: { formal: 'Add', nonformal: 'add' },
+        dead: { formal: 'Remove', nonformal: 'remove' },
       },
     },
-    Events: {
-      Assign: 'addEventListener',
-      Deassign: 'removeEventListener',
-      TargetAccessors: ['[]'],
-    },
-    States: {
-      Instate: function Instate($propertyClass, $property, $value) {
-        const { core, Name } = $propertyClass
+    states: {
+      instate: function instate($propertyClass, $property, $value) {
+        const { core, name } = $propertyClass
         const element = document.createElement($value)
         core.element.appendChild(element)
         return element
       },
-      Deinstate: function Deinstate($propertyClass, $property) {
-        const { core, Name } = $propertyClass
-        const element = core[Name][$property]
+      deinstate: function deinstate($propertyClass, $property) {
+        const { core, name } = $propertyClass
+        const element = core[name][$property]
         core.element.removeChild(element)
-        return core[Name][$property]
+        return core[name][$property]
       },
     },
-    Definition: {
-      Object: 'Object'
+    definition: {
+      object: 'Object'
     },
   }]
   static events = [{

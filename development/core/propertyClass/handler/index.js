@@ -10,25 +10,25 @@ export default class Handler {
     }
   }
   get set() {
-    const Instate = this.#propertyClass.States.Instate || States.Instate
-    const Definition = this.#propertyClass.Definition
+    const instate = this.#propertyClass.states.instate || states.instate
+    const definition = this.#propertyClass.definition
     return function set($target, $property, $value) {
       if(
-        Definition.Object === "Array" && 
+        definition.object === "Array" && 
         $property === 'length'
       ) {
         $target[$property] = $value
       }
       else {
-        $target[$property] = Instate(this.#propertyClass, $property, $value)
+        $target[$property] = instate(this.#propertyClass, $property, $value)
       }
       return true
     }
   }
   get deleteProperty() {
-    const Deinstate = this.#propertyClass.States.Deinstate || States.Deinstate
+    const deinstate = this.#propertyClass.states.deinstate || states.deinstate
     return function deleteProperty($target, $property) {
-      Deinstate(this.#propertyClass, $property)
+      deinstate(this.#propertyClass, $property)
       delete $target[$property]
       return true
     }

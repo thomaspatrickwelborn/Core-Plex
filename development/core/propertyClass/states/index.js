@@ -1,10 +1,10 @@
-function Instate(
+function instate(
   $propertyClass, $property, $value
 ) { return $value }
-function Deinstate(
+function deinstate(
   $propertyClass, $property
 ) { return $propertyClass.core[$property] }
 export {
-  Instate,
-  Deinstate,
+  instate,
+  deinstate,
 }

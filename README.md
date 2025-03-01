@@ -1,192 +1,117 @@
-> [!WARNING]  
-> Early Stage Development  
-
-> [!CAUTION]  
-> Use At Own Risk  
-
-> [!NOTE]  
-> Interested in Core-Plex? 
-> thomas.patrick.welborn@outlook.com
-
-
 # Core-Plex
-**Class-Based Property Ministration, Ventilation**  
- - Classified property groups stantiate serialized properties with custom methods.  
- - Targeted property events sign stantiated serialized properties with custom events.  
+**Class-Based Property Ventilation, Ministration**  
+
+## Impetus
+Property ventilation, ministration configurable through objects.  
+
+*Property Ventilation*  
+ - Managing event addition/removal is necessary for most application development. 
+ - Add/Remove event statements are usually disparately located throughout codebases. 
+ - Event assignment, deassignment differentiate based on event-targetable class prototype. 
+
+*Property Ministration*  
+  - Managing serialized class instances is popular for applications. 
+  - Redundantly authoring code that serializes class instances is wasteful.  
+  - Property set/delete methods differentiate based on property class instance parameters.  
+
+## Introduction
+*Property Ventilation*  
+ - Map Events To Targets With Property Paths (Supports **Path Globbing**)
+ - Enable/Disable Events Dynamically
+
+*Property Ministration*  
+ - Define Properties And Property Classes With Serializable Subproperties 
+ - Instantiate/Deinstantiate Properties Dynamically
+
+
 
 ## Installation
 ```
 npm install core-plex
 ```
 
-## Generic Utilization
-**`serializable-class/index.js`**  
-```
-export default class SerializableClass extends EventTarget {
-  #settings
-  constructor($settings) {
-    super()
-    this.#settings = $settings
-  }
-  get settings() { return this.#settings }
-  start() {
-    this.dispatchEvent(new CustomEvent('start', { detail: this } ))
-    return this
-  }
-  stop() {
-    this.dispatchEvent(new CustomEvent('stop', { detail: this } ))
-    return this
-  }
-}
-```
-
-**`property-classes/index.js`**  
-```
-import SerializableClass from '../serializable-class/index.js'
-export default {
-  propertyClasses: [{
-    Name: 'serializableClassInstances',
-    Names: {
-      Multiple: {
-        Formal: 'SerializableClassInstances',
-        Nonformal: 'serializableClassInstances',
-      },
-      Minister: {
-        Ad: { Formal: 'Add', Nonformal: 'add' },
-        Dead: { Formal: 'Remove', Nonformal: 'remove' },
-      },
-    },
-    Events: {
-      Assign: 'addEventListener',
-      Deassign: 'removeEventListener',
-      TargetAccessors: ['[]'],
-    },
-    States: {
-      Instate: function Instate($propertyClass, $property, $value) {
-        return new SerializableClass(...$value)
-      },
-      Deinstate: function Deinstate($propertyClass, $property) {
-        const { core } = $propertyClass
-        return core[$property].stop()
-      },
-    },
-    Definition: {
-      Object: "Object",
-    },
-  }]
-}
-```
-
-**`index.js`**  
+## Importation
 ```
 import { Core } from 'core-plex'
-import PropertyClasses from './property-classes/index.js'
-function eventLog() { console.log($event.type, $event.detail.settings.name )}
+```
+
+## Instantiation
+```
 const core = new Core({
-  propertyClasses: PropertyClasses,
-  serializableClassInstances: {
-    serializableClassInstance00: { name: 'serializableClassInstance00' },
-    serializableClassInstance01: { name: 'serializableClassInstance01' },
-    serializableClassInstance02: { name: 'serializableClassInstance02' },
-    serializableClassInstance03: { name: 'serializableClassInstance03' },
-    serializableClassInstance04: { name: 'serializableClassInstance04' },
-  },
   events: {
-    'serializableClassInstances.serializableClassInstance00 start': eventLog,
-    'serializableClassInstances.serializableClassInstance01 start': eventLog,
-    'serializableClassInstances.serializableClassInstance02 start': eventLog,
-    'serializableClassInstances.serializableClassInstance03 start': eventLog,
-    'serializableClassInstances.serializableClassInstance04 start': eventLog,
-    'serializableClassInstances.serializableClassInstance00 stop': eventLog,
-    'serializableClassInstances.serializableClassInstance01 stop': eventLog,
-    'serializableClassInstances.serializableClassInstance02 stop': eventLog,
-    'serializableClassInstances.serializableClassInstance03 stop': eventLog,
-    'serializableClassInstances.serializableClassInstance04 stop': eventLog,
+    "element click": function elementClick($event) { console.log($event.type) }
+  },
+})
+core.element = document.querySelector('body')
+core.enableEvents()
+core.element.dispatchEvent(new CustomEvent('click'))
+```
+
+## Extension
+```
+class CustomCore extends Core {
+  constructor() {
+    super(...arguments)
+    this.enableEvents()
   }
-}, { enableEvents: true })
-
-for(const $serializableClassInstance of [
-  'serializableClassInstance00',
-  'serializableClassInstance01',
-  'serializableClassInstance02',
-  'serializableClassInstance03',
-  'serializableClassInstance04',
-]) {
-  core.serializableClassInstances[$serializableClassInstance].start()
+  get element() { return document.querySelector('body') }
 }
-
-delete core.serializableClassInstances.serializableClassInstance00
-delete core.serializableClassInstances.serializableClassInstance01
-delete core.serializableClassInstances.serializableClassInstance02
-delete core.serializableClassInstances.serializableClassInstance03
-delete core.serializableClassInstances.serializableClassInstance04
-
-core.removeEvents([
-  { path: serializableClassInstances.serializableClassInstance00 },
-  { path: serializableClassInstances.serializableClassInstance01 },
-  { path: serializableClassInstances.serializableClassInstance02 },
-  { path: serializableClassInstances.serializableClassInstance03 },
-  { path: serializableClassInstances.serializableClassInstance04 },
-])
-
-core.addSerializableClassInstances({
-  serializableClassInstance05: { name: 'serializableClassInstance05' },
-  serializableClassInstance06: { name: 'serializableClassInstance06' },
-  serializableClassInstance07: { name: 'serializableClassInstance07' },
-  serializableClassInstance08: { name: 'serializableClassInstance08' },
-  serializableClassInstance09: { name: 'serializableClassInstance09' },
+const customCore = new CustomCore({
+  events: {
+    "element click": function elementClick($event) { console.log($event.type) }
+  }
 })
-.addEvents({
-  'serializableClassInstances.serializableClassInstance05 start': eventLog,
-  'serializableClassInstances.serializableClassInstance06 start': eventLog,
-  'serializableClassInstances.serializableClassInstance07 start': eventLog,
-  'serializableClassInstances.serializableClassInstance08 start': eventLog,
-  'serializableClassInstances.serializableClassInstance09 start': eventLog,
-  'serializableClassInstances.serializableClassInstance05 stop': eventLog,
-  'serializableClassInstances.serializableClassInstance06 stop': eventLog,
-  'serializableClassInstances.serializableClassInstance07 stop': eventLog,
-  'serializableClassInstances.serializableClassInstance08 stop': eventLog,
-  'serializableClassInstances.serializableClassInstance09 stop': eventLog,
+```
+
+## Propriation
+### Single Property
+```
+const body = new Core({
+  propertyClasses: [{
+    name: 'element',
+    names: {
+      monople: { formal: 'Element', nonformal: 'element' },
+    },
+    states: {
+      instate: function instate($propertyClass, $property, $value) {
+        return document.querySelector($value)
+      },
+      deinstate: function deinstate($propertyClass, $property) {},
+    },
+    definition: {}
+  }],
+  element: 'body',
 })
-
-for(const $serializableClassInstance of [
-  'serializableClassInstance05',
-  'serializableClassInstance06',
-  'serializableClassInstance07',
-  'serializableClassInstance08',
-  'serializableClassInstance09',
-]) {
-  core.serializableClassInstances[$serializableClassInstance].start()
-}
-
-delete core.serializableClassInstances.serializableClassInstance05
-delete core.serializableClassInstances.serializableClassInstance06
-delete core.serializableClassInstances.serializableClassInstance07
-delete core.serializableClassInstances.serializableClassInstance08
-delete core.serializableClassInstances.serializableClassInstance09
 ```
-
-*console logs*:  
+### Multiple Properties
 ```
-start serializableClassInstance00
-start serializableClassInstance01
-start serializableClassInstance02
-start serializableClassInstance03
-start serializableClassInstance04
-stop serializableClassInstance00
-stop serializableClassInstance01
-stop serializableClassInstance02
-stop serializableClassInstance03
-stop serializableClassInstance04
-start serializableClassInstance05
-start serializableClassInstance06
-start serializableClassInstance07
-start serializableClassInstance08
-start serializableClassInstance09
-stop serializableClassInstance05
-stop serializableClassInstance06
-stop serializableClassInstance07
-stop serializableClassInstance08
-stop serializableClassInstance09
+const core = new Core({
+  propertyClasses: [{
+    name: 'elements',
+    names: {
+      monople: { formal: 'Element', nonformal: 'element' },
+      multiple: { formal: 'Elements', nonformal: 'elements' },
+      minister: {
+        ad: { formal: 'Add', nonformal: 'add' },
+        dead: { formal: 'Remove', nonformal: 'remove' },
+      },
+    },
+    states: {
+      instate: function instate($propertyClass, $property, $value) {
+        const { core, name } = $propertyClass
+        const element = new document.createElement($value)
+        document.querySelector('body').appendChild(element)
+        return element
+      },
+      deinstate: function deinstate($propertyClass, $property) {
+        const { core, name } = $propertyClass
+        const element = core[name][$property]
+        return element.parentElement.removeChild(element)
+      },
+    },
+    definition: {
+      object: "Object"
+    }
+  }],
+})
 ```
-

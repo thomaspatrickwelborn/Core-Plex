@@ -4,11 +4,11 @@ function eventLog($event) { console.log($event.type, $event.detail) }
 const core = new Core({
   propertyClasses: PropertyClasses,
   serializableClassInstances: [
-    { Name: 'serializableClassInstance00' },
-    { Name: 'serializableClassInstance01' },
-    { Name: 'serializableClassInstance02' },
-    { Name: 'serializableClassInstance03' },
-    { Name: 'serializableClassInstance04' },
+    { name: 'serializableClassInstance00' },
+    { name: 'serializableClassInstance01' },
+    { name: 'serializableClassInstance02' },
+    { name: 'serializableClassInstance03' },
+    { name: 'serializableClassInstance04' },
   ],
   events: [{
     type: 'start',
@@ -26,7 +26,7 @@ for(const $serializableClassInstance of core.serializableClassInstances) {
 for(const $serializableClassInstance of core.serializableClassInstances) {
   $serializableClassInstance.stop()
 }
-core.serializableClassInstances[0] = { Name: 'serializableClassInstance00A' },
+core.serializableClassInstances[0] = { name: 'serializableClassInstance00A' },
 core.enableEvents({
   path: 'serializableClassInstances.[0-9]'
 })
@@ -48,11 +48,11 @@ console.log("core.serializableClassInstances", core.serializableClassInstances)
 console.log("core.addSerializableClassInstances", core.addSerializableClassInstances)
 console.log("core.removeSerializableClassInstances", core.removeSerializableClassInstances)
 core.addSerializableClassInstances([
-  { Name: 'serializableClassInstance00' },
-  { Name: 'serializableClassInstance01' },
-  { Name: 'serializableClassInstance02' },
-  { Name: 'serializableClassInstance03' },
-  { Name: 'serializableClassInstance04' },
+  { name: 'serializableClassInstance00' },
+  { name: 'serializableClassInstance01' },
+  { name: 'serializableClassInstance02' },
+  { name: 'serializableClassInstance03' },
+  { name: 'serializableClassInstance04' },
 ])
 core.enableEvents()
 for(const $serializableClassInstance of core.serializableClassInstances) {

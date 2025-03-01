@@ -13,7 +13,7 @@ export default class PropertyClass {
   }
   get #target() {
     if(this.#_target !== undefined) { return this.#_target }
-    this.#_target = typedObjectLiteral(this.Definition.Object)
+    this.#_target = typedObjectLiteral(this.definition.object)
     return this.#_target
   }
   get #handler() {
@@ -27,10 +27,9 @@ export default class PropertyClass {
     return this.#_proxy
   }
   get core() { return this.#core }
-  get ID() { return this.#settings.ID }
-  get Name() { return this.#settings.Name }
-  get Names() { return this.#settings.Names }
-  get Events() { return this.#settings.Events }
-  get States() { return this.#settings.States }
-  get Definition() { return this.#settings.Definition }
+  get id() { return this.#settings.id }
+  get name() { return this.#settings.name }
+  get names() { return this.#settings.names }
+  get states() { return this.#settings.states }
+  get definition() { return this.#settings.definition }
 }

@@ -1,31 +1,34 @@
 export default {
-  events: [/* {
+  events: [/*{
     type: "click",
-    target "views.",
-  } */],
+    path "views.",
+    listener: function listener($event) {},
+    enable: false,
+    target: {
+      accessors: ["[]", "get"], 
+      assign: "addEventListener", 
+      deassign: "removeEventListener", 
+    }
+    targetAccessors: [],
+  }*/],
   propertyClasses: [/* {
-    ID: "VIEW",
-    Name: "views",
-    Class: View,
-    Names: {
-      Monople: { Formal: "View", Nonformal: "view" },
-      Multiple: { Formal: "Views", Nonformal: "views" },
-      Minister: {
-        Ad: { Formal: "Add", Nonformal: "add" },
-        Dead: { Formal: "Remove", Nonformal: "remove" },
+    id: "VIEW",
+    name: "views",
+    class: View,
+    names: {
+      monople: { formal: "View", nonformal: "view" },
+      multiple: { formal: "Views", nonformal: "views" },
+      minister: {
+        ad: { formal: "Add", nonformal: "add" },
+        dead: { formal: "Remove", nonformal: "remove" },
       },
     },
-    Events: {
-      Assign: "addEventListener", // "on",
-      Deassign: "removeEventListener", // "off",
-      TargetAccessors: ["[]", "get"],
+    states: {
+      instate: function instate($propertyClass, $property, $value) {},
+      deinstate: function deinstate($propertyClass, $property) {},
     },
-    States: {
-      Instate: function Instate($propertyClass, $property, $value) {},
-      Deinstate: function Deinstate($propertyClass, $property) {},
-    },
-    Definition: {
-      Object: Array, // Object, // undefined,
+    definition: {
+      object: Array, // Object, // undefined,
     }
   } */],
 }

@@ -40,14 +40,7 @@ delete core.serializableClassInstances.serializableClassInstance02
 delete core.serializableClassInstances.serializableClassInstance03
 delete core.serializableClassInstances.serializableClassInstance04
 
-core.removeEvents([
-  { path: 'serializableClassInstances.serializableClassInstance00' },
-  { path: 'serializableClassInstances.serializableClassInstance01' },
-  { path: 'serializableClassInstances.serializableClassInstance02' },
-  { path: 'serializableClassInstances.serializableClassInstance03' },
-  { path: 'serializableClassInstances.serializableClassInstance04' },
-])
-
+console.log("core", core)
 core.addSerializableClassInstances({
   serializableClassInstance05: { name: 'serializableClassInstance05' },
   serializableClassInstance06: { name: 'serializableClassInstance06' },
