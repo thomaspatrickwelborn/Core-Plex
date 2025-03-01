@@ -6,8 +6,7 @@ const EcosystemConfig = {
       watch: [
         "index.js",
         "package.json",
-        "dpm.config.documents.js",
-        "../../Document-Process-Manager/development"
+        "dpm.config.documents.js"
       ],
       args: "dpm --config dpm.config.documents.js",
       autorestart: false,
