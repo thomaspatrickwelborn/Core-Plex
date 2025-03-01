@@ -195,7 +195,10 @@ export default class Core extends EventTarget {
           },
         })
       }
-      else {
+      else if(
+        Definition !== undefined &&
+        Names?.Monople.Nonformal !== undefined
+      ) {
         Object.defineProperties(this, {
           [Names.Monople.Nonformal]: {
             get() {
