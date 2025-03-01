@@ -70,6 +70,7 @@ export default class Core extends EventTarget {
     iteratePropertyClasses: 
     for(const $propertyClass of this.#propertyClasses) {
       const { Name, Names, Definition } = $propertyClass
+      if(!Definition) { continue iteratePropertyClasses }
       if($properties[Name] === undefined) { continue iteratePropertyClasses }
       if(Definition.Object !== undefined) {
         this[`${Names.Minister.Ad.Nonformal}${Names.Multiple.Formal}`](this.settings[Name])
@@ -88,11 +89,15 @@ export default class Core extends EventTarget {
     const propertyClasses = this.#propertyClasses
     iteratePropertyClasses: 
     for(const $addPropertyClass of $addPropertyClasses) {
+      if(!$addPropertyClass.Definition) {
+        propertyClasses.push($addPropertyClass)
+        continue iteratePropertyClasses
+      }
       // Class States
       $addPropertyClass.States = $addPropertyClass.States || {}
       $addPropertyClass.Definition = $addPropertyClass.Definition || {}
       // Class Instate
-      if($addPropertyClass.States.Instate === undefined) {
+      if($addPropertyClass?.States.Instate === undefined) {
         $addPropertyClass.States.Instate = Instate 
       }
       // Class Deinstate
