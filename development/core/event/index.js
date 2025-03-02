@@ -1,4 +1,4 @@
-import { minimatch } from 'minimatch'
+import outmatch from 'outmatch'
 export default class CoreEvent {
   #settings
   #enable = false
@@ -15,9 +15,12 @@ export default class CoreEvent {
     const propertyDirectory = this.#context.propertyDirectory
     const targetPaths = []
     const targets = []
+    const propertyPathMatcher = outmatch(this.path, {
+      separator: '.',
+    })
     iteratePropertyPaths: 
     for(const $propertyPath of propertyDirectory) {
-      const propertyPathMatch = minimatch($propertyPath, this.path)
+      const propertyPathMatch = propertyPathMatcher($propertyPath)
       if(propertyPathMatch === true) { targetPaths.push($propertyPath) }
     }
     iterateTargetPaths: 

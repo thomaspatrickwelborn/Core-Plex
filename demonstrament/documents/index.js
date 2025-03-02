@@ -3,4 +3,5 @@
 // import './examples/example-c/index.js'
 // import './examples/example-d/index.js'
 // import './examples/example-e/index.js'
-import './examples/example-f/index.js'
+// import './examples/example-f/index.js'
+import './examples/example-g/index.js'

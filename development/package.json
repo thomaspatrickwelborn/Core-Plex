@@ -17,7 +17,6 @@
     "rollup": "^4.34.8"
   },
   "dependencies": {
-    "minimatch": "^10.0.1",
-    "path-to-regexp": "^8.2.0"
+    "outmatch": "^1.0.0"
   }
 }

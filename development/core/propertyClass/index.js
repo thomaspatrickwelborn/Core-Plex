@@ -27,7 +27,6 @@ export default class PropertyClass {
     return this.#_proxy
   }
   get core() { return this.#core }
-  get id() { return this.#settings.id }
   get name() { return this.#settings.name }
   get names() { return this.#settings.names }
   get states() { return this.#settings.states }

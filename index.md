@@ -16,13 +16,12 @@ Property ventilation, ministration configurable through objects.
 
 ## Introduction
 *Property Ventilation*  
- - Map Events To Targets With Property Paths (Supports **Path Globbing**)
+ - Map Events To Event Targets With Property Paths (Supports **Path Globbing**)
  - Enable/Disable Events Dynamically
 
 *Property Ministration*  
  - Define Properties And Property Classes With Serializable Subproperties 
  - Instantiate/Deinstantiate Properties Dynamically
-
 
 
 ## Installation
@@ -87,9 +86,22 @@ const body = new Core({
 ```
 const core = new Core({
   propertyClasses: [{
-    name: 'elements',
+    name: 'element',
     names: {
       monople: { formal: 'Element', nonformal: 'element' },
+    },
+    states: {
+      instate: function instate($propertyClass, $property, $value) {
+        // 
+      },
+      deinstate: function deinstate($propertyClass, $property) {
+        // 
+      },
+    },
+    definition: {},
+  }, {
+    name: 'elements',
+    names: {
       multiple: { formal: 'Elements', nonformal: 'elements' },
       minister: {
         ad: { formal: 'Add', nonformal: 'add' },
@@ -113,5 +125,11 @@ const core = new Core({
       object: "Object"
     }
   }],
+  element: 'body',
+  elements: {
+    header: 'header',
+    main: 'main',
+    footer: 'footer',
+  },
 })
 ```
