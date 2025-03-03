@@ -2,7 +2,7 @@ export default function pathkeyTree($object) {
   const target = []
   for(const [$key, $value] of Object.entries($object)) {
     target.push($key)
-    if(typeof $value === 'object') {
+    if(typeof $value === 'object' && $value !== null) {
       const subtarget = pathkeyTree($value)
       for(const $subtarget of subtarget) {
         let path

@@ -242,7 +242,7 @@ function pathkeyTree($object) {
   const target = [];
   for(const [$key, $value] of Object.entries($object)) {
     target.push($key);
-    if(typeof $value === 'object') {
+    if(typeof $value === 'object' && $value !== null) {
       const subtarget = pathkeyTree($value);
       for(const $subtarget of subtarget) {
         let path;
@@ -958,23 +958,14 @@ class CoreEvent {
   #_targets = []
   constructor($settings) { 
     this.#settings = $settings;
-    this.enable = this.#settings.enable;
   }
   get type() { return this.#settings.type }
   get path() { return this.#settings.path }
   get #targets() {
     const pretargets = this.#_targets;
-
-    const propertyDirectory = this.#context.propertyDirectory;
-    const targetPaths = [];
+    const propertyDirectory = this.#context.propertyDirectory; 
+   const targetPaths = [];
     const targets = [];
-    let pathTarget = this.#context;
-    iteratePathKeys: 
-    for(const $pathKey of this.path.split('.')) {
-      if(pathTarget === undefined) { continue iteratePathKeys }
-      pathTarget = pathTarget[$pathKey];
-    }
-    if(pathTarget !== undefined && pathTarget !== this.#context) { targetPaths.push(this.path); }
     const propertyPathMatcher = outmatch(this.path, {
       separator: '.',
     });
@@ -984,7 +975,7 @@ class CoreEvent {
     }
     for(const $targetPath of targetPaths) {
       const pretargetElement = pretargets.find(
-        ($pretarget) => $pretarget.path === $targetPath
+        ($pretarget) => $pretarget?.path === $targetPath
       );
       let target;
       let targetElement;
