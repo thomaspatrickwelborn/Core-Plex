@@ -6,13 +6,14 @@ export default class CoreEvent {
   #_targets = []
   constructor($settings) { 
     this.#settings = $settings
+    this.enable = this.#settings.enable
   }
   get type() { return this.#settings.type }
   get path() { return this.#settings.path }
   get #targets() {
     const pretargets = this.#_targets
     const propertyDirectory = this.#context.propertyDirectory 
-   const targetPaths = []
+    const targetPaths = []
     const targets = []
     const propertyPathMatcher = outmatch(this.path, {
       separator: '.',

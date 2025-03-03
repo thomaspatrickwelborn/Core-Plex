@@ -1,3 +1,13 @@
+> [!WARNING]  
+> Early Stage Development  
+
+> [!CAUTION]  
+> Use At Own Risk  
+
+> [!NOTE]  
+> Interested in Document Process Manager? 
+> thomas.patrick.welborn@outlook.com
+
 # Core-Plex
 **Class-Based Property Ventilation, Ministration**  
 
