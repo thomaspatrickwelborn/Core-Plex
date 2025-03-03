@@ -285,7 +285,7 @@ export default class Core extends EventTarget {
     const events = this.#events
     iterateEvents: 
     for(let $event of $events) {
-      $event = Object.assign(
+      $event = recursiveAssign(
         {
           target: {
             assign: 'addEventListener',

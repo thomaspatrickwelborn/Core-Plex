@@ -12,9 +12,17 @@ export default class CoreEvent {
   get path() { return this.#settings.path }
   get #targets() {
     const pretargets = this.#_targets
+
     const propertyDirectory = this.#context.propertyDirectory
     const targetPaths = []
     const targets = []
+    let pathTarget = this.#context
+    iteratePathKeys: 
+    for(const $pathKey of this.path.split('.')) {
+      if(pathTarget === undefined) { continue iteratePathKeys }
+      pathTarget = pathTarget[$pathKey]
+    }
+    if(pathTarget !== undefined && pathTarget !== this.#context) { targetPaths.push(this.path) }
     const propertyPathMatcher = outmatch(this.path, {
       separator: '.',
     })
@@ -70,13 +78,14 @@ export default class CoreEvent {
   get options() { return this.#settings.options }
   get enable() { return this.#enable }
   set enable($enable) {
+    const targets = this.#targets
     if(this.#targets.length === 0) { return }
     const eventAbility = (
       $enable === true
     ) ? this.#settings.target.assign
       : this.#settings.target.deassign
     iterateTargets: 
-    for(const { path, target, enable } of this.#targets) {
+    for(const { path, target, enable } of targets) {
       if(enable === eventAbility) { continue iterateTargets }
       try {
         target[eventAbility](this.type, this.#boundListener, this.options)
