@@ -19,7 +19,7 @@ export default class Core extends EventTarget {
     this.addEvents(this.settings.events)
     if(this.options.enableEvents) this.enableEvents(this.options.enableEvents) 
   }
-  get propertyDirectory() { return pathkeyTree(this) }
+  get propertyDirectory() { return pathkeyTree(this, this.options.propertyDirectory) }
   get settings() { return this.#settings }
   set settings($settings) {
     if(this.#settings !== undefined) returnd

@@ -238,12 +238,23 @@ function keytree($object) {
   return target
 }
 
-function pathkeyTree($object) {
+const Options$1 = {
+  depth: 0,
+  maxDepth: 10,
+};
+function pathkeyTree($object, $options) {
   const target = [];
+  const options = Object.assign({}, Options$1, $options);
+  options.depth++;
+  if(options.depth > options.maxDepth) { return target }
   for(const [$key, $value] of Object.entries($object)) {
     target.push($key);
-    if(typeof $value === 'object' && $value !== null) {
-      const subtarget = pathkeyTree($value);
+    if(
+      typeof $value === 'object' &&
+      $value !== null &&
+      $value !== $object
+    ) {
+      const subtarget = pathkeyTree($value, options);
       for(const $subtarget of subtarget) {
         let path;
         if(typeof $subtarget === 'object') {
@@ -958,13 +969,14 @@ class CoreEvent {
   #_targets = []
   constructor($settings) { 
     this.#settings = $settings;
+    this.enable = this.#settings.enable;
   }
   get type() { return this.#settings.type }
   get path() { return this.#settings.path }
   get #targets() {
     const pretargets = this.#_targets;
     const propertyDirectory = this.#context.propertyDirectory; 
-   const targetPaths = [];
+    const targetPaths = [];
     const targets = [];
     const propertyPathMatcher = outmatch(this.path, {
       separator: '.',
@@ -1079,9 +1091,11 @@ var Settings = {
 };
 
 var Options = {
-  assign: [],
-  defineProperties: {},
   enableEvents: false,
+  propertyDirectory: {
+    depth: 0,
+    maxDepth: 10,
+  },
 };
 
 class Core extends EventTarget {
@@ -1099,7 +1113,7 @@ class Core extends EventTarget {
     this.addEvents(this.settings.events);
     if(this.options.enableEvents) this.enableEvents(this.options.enableEvents); 
   }
-  get propertyDirectory() { return pathkeyTree(this) }
+  get propertyDirectory() { return pathkeyTree(this, this.options.propertyDirectory) }
   get settings() { return this.#settings }
   set settings($settings) {
     if(this.#settings !== undefined) returnd;
