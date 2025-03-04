@@ -975,7 +975,7 @@ class CoreEvent {
   get path() { return this.#settings.path }
   get #targets() {
     const pretargets = this.#_targets;
-    const propertyDirectory = this.#context.propertyDirectory; 
+    let propertyDirectory = [this.path].concat(this.#context.propertyDirectory);
     const targetPaths = [];
     const targets = [];
     const propertyPathMatcher = outmatch(this.path, {
@@ -989,9 +989,8 @@ class CoreEvent {
       const pretargetElement = pretargets.find(
         ($pretarget) => $pretarget?.path === $targetPath
       );
-      let target;
+      let target = this.#context;
       let targetElement;
-      target = this.#context;
       const pathKeys = $targetPath.split('.');
       let pathKeysIndex = 0;
       iterateTargetPathKeys: 
@@ -1002,6 +1001,7 @@ class CoreEvent {
         }
         iterateTargetAccessors: 
         for(const $targetAccessor of this.#settings.target.accessors) {
+          if(target === undefined) { break iterateTargetAccessors }
           if($targetAccessor === '[]') {
             target = target[pathKey];
           }
@@ -1012,17 +1012,19 @@ class CoreEvent {
         }
         pathKeysIndex++;
       }
-      if(target === pretargetElement?.target) {
-        targetElement = pretargetElement;
+      if(target !== undefined) {
+        if(target === pretargetElement?.target) {
+          targetElement = pretargetElement;
+        }
+        else {
+          targetElement = {
+            path: $targetPath,
+            target: target,
+            enable: false,
+          };
+        }
       }
-      else {
-        targetElement = {
-          path: $targetPath,
-          target: target,
-          enable: false,
-        };
-      }
-      targets.push(targetElement);
+      if(targetElement !== undefined) { targets.push(targetElement); }
     }
     this.#_targets = targets;
     return this.#_targets
@@ -1038,12 +1040,13 @@ class CoreEvent {
     ) ? this.#settings.target.assign
       : this.#settings.target.deassign;
     iterateTargets: 
-    for(const { path, target, enable } of targets) {
+    for(const targetElement of targets) {
+      const { path, target, enable } = targetElement;
       if(enable === eventAbility) { continue iterateTargets }
       try {
         target[eventAbility](this.type, this.#boundListener, this.options);
-        target.enable = eventAbility;
-      } catch($err) {}
+        targetElement.enable = eventAbility;
+      } catch($err) { console.error($err); }
     }
     this.#enable = $enable;
   }
@@ -1093,9 +1096,8 @@ var Settings = {
 var Options = {
   enableEvents: false,
   propertyDirectory: {
-    depth: 0,
     maxDepth: 10,
-  },
+  }
 };
 
 class Core extends EventTarget {
