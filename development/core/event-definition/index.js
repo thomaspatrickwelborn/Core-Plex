@@ -1,18 +1,23 @@
 import outmatch from 'outmatch'
-export default class CoreEvent {
+import Settings from './settings/index.js'
+import { propertyDirectory } from '../../coutil/index.js'
+export default class EventDefinition {
   #settings
   #enable = false
   #_boundListener
   #_targets = []
   constructor($settings) { 
-    this.#settings = $settings
+    this.#settings = Object.assign({}, Settings, $settings)
     this.enable = this.#settings.enable
+  }
+  get propertyDirectory() {
+    return propertyDirectory(this.#context, this.#settings.propertyDirectory)
   }
   get type() { return this.#settings.type }
   get path() { return this.#settings.path }
   get #targets() {
     const pretargets = this.#_targets
-    let propertyDirectory = [this.path].concat(this.#context.propertyDirectory)
+    let propertyDirectory = [this.path].concat(this.propertyDirectory)
     const targetPaths = []
     const targets = []
     const propertyPathMatcher = outmatch(this.path, {

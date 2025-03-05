@@ -33,13 +33,13 @@ function expandEvents($propEvents) {
   return propEvents
 }
 
-const Options$1 = {
+const Options = {
   depth: 0,
   maxDepth: 10,
 };
-function pathDirectory($object, $options) {
+function propertyDirectory($object, $options) {
   const target = [];
-  const options = Object.assign({}, Options$1, $options);
+  const options = Object.assign({}, Options, $options);
   options.depth++;
   if(options.depth > options.maxDepth) { return target }
   for(const [$key, $value] of Object.entries($object)) {
@@ -49,7 +49,7 @@ function pathDirectory($object, $options) {
       $value !== null &&
       $value !== $object
     ) {
-      const subtarget = pathDirectory($value, options);
+      const subtarget = propertyDirectory($value, options);
       for(const $subtarget of subtarget) {
         let path;
         if(typeof $subtarget === 'object') {
@@ -151,7 +151,7 @@ const typeOf = ($data) => Object
 var index = /*#__PURE__*/Object.freeze({
   __proto__: null,
   expandEvents: expandEvents,
-  pathDirectory: pathDirectory,
+  propertyDirectory: propertyDirectory,
   recursiveAssign: recursiveAssign,
   recursiveAssignConcat: recursiveAssignConcat,
   typeOf: typeOf
@@ -678,20 +678,29 @@ function outmatch(pattern, options) {
     return fn;
 }
 
-class CoreEvent {
+var Settings = {
+  propertyDirectory: {
+    maxDepth: 10,
+  },
+};
+
+class EventDefinition {
   #settings
   #enable = false
   #_boundListener
   #_targets = []
   constructor($settings) { 
-    this.#settings = $settings;
+    this.#settings = Object.assign({}, Settings, $settings);
     this.enable = this.#settings.enable;
+  }
+  get propertyDirectory() {
+    return propertyDirectory(this.#context, this.#settings.propertyDirectory)
   }
   get type() { return this.#settings.type }
   get path() { return this.#settings.path }
   get #targets() {
     const pretargets = this.#_targets;
-    let propertyDirectory = [this.path].concat(this.#context.propertyDirectory);
+    let propertyDirectory = [this.path].concat(this.propertyDirectory);
     const targetPaths = [];
     const targets = [];
     const propertyPathMatcher = outmatch(this.path, {
@@ -774,39 +783,31 @@ class CoreEvent {
   }
 }
 
-var Settings = {
-  events: []
-};
-
-var Options = {
-  enableEvents: false,
-  propertyDirectory: {
-    maxDepth: 10,
-  }
-};
-
 class Core extends EventTarget {
+  #events = []
   #settings
-  #options
-  #_events
-  constructor($settings = {}, $options = {}) {
+  static implement = function ($target, $settings) {
+    let events = [];
+    Object.defineProperties($target, {
+      events: {
+        enumerable: false, configurable: false,
+        get() { return events },
+      },
+      getEvents: { value: configurable.getEvents.bind($target) },
+      addEvents: { value: Core.addEvents.bind($target) },
+      removeEvents: { value: Core.removeEvents.bind($target) },
+      enableEvents: { value: Core.enableEvents.bind($target) },
+    });
+  }
+  constructor($settings = {}) {
     super();
-    this.#settings = Object.assign({}, Settings, $settings);
-    this.#options = recursiveAssign(structuredClone(Options), $options);
-    this.addEvents(this.settings.events);
-    if(this.options.enableEvents) this.enableEvents(this.options.enableEvents); 
+    this.addEvents($settings.events);
+    if($settings.enableEvents) this.enableEvents($settings.enableEvents);
   }
-  get propertyDirectory() { return pathDirectory(this, this.options.propertyDirectory) }
-  get settings() { return this.#settings }
-  get options() { return this.#options }
-  get #events() {
-    if(this.#_events !== undefined) return this.#_events
-    this.#_events = [];
-    return this.#_events
-  }
+  get events() { return this.#events }
   getEvents() {
     const getEvents = [];
-    const events = this.#events;
+    const events = this.events;
     const $events = [].concat(arguments[0]);
     for(const $event of $events) {
       const { type, path, listener, enable } = $event;
@@ -834,7 +835,7 @@ class Core extends EventTarget {
   addEvents() {
     if(arguments[0] === undefined) { return this }
     const $events = expandEvents(arguments[0]);
-    const events = this.#events;
+    const events = this.events;
     for(let $event of $events) {
       $event = recursiveAssign(
         {
@@ -843,12 +844,12 @@ class Core extends EventTarget {
             deassign: 'removeEventListener',
             accessors: ['[]', 'get']
           },
-          context: this
+          context: this,
         }, 
         $event,
       );
-      const coreEvent = new CoreEvent($event);
-      events.push(coreEvent);
+      const eventDefinition = new EventDefinition($event);
+      events.push(eventDefinition);
     }
     return this
   }
@@ -862,12 +863,12 @@ class Core extends EventTarget {
     let eventsIndex = $events.length - 1;
     while(eventsIndex > -1) {
       const event = $events[eventsIndex];
-      const removeEventIndex = this.#events.findIndex(
+      const removeEventIndex = this.events.findIndex(
         ($event) => $event === event
       );
       if(removeEventIndex !== -1) {
         event.enable = false;
-        this.#events.splice(eventsIndex, 1);
+        this.events.splice(eventsIndex, 1);
       }
       eventsIndex--;
     }
@@ -878,28 +879,21 @@ class Core extends EventTarget {
     if(
       arguments.length === 0 ||
       arguments[0] === true
-    ) { $events = this.#events; }
+    ) { $events = this.events; }
     else { $events = this.getEvents(arguments[0]); }
-    return this.#toggleEventAbility('Assign', $events)
+    for(const $event of $events) { $event.enable = true; }
   }
   disableEvents() {
     let $events;
-    if(arguments.length === 0) { $events = this.#events; }
+    if(arguments.length === 0) { $events = this.events; }
     else { $events = this.getEvents(arguments[0]); }
-    return this.#toggleEventAbility('Deassign', $events)
+    for(const $event of $events) { $event.enable = false; }
+    return this
   }
   reenableEvents() {
     return this
     .disableEvents(...arguments)
     .enableEvents(...arguments)
-  }
-  #toggleEventAbility($eventListenerMethod, $events) {
-    let enability;
-    if($eventListenerMethod === 'Assign') { enability = true; }
-    else if($eventListenerMethod === 'Deassign') { enability = false; }
-    else { return this }
-    for(const $event of $events) { $event.enable = enability; }
-    return this
   }
 }
 
