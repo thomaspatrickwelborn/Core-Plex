@@ -1,6 +1,6 @@
-import { expandEvents, recursiveAssign, typedObjectLiteral, typeOf, pathkeyTree } from '../coutil/index.js'
-import PropertyClass from './propertyClass/index.js'
-import { instate, deinstate } from './propertyClass/states/index.js'
+import {
+  expandEvents, recursiveAssign, typedObjectLiteral, typeOf, pathkeyTree
+} from '../coutil/index.js'
 import CoreEvent from './event/index.js'
 import Settings from './settings/index.js' 
 import Options from './options/index.js' 
@@ -8,14 +8,10 @@ export default class Core extends EventTarget {
   #settings
   #options
   #_events
-  #_propertyClasses = []
-  static propertyClasses = []
   constructor($settings = {}, $options = {}) {
     super()
     this.settings = $settings
     this.options = $options
-    this.addPropertyClasses(this.settings.propertyClasses)
-    this.#addProperties(this.settings)
     this.addEvents(this.settings.events)
     if(this.options.enableEvents) this.enableEvents(this.options.enableEvents) 
   }
@@ -34,222 +30,6 @@ export default class Core extends EventTarget {
     if(this.#_events !== undefined) return this.#_events
     this.#_events = []
     return this.#_events
-  }
-  get #propertyClasses() { return this.#_propertyClasses }
-  #getPropertyClasses() {
-    let $getPropertyClasses
-    if(arguments.length === 0) $getPropertyClasses = this.#propertyClasses
-    else { $getPropertyClasses = [].concat(...arguments) }
-    const getPropertyClasses = []
-    let propertyClassIndex = 0
-    iteratePropertyClasses: 
-    for(const $propertyClass of this.#propertyClasses) {
-      for(const $getPropertyClass of $getPropertyClasses) {
-        if($propertyClass.name === $getPropertyClass.name) {
-          getPropertyClasses.push({
-            propertyClassIndex: propertyClassIndex,
-            propertyClass: $propertyClass
-          })
-        }
-      }
-      propertyClassIndex++
-    }
-    return getPropertyClasses
-  }
-  #addProperties($properties) {
-    iteratePropertyClasses: 
-    for(const $propertyClass of this.#propertyClasses) {
-      const { name, names, definition } = $propertyClass
-      if(!definition) { continue iteratePropertyClasses }
-      if($properties[name] === undefined) { continue iteratePropertyClasses }
-      if(definition.object !== undefined) {
-        this[`${names.minister.ad.nonformal}${names.multiple.formal}`](this.settings[name])
-      }
-      else if(this.settings[name] !== undefined) {
-        this[name] = this.settings[name]
-      }
-    }
-    return this
-  }
-  addPropertyClasses() {
-    const $this = this
-    let $addPropertyClasses = (arguments.length === 0)
-      ? this.settings.propertyClasses
-      : [].concat(...arguments)
-    const propertyClasses = this.#propertyClasses
-    iteratePropertyClasses: 
-    for(const $addPropertyClass of $addPropertyClasses) {
-      if(!$addPropertyClass.definition) {
-        propertyClasses.push($addPropertyClass)
-        continue iteratePropertyClasses
-      }
-      // Class States
-      $addPropertyClass.states = $addPropertyClass.states || {}
-      $addPropertyClass.definition = $addPropertyClass.definition || {}
-      // Class instate
-      if($addPropertyClass?.states.instate === undefined) {
-        $addPropertyClass.states.instate = instate 
-      }
-      // Class deinstate
-      if($addPropertyClass.states.deinstate === undefined) {
-        $addPropertyClass.states.deinstate = deinstate 
-      }
-      const {
-        name,
-        names,
-        states,
-        definition,
-      } = $addPropertyClass
-      let propertyValue
-      if(
-        definition.object === 'Array' || 
-        definition.object === 'Object'
-      ) {
-        Object.defineProperties(this, {
-          // Property Class Instances
-          [name]: {
-            configurable: true, enumerable: true,  
-            get() {
-              if(propertyValue !== undefined) {
-                return propertyValue
-              }
-              propertyValue = new PropertyClass($addPropertyClass, $this)
-              return propertyValue
-            },
-            set($propertyValue) {
-              const propertyClassInstances = $this[name]
-              let propertyClassInstancesEntries
-              if($propertyValue) {
-                if(Array.isArray($propertyValue)) {
-                  propertyClassInstancesEntries = $propertyValue
-                }
-                else {
-                  propertyClassInstancesEntries = Object.entries($propertyValue)
-                }
-              } else { propertyClassInstancesEntries = [] }
-              iteratePropertyClassInstances: 
-              for(const [
-                $propertyClassInstanceName, $propertyClassInstance
-              ] of propertyClassInstancesEntries) {
-                propertyClassInstances[$propertyClassInstanceName] = $propertyClassInstance
-              }
-            }
-          },
-          // Add Property Class Instances
-          [`${names.minister.ad.nonformal}${names.multiple.formal}`]: {
-            configurable: true, enumerable: false, writable: false, 
-            value: function() {
-              const $arguments = [...arguments]
-              if($arguments.length === 1) {
-                const [$values] = $arguments
-                if(definition.object === 'Array') {
-                  $this[name] = Object.entries($values)
-                }
-                else {
-                  if(Array.isArray($values)) {
-                    $this[name] = Object.fromEntries($values)
-                  }
-                  else {
-                    $this[name] = $values
-                  }
-                }
-              }
-              else if($arguments.length === 2) {
-                const [$key, $value] = $arguments
-                $this[name] = { [$key]: $value }
-              }
-              return $this
-            }
-          },
-          // Remove Property Class Instances
-          [`${names.minister.dead.nonformal}${names.multiple.formal}`]: {
-            configurable: true, enumerable: false, writable: false, 
-            value: function() {
-              const [$removeKeys] = [...arguments]
-              const removeKeys = []
-              const typeofRemoveKeys = typeof $arguments[0]
-              if(typeofRemoveKeys === 'string') { removeKeys.push($arguments[0]) }
-              else if(typeofRemoveKeys === 'object') {
-                if(Array.isArray($removeKeys)) { removeKeys.push(...$removeKeys) }
-                else { removeKeys.push(...Object.keys($removeKeys)) }
-              }
-              else if(typeofRemoveKeys === 'undefined') {
-                removeKeys.push(...Object.keys($this[name]))
-              }
-              for(const $removeKey of $removeKeys) {
-                delete $this[name][$removeKey]
-              }
-              return $this
-            }
-          },
-        })
-      }
-      else if(
-        definition !== undefined &&
-        names?.monople.nonformal !== undefined
-      ) {
-        Object.defineProperties(this, {
-          [names.monople.nonformal]: {
-            get() {
-              return propertyValue
-            },
-            set($propertyValue) {
-              propertyValue = states.instate(Object.assign({
-                core: this
-              }, $addPropertyClass), name, $propertyValue)
-              }
-          },
-        })
-      }
-      propertyClasses.push($addPropertyClass)
-    }
-    return this
-  }
-  removePropertyClasses() {
-    const removePropertyClasses = this.#getPropertyClasses(...arguments)
-    let removePropertyClassIndex = removePropertyClasses.length - 1
-    iterateRemovePropertyClasses: 
-    while(removePropertyClassIndex > -1) {
-      const { propertyClassIndex, propertyClass } = removePropertyClasses[removePropertyClassIndex]
-      const { names, definition } = propertyClass
-      const propertyClassInstances = this[names.multiple.nonformal]
-      if(definition.object) {
-        if(definition.object === 'Array') {
-          let propertyClassInstanceIndex = propertyClassInstances.length - 1
-          iteratePropertyClassInstances: 
-          while(propertyClassInstanceIndex > -1) {
-            propertyClassInstances.splice(propertyClassInstanceIndex, 1)
-            propertyClassInstanceIndex--
-          }
-        }
-        else if(definition.object === 'Object') {
-          iteratePropertyClassInstances: 
-          for(const [
-            $propertyClassInstanceName, $propertyClassInstance
-          ] of Object.entries(this[names.multiple.nonformal])) {
-            delete propertyClassInstances[$propertyClassInstanceName]
-          }
-        }
-        delete this[`_${names.multiple.nonformal}`]
-        Object.defineProperty(this, names.multiple.nonformal, {
-          configurable: true, enumerable: false, writable: true, 
-          value: undefined
-        })
-        delete this[names.multiple.nonformal]
-        delete this[`${names.minister.ad.nonformal}${names.multiple.formal}`]
-        delete this[`${names.minister.dead.nonformal}${names.multiple.formal}`]
-      }
-      else {
-        delete this[names.monople.nonformal]
-        Object.defineProperty(this, names.monople.nonformal, {
-          configurable: true, enumerable: false, writable: true, 
-          value: undefined
-        })
-      }
-      this.#propertyClasses.splice(propertyClassIndex, 1)
-      removePropertyClassIndex--
-    }
-    return this
   }
   getEvents() {
     const getEvents = []

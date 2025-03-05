@@ -18,6 +18,7 @@ export default {
     port: 3347,
     open: false,
     ui: false, 
+    ghostMode: false,
     host: "demonstrament.core-plex",
     https: {
       key: certificates.key.path,
@@ -27,6 +28,10 @@ export default {
     proxy: {
       ws: true,
     },
+    reloadDelay: 500,
+    reloadDebounce: 500,
+    reloadThrottle: 0,
+    injectChanges: true,
   },
   sockets: {
     host: "demonstrament.core-plex",

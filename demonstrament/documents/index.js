@@ -1,7 +1,1 @@
-// import './examples/example-a/index.js'
-// import './examples/example-b/index.js'
-// import './examples/example-c/index.js'
-// import './examples/example-d/index.js'
-// import './examples/example-e/index.js'
-// import './examples/example-f/index.js'
-import './examples/example-g/index.js'
+console.log("Hello All Dogs")
