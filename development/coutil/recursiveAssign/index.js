@@ -20,7 +20,8 @@ function recursiveAssign() {
         let targetPropValue
         if($target[$sourcePropKey] === undefined) {
           $target[$sourcePropKey] = $sourcePropValue
-        } else {
+        }
+        else {
           $target[$sourcePropKey] = recursiveAssign(
             $target[$sourcePropKey], $sourcePropValue
           )

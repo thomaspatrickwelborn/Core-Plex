@@ -1,4 +1,3 @@
-import { typeOf } from '../../coutil/index.js'
 import outmatch from 'outmatch'
 export default class CoreEvent {
   #settings

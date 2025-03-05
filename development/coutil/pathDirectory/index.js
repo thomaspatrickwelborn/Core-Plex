@@ -2,7 +2,7 @@ const Options = {
   depth: 0,
   maxDepth: 10,
 }
-export default function pathkeyTree($object, $options) {
+export default function pathDirectory($object, $options) {
   const target = []
   const options = Object.assign({}, Options, $options)
   options.depth++
@@ -15,7 +15,7 @@ export default function pathkeyTree($object, $options) {
       $value !== null &&
       $value !== $object
     ) {
-      const subtarget = pathkeyTree($value, options)
+      const subtarget = pathDirectory($value, options)
       for(const $subtarget of subtarget) {
         let path
         if(typeof $subtarget === 'object') {

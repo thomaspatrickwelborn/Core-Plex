@@ -15,6 +15,7 @@ export default {
     },
   },
   browserSync: {
+    logPrefix: "Core-Plex | Demonstrament",
     port: 3347,
     open: false,
     ui: false, 
@@ -24,7 +25,10 @@ export default {
       key: certificates.key.path,
       cert: certificates.cert.path,
     },
-    files: ['static', 'localhost'],
+    files: [
+      'static/*.{js,css,html}',
+      'localhost/*.{js,css,html}',
+    ],
     proxy: {
       ws: true,
     },

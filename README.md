@@ -12,7 +12,7 @@
 **Class-Based Property Ventilation**  
 
 ## Impetus
-Property ventilation, ministration configurable through objects.  
+Property ventilation configurable through objects.  
 
 *Property Ventilation*  
  - Managing event addition/removal is necessary for most application development. 

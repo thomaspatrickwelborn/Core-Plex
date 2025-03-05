@@ -1,6 +1,6 @@
 {
   "name": "core-plex",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "",
   "homepage": "https://github.com/thomaspatrickwelborn/Core-Plex#readme",
   "bugs": {
@@ -16,7 +16,8 @@
   "exports": {
     ".": "./distributement/core-plex.js",
     "./development": "./development/index.js",
-    "./distributement": "./distributement/core-plex.js"
+    "./distributement/core-plex.js": "./distributement/core-plex.js",
+    "./distributement/core-plex.min.js": "./distributement/core-plex.min.js"
   },
   "scripts": {
     "demonstrate:start": "concurrently \"npm run start --workspace development\" \"npm run start --workspace demonstrament\"",

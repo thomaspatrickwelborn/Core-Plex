@@ -1,6 +1,4 @@
-import {
-  expandEvents, recursiveAssign, typedObjectLiteral, typeOf, pathkeyTree
-} from '../coutil/index.js'
+import { expandEvents, recursiveAssign, pathDirectory } from '../coutil/index.js'
 import CoreEvent from './event/index.js'
 import Settings from './settings/index.js' 
 import Options from './options/index.js' 
@@ -10,22 +8,14 @@ export default class Core extends EventTarget {
   #_events
   constructor($settings = {}, $options = {}) {
     super()
-    this.settings = $settings
-    this.options = $options
+    this.#settings = Object.assign({}, Settings, $settings)
+    this.#options = recursiveAssign(structuredClone(Options), $options)
     this.addEvents(this.settings.events)
     if(this.options.enableEvents) this.enableEvents(this.options.enableEvents) 
   }
-  get propertyDirectory() { return pathkeyTree(this, this.options.propertyDirectory) }
+  get propertyDirectory() { return pathDirectory(this, this.options.propertyDirectory) }
   get settings() { return this.#settings }
-  set settings($settings) {
-    if(this.#settings !== undefined) returnd
-    this.#settings = Object.assign({}, Settings, $settings)
-  }
   get options() { return this.#options }
-  set options($options) {
-    if(this.#options !== undefined) return
-    this.#options = recursiveAssign(structuredClone(Options), $options)
-  }
   get #events() {
     if(this.#_events !== undefined) return this.#_events
     this.#_events = []

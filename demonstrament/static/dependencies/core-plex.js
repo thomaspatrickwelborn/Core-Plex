@@ -1,19 +1,3 @@
-function impandEvents($propEvents) {
-  if(!Array.isArray($propEvents)) { return $propEvents }
-  const propEvents = {};
-  for(const $propEvent of $propEvents) {
-    const { path, type, listener, options } = $propEvent;
-    const propEventSettings = `${$path} ${$type}`;
-    if(options !== undefined) {
-      propEvents[propEventSettings] = [listener, options];
-    }
-    else {
-      propEvents[propEventSettings] = listener;
-    }
-  }
-  return propEvents
-}
-
 function expandEvents($propEvents) {
   const propEvents = [];
   if(Array.isArray($propEvents)) { return $propEvents }
@@ -49,200 +33,11 @@ function expandEvents($propEvents) {
   return propEvents
 }
 
-const Primitives = {
-  'string': String, 
-  'number': Number, 
-  'boolean': Boolean, 
-  'undefined': undefined,
-  'null': null,
-};
-const PrimitiveKeys = Object.keys(Primitives);
-const PrimitiveValues = Object.values(Primitives);
-const Objects = {
-  'object': Object,
-  'array': Array,
-};
-const ObjectKeys = Object.keys(Objects);
-const ObjectValues = Object.values(Objects);
-const Types = Object.assign({}, Primitives, Objects);
-const TypeKeys = Object.keys(Types);
-const TypeValues = Object.values(Types);
-const TypeMethods = [
- Primitives.String, Primitives.Number, Primitives.Boolean, 
- Objects.Object, Objects.Array
-];
-
-var index$3 = /*#__PURE__*/Object.freeze({
-  __proto__: null,
-  ObjectKeys: ObjectKeys,
-  ObjectValues: ObjectValues,
-  Objects: Objects,
-  PrimitiveKeys: PrimitiveKeys,
-  PrimitiveValues: PrimitiveValues,
-  Primitives: Primitives,
-  TypeKeys: TypeKeys,
-  TypeMethods: TypeMethods,
-  TypeValues: TypeValues,
-  Types: Types
-});
-
-var regularExpressions = {
-  quotationEscape: /\.(?=(?:[^"]*"[^"]*")*[^"]*$)/,
-};
-
-function subpaths($path) {
-  return $path.split(
-    new RegExp(regularExpressions.quotationEscape)
-  )
-}
-function keypaths($path) {
-  const _subpaths = subpaths($path);
-  _subpaths.pop();
-  return _subpaths
-}
-function key($path) {
-  return subpaths($path).pop()
-}
-function root($path) {
-  return subpaths($path).shift()
-}
-function typeofRoot($path) {
-  return (Number(root($path))) ? 'array' : 'object'
-}
-function parse($path) {
-  return {
-    subpaths: subpaths($path),
-    keypaths: keypaths($path),
-    key: key($path),
-    root: root($path),
-    typeofRoot: typeofRoot($path),
-  }
-}
-
-var index$2 = /*#__PURE__*/Object.freeze({
-  __proto__: null,
-  key: key,
-  keypaths: keypaths,
-  parse: parse,
-  root: root,
-  subpaths: subpaths,
-  typeofRoot: typeofRoot
-});
-
-const typeOf = ($data) => Object
-  .prototype
-  .toString
-  .call($data).slice(8, -1).toLowerCase();
-
-function typedObjectLiteral($object) {
-  const typeOfObject = typeOf($object);
-  if(
-    typeOfObject === 'object' ||
-    $object === Object
-  ) { return {} }
-  else if(
-    typeOfObject === 'array' ||
-    $object === Array
-  ) { return [] }
-  else if(typeOfObject === 'string') { return (
-    $object === 'Object' ||
-    $object === 'object'
-  ) ? {} 
-    : (
-    $object === 'Array' ||
-    $object === 'array'
-  ) ? []
-    : undefined
-  }
-  else { return undefined }
-}
-
-function get($path, $value) {
-  const subpaths = $path.split(new RegExp(regularExpressions.quotationEscape));
-  const key = subpaths.pop();
-  const tree = $value;
-  let treeNode = tree;
-  for(const $subpath of subpaths) {
-    treeNode = treeNode[$subpath];
-  }
-  return treeNode[key]
-}
-function set($path, $value) {
-  const {
-    keypaths, key, typeofRoot
-  } = parse($path);
-  const tree = typedObjectLiteral(typeofRoot);
-  let treeNode = tree;
-  for(const $subpath of keypaths) {
-    if(Number($subpath)) { treeNode[$subpath] = []; }
-    else { treeNode[$subpath] = {}; }
-    treeNode = treeNode[$subpath];
-  }
-  treeNode[key] = $value;
-  return tree
-}
-
-var index$1 = /*#__PURE__*/Object.freeze({
-  __proto__: null,
-  get: get,
-  set: set
-});
-
-function impandTree($root, $tree) {
-  const typeofTree = typeof $tree;
-  const typeofRoot = typeof $root;
-  if(
-    !['string', 'function'].includes(typeofTree) ||
-    typeofRoot && typeofRoot !== 'object'
-  ) { return undefined /*$root*/ }
-  let tree = typedObjectLiteral($root);
-  if(typeofRoot === 'object') {
-    for(const [$rootKey, $rootValue] of Object.entries($root)) {
-      if(typeofTree === 'string') { tree[$rootKey] = get($tree, $rootValue); }
-      else if(typeofTree === 'function') { tree = $tree($rootValue); }
-    }
-  }
-  return tree
-}
-
-function expandTree($root, $tree) {
-  const typeofRoot = typeof $root;
-  const typeofTree = typeof $tree;
-  if(
-    !['string', 'function'].includes(typeofTree)
-  ) { return undefined }
-  let tree;
-  if($root && typeofRoot === 'object') {
-    for(const [$rootKey, $rootValue] of Object.entries($root)) {
-      if(typeofTree === 'string') { tree = set($tree, $rootValue); }
-      else if(typeofTree === 'function') { tree = $tree($rootValue); }
-    }
-  }
-  else {
-    if(typeofTree === 'string') { tree = set($tree, $root); }
-    else if(typeofTree === 'function') { tree = $tree($root); }
-  }
-  return tree
-}
-
-function keytree($object) {
-  const target = [];
-  for(const [$key, $value] of Object.entries($object)) {
-    if(typeof $value === 'object') {
-      target.push([$key, keytree($value)]);
-    }
-    else {
-      target.push($key);
-    }
-  }
-  return target
-}
-
 const Options$1 = {
   depth: 0,
   maxDepth: 10,
 };
-function pathkeyTree($object, $options) {
+function pathDirectory($object, $options) {
   const target = [];
   const options = Object.assign({}, Options$1, $options);
   options.depth++;
@@ -254,7 +49,7 @@ function pathkeyTree($object, $options) {
       $value !== null &&
       $value !== $object
     ) {
-      const subtarget = pathkeyTree($value, options);
+      const subtarget = pathDirectory($value, options);
       for(const $subtarget of subtarget) {
         let path;
         if(typeof $subtarget === 'object') {
@@ -290,7 +85,8 @@ function recursiveAssign() {
       ) {
         if($target[$sourcePropKey] === undefined) {
           $target[$sourcePropKey] = $sourcePropValue;
-        } else {
+        }
+        else {
           $target[$sourcePropKey] = recursiveAssign(
             $target[$sourcePropKey], $sourcePropValue
           );
@@ -347,22 +143,18 @@ function recursiveAssignConcat() {
   return $target
 }
 
+const typeOf = ($data) => Object
+  .prototype
+  .toString
+  .call($data).slice(8, -1).toLowerCase();
+
 var index = /*#__PURE__*/Object.freeze({
   __proto__: null,
   expandEvents: expandEvents,
-  expandTree: expandTree,
-  impandEvents: impandEvents,
-  impandTree: impandTree,
-  keytree: keytree,
-  path: index$2,
-  pathkeyTree: pathkeyTree,
+  pathDirectory: pathDirectory,
   recursiveAssign: recursiveAssign,
   recursiveAssignConcat: recursiveAssignConcat,
-  regularExpressions: regularExpressions,
-  tree: index$1,
-  typeOf: typeOf,
-  typedObjectLiteral: typedObjectLiteral,
-  variables: index$3
+  typeOf: typeOf
 });
 
 function handleNoCommaBraces(span) {
@@ -983,18 +775,7 @@ class CoreEvent {
 }
 
 var Settings = {
-  events: [/*{
-    type: "click",
-    path "views.",
-    listener: function listener($event) {},
-    enable: false,
-    target: {
-      accessors: ["[]", "get"], 
-      assign: "addEventListener", 
-      deassign: "removeEventListener", 
-    }
-    targetAccessors: [],
-  }*/],
+  events: []
 };
 
 var Options = {
@@ -1010,22 +791,14 @@ class Core extends EventTarget {
   #_events
   constructor($settings = {}, $options = {}) {
     super();
-    this.settings = $settings;
-    this.options = $options;
+    this.#settings = Object.assign({}, Settings, $settings);
+    this.#options = recursiveAssign(structuredClone(Options), $options);
     this.addEvents(this.settings.events);
     if(this.options.enableEvents) this.enableEvents(this.options.enableEvents); 
   }
-  get propertyDirectory() { return pathkeyTree(this, this.options.propertyDirectory) }
+  get propertyDirectory() { return pathDirectory(this, this.options.propertyDirectory) }
   get settings() { return this.#settings }
-  set settings($settings) {
-    if(this.#settings !== undefined) returnd;
-    this.#settings = Object.assign({}, Settings, $settings);
-  }
   get options() { return this.#options }
-  set options($options) {
-    if(this.#options !== undefined) return
-    this.#options = recursiveAssign(structuredClone(Options), $options);
-  }
   get #events() {
     if(this.#_events !== undefined) return this.#_events
     this.#_events = [];
