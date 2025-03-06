@@ -1,16 +1,51 @@
 # Core-Plex
-**Property Ventilation**  
+**JavaScript Property Ventilation**  
 ## Impetus
  - Managing event addition/removal is necessary for most application development. 
  - Add/Remove event statements are usually disparately located throughout codebases. 
  - Event assignment/deassignment differentiate based on event-targetable class prototype. 
 
 ## Introduction
- - Map Events To Event Targets With Property Paths
+ - Map Events To Scoped Event Targets With Property Paths
  - Add/Remove, Enable/Disable Pathed Events 
- - Define Property Paths With Dot-Notation, Globbing, And Pattern Matching (Supports [Outmatch Syntax](https://www.npmjs.com/package/outmatch#syntax). 
+ - Define Property Paths With Dot-Notation, Globbing, And Pattern Matching
+   - Supports [Outmatch Syntax](https://www.npmjs.com/package/outmatch#syntax)
  - Enable/Disable Events Dynamically
- - Extend Core-Plex Class *OR* Implement Core-Plex On Existing Object
+ - Implement Core-Plex On Existing Objects
+ - Extend Core-Plex On Custom Classes
+
+### Manage Any Events For Any Project
+#### Configure Events With Impanded Syntax
+```
+{
+  events: {
+    "someEvent": eventLog,
+    "some.property.path someEvent": eventLog,
+    "some.array.[0-9] someEvent": eventLog,
+  }
+}
+```
+#### Configure Events With Expanded Syntax
+```
+{
+  events: [{
+    path: ":scope", type: "someEvent", listener: eventLog,
+    target: {
+      assign: "on", deassign: "off",
+    }
+  }, {
+    path: "some.property.path", type: "someEvent", listener: eventLog,
+    target: {
+      assign: "addEventListener", deassign: "off",
+    }
+  }, {
+    path: "some.property.path", type: "someEvent", listener: eventLog,
+    target: {
+      assign: "addEventListener", deassign: "off",
+    }
+  }]
+}
+```
 
 ## Installation
 ```
@@ -23,8 +58,8 @@ import { Core } from 'core-plex'
 ```
 
 ## Implementation
-### Example A
-#### `target` has several event-targetable properties
+### Example A.1.
+#### Define `target` with event-targetable properties  
 ```
 const target = {
   propertyA: new EventTarget(),
@@ -42,7 +77,7 @@ const target = {
   }]
 }
 ```
-### Add, enable `target` property events with `Core.implement`
+#### Add, enable `target` property events with `Core.implement`  
 ```
 function eventLog($event) { console.log($event.type, $event.detail) }
 Core.implement(target, {
@@ -54,7 +89,7 @@ Core.implement(target, {
   enableEvents: true
 })
 ```
-### Dispatch events from `target` properties
+#### `dispatchEvent` from `target` properties  
 ```
 for(const $eventTarget of [
   target.propertyA,
@@ -63,13 +98,12 @@ for(const $eventTarget of [
   target.propertyE[1].propertyF, 
   target.propertyE[2].propertyF,
 ]) {
-  console.log()
   $eventTarget.dispatchEvent(
     new CustomEvent('customEvent', { detail: $eventTarget })
   )
 }
 ```
-### Example A Event Log
+#### `target` property event capture log
 ```
 customEvent EventTarget {}
 customEvent EventTarget {}
