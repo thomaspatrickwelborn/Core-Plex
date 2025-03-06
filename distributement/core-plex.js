@@ -157,6 +157,21 @@ var index = /*#__PURE__*/Object.freeze({
   typeOf: typeOf
 });
 
+var Settings$1 = {
+  events: {},
+  enableEvents: false,
+  propertyDefinitions: {
+    events: 'events',
+    enableEvents: 'enableEvents',
+    getEvents: 'getEvents',
+    addEvents: 'addEvents',
+    removeEvents: 'removeEvents',
+    enableEvents: 'enableEvents',
+    disableEvents: 'disableEvents',
+    reenableEvents: 'reenableEvents',
+  }
+};
+
 function handleNoCommaBraces(span) {
     if (span.length < 3) {
         return "{" + span + "}";
@@ -785,27 +800,53 @@ class EventDefinition {
 
 class Core extends EventTarget {
   #events = []
-  #settings
   static implement = function ($target, $settings) {
-    let events = [];
+    const settings = recursiveAssign({}, Settings$1, $settings);
+    const events = [];
     Object.defineProperties($target, {
-      events: {
-        enumerable: false, configurable: false,
+      [settings.propertyDefinitions.events]: {
+        enumerable: false, configurable: false, 
         get() { return events },
       },
-      getEvents: { value: configurable.getEvents.bind($target) },
-      addEvents: { value: Core.addEvents.bind($target) },
-      removeEvents: { value: Core.removeEvents.bind($target) },
-      enableEvents: { value: Core.enableEvents.bind($target) },
+      [settings.propertyDefinitions.getEvents]: {
+        enumerable: false, writable: false, 
+        value: Core.getEvents.bind($target),
+      },
+      [settings.propertyDefinitions.addEvents]: {
+        enumerable: false, writable: false, 
+        value: Core.addEvents.bind($target),
+      },
+      [settings.propertyDefinitions.removeEvents]: {
+        enumerable: false, writable: false, 
+        value: Core.removeEvents.bind($target),
+      },
+      [settings.propertyDefinitions.enableEvents]: {
+        enumerable: false, writable: false, 
+        value: Core.enableEvents.bind($target),
+      },
+      [settings.propertyDefinitions.disableEvents]: {
+        enumerable: false, writable: false, 
+        value: Core.disableEvents.bind($target),
+      },
+      [settings.propertyDefinitions.reenableEvents]: {
+        enumerable: false, writable: false, 
+        value: Core.reenableEvents.bind($target),
+      },
     });
+    $target[settings.propertyDefinitions.addEvents](
+      settings[
+        settings.propertyDefinitions.events || settings.events
+      ]
+    );
+    if(settings.enableEvents) $target.enableEvents(settings.enableEvents);
+    console.log("$target", $target);
+    return $target
   }
   constructor($settings = {}) {
     super();
-    this.addEvents($settings.events);
-    if($settings.enableEvents) this.enableEvents($settings.enableEvents);
+    return Core.implement(this, $settings)
   }
-  get events() { return this.#events }
-  getEvents() {
+  static getEvents() {
     const getEvents = [];
     const events = this.events;
     const $events = [].concat(arguments[0]);
@@ -832,7 +873,7 @@ class Core extends EventTarget {
     }
     return getEvents
   }
-  addEvents() {
+  static addEvents() {
     if(arguments[0] === undefined) { return this }
     const $events = expandEvents(arguments[0]);
     const events = this.events;
@@ -853,7 +894,7 @@ class Core extends EventTarget {
     }
     return this
   }
-  removeEvents() {
+  static removeEvents() {
     let $events;
     if(arguments.length === 0) { $events = this.getEvents(); }
     else if(arguments.length === 1) {
@@ -874,7 +915,7 @@ class Core extends EventTarget {
     }
     return this
   }
-  enableEvents() {
+  static enableEvents() {
     let $events;
     if(
       arguments.length === 0 ||
@@ -883,14 +924,14 @@ class Core extends EventTarget {
     else { $events = this.getEvents(arguments[0]); }
     for(const $event of $events) { $event.enable = true; }
   }
-  disableEvents() {
+  static disableEvents() {
     let $events;
     if(arguments.length === 0) { $events = this.events; }
     else { $events = this.getEvents(arguments[0]); }
     for(const $event of $events) { $event.enable = false; }
     return this
   }
-  reenableEvents() {
+  static reenableEvents() {
     return this
     .disableEvents(...arguments)
     .enableEvents(...arguments)

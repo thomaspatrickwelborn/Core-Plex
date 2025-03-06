@@ -2,8 +2,8 @@ export default {
   events: {},
   enableEvents: false,
   propertyDefinitions: {
-    settings: 'settings', 
     events: 'events',
+    enableEvents: 'enableEvents',
     getEvents: 'getEvents',
     addEvents: 'addEvents',
     removeEvents: 'removeEvents',
