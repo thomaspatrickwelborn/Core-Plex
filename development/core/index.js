@@ -44,7 +44,6 @@ export default class Core extends EventTarget {
       ]
     )
     if(settings.enableEvents) $target.enableEvents(settings.enableEvents)
-    console.log("$target", $target)
     return $target
   }
   constructor($settings = {}) {

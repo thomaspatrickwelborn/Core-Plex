@@ -1,1 +1,1 @@
-console.log("Hello All Dogs")
+import './examples/example-a/index.js'
