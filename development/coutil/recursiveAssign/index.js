@@ -1,38 +1,27 @@
-function recursiveAssign() {
+import typeOf from '../typeOf/index.js'
+export default function recursiveAssign() {
   const $arguments = [...arguments]
   const $target = $arguments.shift()
+  if(!$target) { return $target }
   const $sources = $arguments
+  if(!$target) { return $target}
   iterateSources: 
   for(const $source of $sources) {
-    if(
-      $source === null ||
-      $source === undefined
-    ) { continue iterateSources }
     iterateSourceEntries: 
-    for(let [
-      $sourcePropKey, $sourcePropValue
+    for(const [
+      $sourcePropertyKey, $sourcePropertyValue
     ] of Object.entries($source)) {
-      // Type: Non-Null Object
-      if(
-        $target[$sourcePropKey] !== null &&
-        typeof $sourcePropValue === 'object'
-      ) {
-        let targetPropValue
-        if($target[$sourcePropKey] === undefined) {
-          $target[$sourcePropKey] = $sourcePropValue
-        }
-        else {
-          $target[$sourcePropKey] = recursiveAssign(
-            $target[$sourcePropKey], $sourcePropValue
-          )
-        }
+      const typeOfSourcePropertyValue = typeOf($sourcePropertyValue)
+      const typeOfTargetPropertyValue = typeOf($target[$sourcePropertyKey])
+      if(typeOfSourcePropertyValue === 'object') {
+        $target[$sourcePropertyKey] = recursiveAssign(
+          $target[$sourcePropertyKey] || {}, $sourcePropertyValue
+        )
       }
-      // Type: Primitive
       else {
-        $target[$sourcePropKey] = $sourcePropValue
+        $target[$sourcePropertyKey] = $sourcePropertyValue
       }
     }
   }
   return $target
-}
-export default recursiveAssign
+} 

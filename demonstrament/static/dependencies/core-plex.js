@@ -1,12 +1,30 @@
+function impandEvents($propEvents) {
+  if(!Array.isArray($propEvents)) { return $propEvents }
+  const propEvents = {};
+  iteratePropEvents: 
+  for(const $propEvent of $propEvents) {
+    const { path, type, listener, options } = $propEvent;
+    const propEventSettings = `${$path} ${$type}`;
+    if(options !== undefined) {
+      propEvents[propEventSettings] = [listener, options];
+    }
+    else {
+      propEvents[propEventSettings] = listener;
+    }
+  }
+  return propEvents
+}
+
 function expandEvents($propEvents) {
   const propEvents = [];
   if(Array.isArray($propEvents)) { return $propEvents }
   else if($propEvents === undefined) { return propEvents }
+  iteratePropEvents:
   for(const [
     $propEventSettings, $propEventListener
   ] of Object.entries($propEvents)) {
     const propEventSettings = $propEventSettings.split(' ');
-    let path, type, listener;
+    let path, type, listener, options;
     if(propEventSettings.length === 1) {
       path = ':scope';
       type = propEventSettings[0];
@@ -17,7 +35,7 @@ function expandEvents($propEvents) {
     }
     if(Array.isArray($propEventListener)) {
       listener = $propEventListener[0];
-      $propEventListener[1];
+      options = $propEventListener[1];
     }
     else {
       listener = $propEventListener;
@@ -42,6 +60,7 @@ function propertyDirectory($object, $options) {
   const options = Object.assign({}, Options, $options);
   options.depth++;
   if(options.depth > options.maxDepth) { return target }
+  iterateObjectProperties: 
   for(const [$key, $value] of Object.entries($object)) {
     target.push($key);
     if(
@@ -65,36 +84,32 @@ function propertyDirectory($object, $options) {
   return target
 }
 
+const typeOf = ($data) => Object
+  .prototype
+  .toString
+  .call($data).slice(8, -1).toLowerCase();
+
 function recursiveAssign() {
   const $arguments = [...arguments];
   const $target = $arguments.shift();
+  if(!$target) { return $target }
   const $sources = $arguments;
+  if(!$target) { return $target}
   iterateSources: 
   for(const $source of $sources) {
-    if(
-      $source === null ||
-      $source === undefined
-    ) { continue iterateSources }
-    for(let [
-      $sourcePropKey, $sourcePropValue
+    iterateSourceEntries: 
+    for(const [
+      $sourcePropertyKey, $sourcePropertyValue
     ] of Object.entries($source)) {
-      // Type: Non-Null Object
-      if(
-        $target[$sourcePropKey] !== null &&
-        typeof $sourcePropValue === 'object'
-      ) {
-        if($target[$sourcePropKey] === undefined) {
-          $target[$sourcePropKey] = $sourcePropValue;
-        }
-        else {
-          $target[$sourcePropKey] = recursiveAssign(
-            $target[$sourcePropKey], $sourcePropValue
-          );
-        }
+      const typeOfSourcePropertyValue = typeOf($sourcePropertyValue);
+      const typeOfTargetPropertyValue = typeOf($target[$sourcePropertyKey]);
+      if(typeOfSourcePropertyValue === 'object') {
+        $target[$sourcePropertyKey] = recursiveAssign(
+          $target[$sourcePropertyKey] || {}, $sourcePropertyValue
+        );
       }
-      // Type: Primitive
       else {
-        $target[$sourcePropKey] = $sourcePropValue;
+        $target[$sourcePropertyKey] = $sourcePropertyValue;
       }
     }
   }
@@ -104,73 +119,58 @@ function recursiveAssign() {
 function recursiveAssignConcat() {
   const $arguments = [...arguments];
   const $target = $arguments.shift();
+  if(!$target) { return $target }
   const $sources = $arguments;
+  if(!$target) { return $target}
   iterateSources: 
   for(const $source of $sources) {
-    if(
-      $source === null ||
-      $source === undefined
-    ) { continue iterateSources }
-    for(let [
-      $sourcePropKey, $sourcePropValue
+    iterateSourceEntries: 
+    for(const [
+      $sourcePropertyKey, $sourcePropertyValue
     ] of Object.entries($source)) {
-      // Type: Non-Null Object
-      if(
-        $target[$sourcePropKey] !== null &&
-        typeof $sourcePropValue === 'object'
-      ) {
-        if($target[$sourcePropKey] === undefined) {
-          $target[$sourcePropKey] = $sourcePropValue;
+      const typeOfSourcePropertyValue = typeOf($sourcePropertyValue);
+      const typeOfTargetPropertyValue = typeOf($target[$sourcePropertyKey]);
+      if(['array', 'object'].includes(typeOfSourcePropertyValue)) {
+        if(typeOfTargetPropertyValue === 'array') {
+          $target[$sourcePropertyKey] = $target[$sourcePropertyKey].concat($sourcePropertyValue);
         }
         else {
-          if(Array.isArray($sourcePropValue)) {
-            $target[$sourcePropKey] = $target[$sourcePropKey]
-              .concat(recursiveAssignConcat($sourcePropValue));
-          }
-          else {
-            $target[$sourcePropKey] = recursiveAssignConcat(
-              $target[$sourcePropKey], $sourcePropValue
-            );
-          }
+          $target[$sourcePropertyKey] = recursiveAssignConcat(
+            $target[$sourcePropertyKey], $sourcePropertyValue
+          );
         }
       }
-      // Type: Primitive
       else {
-        $target[$sourcePropKey] = $sourcePropValue;
+        $target[$sourcePropertyKey] = $sourcePropertyValue;
       }
     }
   }
   return $target
 }
 
-const typeOf = ($data) => Object
-  .prototype
-  .toString
-  .call($data).slice(8, -1).toLowerCase();
-
 var index = /*#__PURE__*/Object.freeze({
   __proto__: null,
   expandEvents: expandEvents,
+  impandEvents: impandEvents,
   propertyDirectory: propertyDirectory,
   recursiveAssign: recursiveAssign,
   recursiveAssignConcat: recursiveAssignConcat,
   typeOf: typeOf
 });
 
-var Settings$1 = {
+var Settings$1 = Object.freeze({
   events: {},
   enableEvents: false,
-  propertyDefinitions: {
+  propertyDefinitions: Object.freeze({
     events: 'events',
-    enableEvents: 'enableEvents',
     getEvents: 'getEvents',
     addEvents: 'addEvents',
     removeEvents: 'removeEvents',
     enableEvents: 'enableEvents',
     disableEvents: 'disableEvents',
     reenableEvents: 'reenableEvents',
-  }
-};
+  })
+});
 
 function handleNoCommaBraces(span) {
     if (span.length < 3) {
@@ -699,6 +699,7 @@ var Settings = {
   },
 };
 
+console.log("Settings", Settings);
 class EventDefinition {
   #settings
   #enable = false
@@ -715,16 +716,18 @@ class EventDefinition {
   get path() { return this.#settings.path }
   get #targets() {
     const pretargets = this.#_targets;
-    let propertyDirectory = [/*this.path*/].concat(this.propertyDirectory);
+    let propertyDirectory = this.propertyDirectory;
     const targetPaths = [];
     const targets = [];
     const propertyPathMatcher = outmatch(this.path, {
       separator: '.',
     });
+    iteratePropertyPaths: 
     for(const $propertyPath of propertyDirectory) {
       const propertyPathMatch = propertyPathMatcher($propertyPath);
       if(propertyPathMatch === true) { targetPaths.push($propertyPath); }
     }
+    iterateTargetPaths: 
     for(const $targetPath of targetPaths) {
       const pretargetElement = pretargets.find(
         ($pretarget) => $pretarget?.path === $targetPath
@@ -799,141 +802,141 @@ class EventDefinition {
 }
 
 class Core extends EventTarget {
-  #events = []
   static implement = function ($target, $settings) {
     const settings = recursiveAssign({}, Settings$1, $settings);
+    console.log($target);
     const events = [];
     Object.defineProperties($target, {
-      [settings.propertyDefinitions.events]: {
-        enumerable: false, configurable: false, 
-        get() { return events },
-      },
+      // Get Events
       [settings.propertyDefinitions.getEvents]: {
         enumerable: false, writable: false, 
-        value: Core.getEvents.bind($target),
+        value: function getEvents() {
+          if(arguments.length === 0) { return events }
+          const getEvents = [];
+          const $events = [].concat(arguments[0]);
+          iterateEvents: 
+          for(const $event of $events) {
+            const { type, path, listener, enable } = $event;
+            const eventFilterProperties = [];
+            if(type !== undefined) { eventFilterProperties.push(['type', type]); }
+            if(path !== undefined) { eventFilterProperties.push(['path', path]); }
+            if(listener !== undefined) { eventFilterProperties.push(['listener', listener]); }
+            if(enable !== undefined) { eventFilterProperties.push(['enable', enable]); }
+            getEvents.push(
+              ...events.filter(($existingEvent) => {
+                return eventFilterProperties.reduce(($match, [
+                  $eventFilterPropertyKey, $eventFilterPropertyValue
+                ]) => {
+                  const match = (
+                    $existingEvent[$eventFilterPropertyKey] === $eventFilterPropertyValue
+                  ) ? true : false;
+                  if($match !== false) { $match = match; }
+                  return $match
+                }, undefined)
+              })
+            );
+          }
+          return getEvents
+        }
       },
+      // Add Events
       [settings.propertyDefinitions.addEvents]: {
         enumerable: false, writable: false, 
-        value: Core.addEvents.bind($target),
+        value: function addEvents() {
+          let $events;
+          if(arguments[0] === undefined) {
+            $events = $target[settings.propertyDefinitions.events]();
+          }
+          else {
+            $events = expandEvents(arguments[0]);
+          }
+          iterateEvents: 
+          for(let $event of $events) {
+            $event = recursiveAssign(
+              {
+                target: {
+                  assign: 'addEventListener',
+                  deassign: 'removeEventListener',
+                  accessors: ['[]', 'get']
+                },
+                context: $target,
+              }, 
+              $event,
+            );
+            const eventDefinition = new EventDefinition($event);
+            events.push(eventDefinition);
+          }
+          return $target
+        },
       },
+      // Remove Events
       [settings.propertyDefinitions.removeEvents]: {
         enumerable: false, writable: false, 
-        value: Core.removeEvents.bind($target),
+        value: function removeEvents() {
+          let $events;
+          if(arguments.length === 0) { $events = $target[settings.propertyDefinitions.getEvents](); }
+          else if(arguments.length === 1) {
+            $events = $target[settings.propertyDefinitions.getEvents](arguments[0]);
+          }
+          if($events.length === 0) return $target
+          let eventsIndex = $events.length - 1;
+          iterateEvents: 
+          while(eventsIndex > -1) {
+            const event = $events[eventsIndex];
+            const removeEventIndex = events.findIndex(
+              ($event) => $event === event
+            );
+            if(removeEventIndex !== -1) {
+              event.enable = false;
+              events.splice(eventsIndex, 1);
+            }
+            eventsIndex--;
+          }
+          return $target
+        }
       },
+      // Enable Events
       [settings.propertyDefinitions.enableEvents]: {
         enumerable: false, writable: false, 
-        value: Core.enableEvents.bind($target),
+        value: function enableEvents() {
+          let $events;
+          if(
+            arguments.length === 0 ||
+            arguments[0] === true
+          ) { $events = events; }
+          else { $events = $target[settings.propertyDefinitions.getEvents](arguments[0]); }
+          iterateEvents: for(const $event of $events) { $event.enable = true; }
+          return $target
+        },
       },
+      // Disable Events
       [settings.propertyDefinitions.disableEvents]: {
         enumerable: false, writable: false, 
-        value: Core.disableEvents.bind($target),
+        value: function disableEvents() {
+          let $events;
+          if(arguments.length === 0) { $events = events; }
+          else { $events = $target[settings.propertyDefinitions.getEvents](arguments[0]); }
+          iterateEvents: for(const $event of $events) { $event.enable = false; }
+          return $target
+        },
       },
+      // Reenable Events
       [settings.propertyDefinitions.reenableEvents]: {
         enumerable: false, writable: false, 
-        value: Core.reenableEvents.bind($target),
+        value: function reenableEvents() {
+          $target[settings.propertyDefinitions.disableEvents](...arguments);
+          $target[settings.propertyDefinitions.enableEvents](...arguments);
+          return $target
+        },
       },
     });
-    $target[settings.propertyDefinitions.addEvents](
-      settings[
-        settings.propertyDefinitions.events || settings.events
-      ]
-    );
-    if(settings.enableEvents) $target.enableEvents(settings.enableEvents);
+    if(settings.events) { $target[settings.propertyDefinitions.addEvents](settings.events); }
+    if(settings.enableEvents) { $target[settings.propertyDefinitions.enableEvents](settings.enableEvents); }
     return $target
   }
   constructor($settings = {}) {
     super();
     return Core.implement(this, $settings)
-  }
-  static getEvents() {
-    const getEvents = [];
-    const events = this.events;
-    const $events = [].concat(arguments[0]);
-    for(const $event of $events) {
-      const { type, path, listener, enable } = $event;
-      const eventFilterProperties = [];
-      if(type !== undefined) { eventFilterProperties.push(['type', type]); }
-      if(path !== undefined) { eventFilterProperties.push(['path', path]); }
-      if(listener !== undefined) { eventFilterProperties.push(['listener', listener]); }
-      if(enable !== undefined) { eventFilterProperties.push(['enable', enable]); }
-      getEvents.push(
-        ...events.filter(($existingEvent) => {
-          return eventFilterProperties.reduce(($match, [
-            $eventFilterPropertyKey, $eventFilterPropertyValue
-          ]) => {
-            const match = (
-              $existingEvent[$eventFilterPropertyKey] === $eventFilterPropertyValue
-            ) ? true : false;
-            if($match !== false) { $match = match; }
-            return $match
-          }, undefined)
-        })
-      );
-    }
-    return getEvents
-  }
-  static addEvents() {
-    if(arguments[0] === undefined) { return this }
-    const $events = expandEvents(arguments[0]);
-    const events = this.events;
-    for(let $event of $events) {
-      $event = recursiveAssign(
-        {
-          target: {
-            assign: 'addEventListener',
-            deassign: 'removeEventListener',
-            accessors: ['[]', 'get']
-          },
-          context: this,
-        }, 
-        $event,
-      );
-      const eventDefinition = new EventDefinition($event);
-      events.push(eventDefinition);
-    }
-    return this
-  }
-  static removeEvents() {
-    let $events;
-    if(arguments.length === 0) { $events = this.getEvents(); }
-    else if(arguments.length === 1) {
-      $events = this.getEvents(arguments[0]);
-    }
-    if($events.length === 0) return this
-    let eventsIndex = $events.length - 1;
-    while(eventsIndex > -1) {
-      const event = $events[eventsIndex];
-      const removeEventIndex = this.events.findIndex(
-        ($event) => $event === event
-      );
-      if(removeEventIndex !== -1) {
-        event.enable = false;
-        this.events.splice(eventsIndex, 1);
-      }
-      eventsIndex--;
-    }
-    return this
-  }
-  static enableEvents() {
-    let $events;
-    if(
-      arguments.length === 0 ||
-      arguments[0] === true
-    ) { $events = this.events; }
-    else { $events = this.getEvents(arguments[0]); }
-    for(const $event of $events) { $event.enable = true; }
-  }
-  static disableEvents() {
-    let $events;
-    if(arguments.length === 0) { $events = this.events; }
-    else { $events = this.getEvents(arguments[0]); }
-    for(const $event of $events) { $event.enable = false; }
-    return this
-  }
-  static reenableEvents() {
-    return this
-    .disableEvents(...arguments)
-    .enableEvents(...arguments)
   }
 }
 

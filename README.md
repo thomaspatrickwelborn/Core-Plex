@@ -1,3 +1,13 @@
+> [!WARNING]  
+> Early Stage Development  
+
+> [!CAUTION]  
+> Use At Own Risk  
+
+> [!NOTE]  
+> Interested in MVC Framework? 
+> thomas.patrick.welborn@outlook.com
+
 # Core-Plex
 **JavaScript Property Ventilation**  
 ## Impetus
@@ -17,7 +27,7 @@
 ### Manage Any Events For Any Project
 #### Configure Events With Impanded Syntax
 ```
-{
+const coreSettings = {
   events: {
     "someEvent": eventLog,
     "some.property.path someEvent": eventLog,
@@ -27,7 +37,7 @@
 ```
 #### Configure Events With Expanded Syntax
 ```
-{
+const coreSettings = {
   events: [{
     path: ":scope", type: "someEvent", listener: eventLog,
     target: {
@@ -39,12 +49,41 @@
       assign: "addEventListener", deassign: "off",
     }
   }, {
-    path: "some.property.path", type: "someEvent", listener: eventLog,
+    path: "some.array.[0-9]", type: "someEvent", listener: eventLog,
     target: {
       assign: "addEventListener", deassign: "off",
     }
   }]
 }
+```
+
+#### Ministrate Events With API
+```
+const core = new Core({
+  events: {},
+  enableEvents: true
+})
+core.addEvents({ ... })
+core.getEvents({ ... })
+core.removeEvents({ ... })
+core.enableEvents({ ... })
+core.disableEvents({ ... })
+core.reenableEvents({ ... })
+```
+
+#### Configure Ministration With Settings
+```
+const core = new Core({
+  propertyDefinitions: {
+    enableEvents: 'alterEnableEvents',
+    getEvents: 'alterGetEvents',
+    addEvents: 'alterAddEvents',
+    removeEvents: 'alterRemoveEvents',
+    enableEvents: 'alterEnableEvents',
+    disableEvents: 'alterDisableEvents',
+    reenableEvents: 'alterReenableEvents',
+  }
+})
 ```
 
 ## Installation

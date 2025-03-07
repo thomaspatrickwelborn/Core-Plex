@@ -1,14 +1,13 @@
-export default {
+export default Object.freeze({
   events: {},
   enableEvents: false,
-  propertyDefinitions: {
+  propertyDefinitions: Object.freeze({
     events: 'events',
-    enableEvents: 'enableEvents',
     getEvents: 'getEvents',
     addEvents: 'addEvents',
     removeEvents: 'removeEvents',
     enableEvents: 'enableEvents',
     disableEvents: 'disableEvents',
     reenableEvents: 'reenableEvents',
-  }
-}
+  })
+})

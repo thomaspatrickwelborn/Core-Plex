@@ -26,8 +26,7 @@ export default {
       cert: certificates.cert.path,
     },
     files: [
-      'static/*.{js,css,html}',
-      'localhost/*.{js,css,html}',
+      'static', 'localhost',
     ],
     proxy: {
       ws: true,
@@ -35,7 +34,7 @@ export default {
     reloadDelay: 500,
     reloadDebounce: 500,
     reloadThrottle: 0,
-    injectChanges: true,
+    // injectChanges: true,
   },
   sockets: {
     host: "demonstrament.core-plex",

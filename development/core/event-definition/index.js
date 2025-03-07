@@ -1,5 +1,6 @@
 import outmatch from 'outmatch'
 import Settings from './settings/index.js'
+console.log("Settings", Settings)
 import { propertyDirectory } from '../../coutil/index.js'
 export default class EventDefinition {
   #settings
@@ -17,7 +18,7 @@ export default class EventDefinition {
   get path() { return this.#settings.path }
   get #targets() {
     const pretargets = this.#_targets
-    let propertyDirectory = [/*this.path*/].concat(this.propertyDirectory)
+    let propertyDirectory = this.propertyDirectory
     const targetPaths = []
     const targets = []
     const propertyPathMatcher = outmatch(this.path, {

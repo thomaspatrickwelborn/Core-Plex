@@ -1,44 +1,32 @@
-function recursiveAssignConcat() {
+import typeOf from '../typeOf/index.js'
+export default function recursiveAssignConcat() {
   const $arguments = [...arguments]
   const $target = $arguments.shift()
+  if(!$target) { return $target }
   const $sources = $arguments
+  if(!$target) { return $target}
   iterateSources: 
   for(const $source of $sources) {
-    if(
-      $source === null ||
-      $source === undefined
-    ) { continue iterateSources }
     iterateSourceEntries: 
-    for(let [
-      $sourcePropKey, $sourcePropValue
+    for(const [
+      $sourcePropertyKey, $sourcePropertyValue
     ] of Object.entries($source)) {
-      // Type: Non-Null Object
-      if(
-        $target[$sourcePropKey] !== null &&
-        typeof $sourcePropValue === 'object'
-      ) {
-        let targetPropValue
-        if($target[$sourcePropKey] === undefined) {
-          $target[$sourcePropKey] = $sourcePropValue
+      const typeOfSourcePropertyValue = typeOf($sourcePropertyValue)
+      const typeOfTargetPropertyValue = typeOf($target[$sourcePropertyKey])
+      if(['array', 'object'].includes(typeOfSourcePropertyValue)) {
+        if(typeOfTargetPropertyValue === 'array') {
+          $target[$sourcePropertyKey] = $target[$sourcePropertyKey].concat($sourcePropertyValue)
         }
         else {
-          if(Array.isArray($sourcePropValue)) {
-            $target[$sourcePropKey] = $target[$sourcePropKey]
-              .concat(recursiveAssignConcat($sourcePropValue))
-          }
-          else {
-            $target[$sourcePropKey] = recursiveAssignConcat(
-              $target[$sourcePropKey], $sourcePropValue
-            )
-          }
+          $target[$sourcePropertyKey] = recursiveAssignConcat(
+            $target[$sourcePropertyKey], $sourcePropertyValue
+          )
         }
       }
-      // Type: Primitive
       else {
-        $target[$sourcePropKey] = $sourcePropValue
+        $target[$sourcePropertyKey] = $sourcePropertyValue
       }
     }
   }
   return $target
 }
-export default recursiveAssignConcat
