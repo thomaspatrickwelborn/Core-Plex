@@ -51,17 +51,7 @@ export default class Core extends EventTarget {
           }
           iterateEvents: 
           for(let $event of $events) {
-            $event = recursiveAssign(
-              {
-                target: {
-                  assign: 'addEventListener',
-                  deassign: 'removeEventListener',
-                  accessors: ['[]', 'get']
-                },
-                context: $target,
-              }, 
-              $event,
-            )
+            $event = recursiveAssign({ context: $target }, $event)
             const eventDefinition = new EventDefinition($event)
             events.push(eventDefinition)
           }

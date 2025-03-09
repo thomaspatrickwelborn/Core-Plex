@@ -712,22 +712,45 @@ var Settings = {
   propertyDirectory: {
     maxDepth: 10,
   },
+  target: {
+    assign: function(target, $eventDefinition) {
+      const { type, listener, options } = $eventDefinition.settings;
+      return $target['addEventListener'](type, listener, options)
+    },  
+    deassign: function($target, $eventDefinition) {
+      const { type, listener, options } = $eventDefinition.settings;
+      return $target['removeEventListener'](type, listener, options)
+    }, 
+    accessors: ['[]', 'get'],
+  },
+  enable: false,
+  path: ':scope',
 };
 
 class EventDefinition {
   #settings
   #enable = false
-  #_boundListener
+  #listener
   #_targets = []
   constructor($settings) { 
     this.#settings = Object.assign({}, Settings, $settings);
     this.enable = this.#settings.enable;
   }
-  get propertyDirectory() {
-    return propertyDirectory(this.#context, this.#settings.propertyDirectory)
-  }
+  // 
+  get settings() { return this.#settings }
+  // 
   get type() { return this.#settings.type }
+  // 
   get path() { return this.#settings.path }
+  // 
+  get target() { return this.#settings.target }
+  // 
+  get listener() {
+    if(this.#listener !== undefined) { return this.#listener }
+    this.#listener = this.settings.listener.bind(this.#context);
+    return this.#listener
+  }
+  get #context() { return this.#settings.context }
   get #targets() {
     const pretargets = this.#_targets;
     let propertyDirectory = this.propertyDirectory;
@@ -757,7 +780,7 @@ class EventDefinition {
           break iterateTargetPathKeys
         }
         iterateTargetAccessors: 
-        for(const $targetAccessor of this.#settings.target.accessors) {
+        for(const $targetAccessor of this.accessors) {
           if(target === undefined) { break iterateTargetAccessors }
           if($targetAccessor === '[]') {
             target = target[pathKey];
@@ -786,8 +809,9 @@ class EventDefinition {
     this.#_targets = targets;
     return this.#_targets
   }
-  get listener() { return this.#settings.listener }
-  get options() { return this.#settings.options }
+  get propertyDirectory() {
+    return propertyDirectory(this.#context, this.#settings.propertyDirectory)
+  }
   get enable() { return this.#enable }
   set enable($enable) {
     const targets = this.#targets;
@@ -801,17 +825,23 @@ class EventDefinition {
       const { path, target, enable } = targetElement;
       if(enable === $enable) { continue iterateTargets }
       if(target[eventSign]) {
-        target[eventSign](this.type, this.#boundListener, this.options);
+        target[eventSign](
+          this.type, this.#settings.listener.bind(this.#context), this.options
+        );
         targetElement.enable = $enable;
       }
     }
     this.#enable = $enable;
   }
-  get #context() { return this.#settings.context }
-  get #boundListener() {
-    if(this.#_boundListener !== undefined) { return this.#_boundListener }
-    this.#_boundListener = this.#settings.listener.bind(this.#context);
-    return this.#_boundListener
+  get assign() {
+    if(this.#assign !== undefined) { return this.#assign }
+    this.#assign = this.settings.assign.bind(this);
+    return this.#assign
+  }
+  get deassign() {
+    if(this.#deassign !== undefined) { return this.#deassign }
+    this.#deassign = this.settings.deassign.bind(this);
+    return this.#deassign
   }
 }
 
@@ -865,17 +895,7 @@ class Core extends EventTarget {
           }
           iterateEvents: 
           for(let $event of $events) {
-            $event = recursiveAssign(
-              {
-                target: {
-                  assign: 'addEventListener',
-                  deassign: 'removeEventListener',
-                  accessors: ['[]', 'get']
-                },
-                context: $target,
-              }, 
-              $event,
-            );
+            $event = recursiveAssign({ context: $target }, $event);
             const eventDefinition = new EventDefinition($event);
             events.push(eventDefinition);
           }
