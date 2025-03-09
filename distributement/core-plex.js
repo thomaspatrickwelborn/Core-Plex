@@ -818,7 +818,6 @@ class EventDefinition {
 class Core extends EventTarget {
   static implement = function ($target, $settings) {
     const settings = recursiveAssign({}, Settings$1, $settings);
-    console.log($target);
     const events = [];
     Object.defineProperties($target, {
       // Get Events
