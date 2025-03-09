@@ -13,15 +13,24 @@ export default function recursiveAssignConcat() {
     ] of Object.entries($source)) {
       const typeOfSourcePropertyValue = typeOf($sourcePropertyValue)
       const typeOfTargetPropertyValue = typeOf($target[$sourcePropertyKey])
-      if(['array', 'object'].includes(typeOfSourcePropertyValue)) {
-        if(typeOfTargetPropertyValue === 'array') {
-          $target[$sourcePropertyKey] = $target[$sourcePropertyKey].concat($sourcePropertyValue)
+      if(typeOfTargetPropertyValue === 'undefined') {
+        if(typeOfSourcePropertyValue === 'array') {
+          $target[$sourcePropertyKey] = Array.prototype.concat([], $sourcePropertyValue)
+        }
+        else if(typeOfSourcePropertyValue === 'object') {
+          $target[$sourcePropertyKey] = Object.assign({}, $sourcePropertyValue)
         }
         else {
-          $target[$sourcePropertyKey] = recursiveAssignConcat(
-            $target[$sourcePropertyKey], $sourcePropertyValue
-          )
+          $target[$sourcePropertyKey] = $sourcePropertyValue
         }
+      }
+      else if(typeOfSourcePropertyValue === 'array') {
+        $target[$sourcePropertyKey] = $target[$sourcePropertyKey].concat($sourcePropertyValue)
+      }
+      else if(typeOfSourcePropertyValue === 'object') {
+        $target[$sourcePropertyKey] = recursiveAssignConcat(
+          $target, $sourcePropertyValue
+        )
       }
       else {
         $target[$sourcePropertyKey] = $sourcePropertyValue

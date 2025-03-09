@@ -1,6 +1,5 @@
 import outmatch from 'outmatch'
 import Settings from './settings/index.js'
-console.log("Settings", Settings)
 import { propertyDirectory } from '../../coutil/index.js'
 export default class EventDefinition {
   #settings

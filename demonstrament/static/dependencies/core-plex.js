@@ -103,9 +103,15 @@ function recursiveAssign() {
     ] of Object.entries($source)) {
       const typeOfSourcePropertyValue = typeOf($sourcePropertyValue);
       const typeOfTargetPropertyValue = typeOf($target[$sourcePropertyKey]);
-      if(typeOfSourcePropertyValue === 'object') {
+      let target;
+      if(typeOfTargetPropertyValue === 'undefined') {
+        if(typeOfSourcePropertyValue === 'array') { target = []; }
+        else if(typeOfSourcePropertyValue === 'object') { target = {}; }
+      }
+      else { target = $target[$sourcePropertyKey]; }
+      if(['array', 'object'].includes(typeOfSourcePropertyValue)) {
         $target[$sourcePropertyKey] = recursiveAssign(
-          $target[$sourcePropertyKey] || {}, $sourcePropertyValue
+          target, $sourcePropertyValue
         );
       }
       else {
@@ -130,15 +136,24 @@ function recursiveAssignConcat() {
     ] of Object.entries($source)) {
       const typeOfSourcePropertyValue = typeOf($sourcePropertyValue);
       const typeOfTargetPropertyValue = typeOf($target[$sourcePropertyKey]);
-      if(['array', 'object'].includes(typeOfSourcePropertyValue)) {
-        if(typeOfTargetPropertyValue === 'array') {
-          $target[$sourcePropertyKey] = $target[$sourcePropertyKey].concat($sourcePropertyValue);
+      if(typeOfTargetPropertyValue === 'undefined') {
+        if(typeOfSourcePropertyValue === 'array') {
+          $target[$sourcePropertyKey] = Array.prototype.concat([], $sourcePropertyValue);
+        }
+        else if(typeOfSourcePropertyValue === 'object') {
+          $target[$sourcePropertyKey] = Object.assign({}, $sourcePropertyValue);
         }
         else {
-          $target[$sourcePropertyKey] = recursiveAssignConcat(
-            $target[$sourcePropertyKey], $sourcePropertyValue
-          );
+          $target[$sourcePropertyKey] = $sourcePropertyValue;
         }
+      }
+      else if(typeOfSourcePropertyValue === 'array') {
+        $target[$sourcePropertyKey] = $target[$sourcePropertyKey].concat($sourcePropertyValue);
+      }
+      else if(typeOfSourcePropertyValue === 'object') {
+        $target[$sourcePropertyKey] = recursiveAssignConcat(
+          $target, $sourcePropertyValue
+        );
       }
       else {
         $target[$sourcePropertyKey] = $sourcePropertyValue;
@@ -699,7 +714,6 @@ var Settings = {
   },
 };
 
-console.log("Settings", Settings);
 class EventDefinition {
   #settings
   #enable = false
