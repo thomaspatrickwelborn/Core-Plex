@@ -1,1 +1,1 @@
-import './example-a-1/index.js'
+import './example-c-1/index.js'

@@ -42,13 +42,7 @@ export default class Core extends EventTarget {
       [settings.propertyDefinitions.addEvents]: {
         enumerable: false, writable: false, 
         value: function addEvents() {
-          let $events
-          if(arguments[0] === undefined) {
-            $events = expandEvents(settings.events)
-          }
-          else {
-            $events = expandEvents(arguments[0])
-          }
+          let $events = expandEvents(arguments[0])
           iterateEvents: 
           for(let $event of $events) {
             $event = recursiveAssign({ context: $target }, $event)

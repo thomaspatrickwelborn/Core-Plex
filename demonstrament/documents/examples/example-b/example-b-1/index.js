@@ -1,3 +1,8 @@
+console.log(
+  "\n", "------------",
+  "\n", "Example B.1.",
+  "\n", "------------",
+)
 import { Core } from '/dependencies/core-plex.js'
 function eventLog($event) { console.log($event.type, $event.detail) }
 const target = {

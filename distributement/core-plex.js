@@ -16,9 +16,11 @@ function impandEvents($propEvents) {
 }
 
 function expandEvents($propEvents) {
+  if(
+    Array.isArray($propEvents) ||
+    $propEvents === undefined
+  ) { return $propEvents }
   const propEvents = [];
-  if(Array.isArray($propEvents)) { return $propEvents }
-  else if($propEvents === undefined) { return propEvents }
   iteratePropEvents:
   for(const [
     $propEventSettings, $propEventListener
@@ -103,15 +105,23 @@ function recursiveAssign() {
     ] of Object.entries($source)) {
       const typeOfSourcePropertyValue = typeOf($sourcePropertyValue);
       const typeOfTargetPropertyValue = typeOf($target[$sourcePropertyKey]);
-      let target;
       if(typeOfTargetPropertyValue === 'undefined') {
-        if(typeOfSourcePropertyValue === 'array') { target = []; }
-        else if(typeOfSourcePropertyValue === 'object') { target = {}; }
+        if(typeOfSourcePropertyValue === 'array') {
+          $target[$sourcePropertyKey] = $sourcePropertyValue;
+        }
+        else if(typeOfSourcePropertyValue === 'object') {
+          $target[$sourcePropertyKey] = Object.assign({}, $sourcePropertyValue);
+        }
+        else {
+          $target[$sourcePropertyKey] = $sourcePropertyValue;
+        }
       }
-      else { target = $target[$sourcePropertyKey]; }
-      if(['array', 'object'].includes(typeOfSourcePropertyValue)) {
+      else if(typeOfSourcePropertyValue === 'array') {
+        $target[$sourcePropertyKey] = $sourcePropertyValue;
+      }
+      else if(typeOfSourcePropertyValue === 'object') {
         $target[$sourcePropertyKey] = recursiveAssign(
-          target, $sourcePropertyValue
+          $target[$sourcePropertyKey], $sourcePropertyValue
         );
       }
       else {
@@ -789,7 +799,7 @@ class EventDefinition {
     const targetPaths = [];
     const targets = [];
     const typeOfPath = typeOf(this.path);
-    if(this.target) {
+    if(this.#target) {
       const pretargetElement = pretargets.find(
         ($pretarget) => $pretarget?.path === this.path
       );
@@ -799,7 +809,7 @@ class EventDefinition {
       else if(pretargetElement === undefined) {
         targets.push({
           path: this.path,
-          target: this.target,
+          target: this.#target,
           enable: false,
         });
       }
@@ -935,13 +945,7 @@ class Core extends EventTarget {
       [settings.propertyDefinitions.addEvents]: {
         enumerable: false, writable: false, 
         value: function addEvents() {
-          let $events;
-          if(arguments[0] === undefined) {
-            $events = expandEvents(settings.events);
-          }
-          else {
-            $events = expandEvents(arguments[0]);
-          }
+          let $events = expandEvents(arguments[0]);
           iterateEvents: 
           for(let $event of $events) {
             $event = recursiveAssign({ context: $target }, $event);

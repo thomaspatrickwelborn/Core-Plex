@@ -39,7 +39,7 @@ export default class EventDefinition {
     const targetPaths = []
     const targets = []
     const typeOfPath = typeOf(this.path)
-    if(this.target) {
+    if(this.#target) {
       const pretargetElement = pretargets.find(
         ($pretarget) => $pretarget?.path === this.path
       )
@@ -49,7 +49,7 @@ export default class EventDefinition {
       else if(pretargetElement === undefined) {
         targets.push({
           path: this.path,
-          target: this.target,
+          target: this.#target,
           enable: false,
         })
       }

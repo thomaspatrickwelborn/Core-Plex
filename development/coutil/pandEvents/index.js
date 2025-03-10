@@ -16,9 +16,11 @@ function impandEvents($propEvents) {
 }
 
 function expandEvents($propEvents) {
+  if(
+    Array.isArray($propEvents) ||
+    $propEvents === undefined
+  ) { return $propEvents }
   const propEvents = []
-  if(Array.isArray($propEvents)) { return $propEvents }
-  else if($propEvents === undefined) { return propEvents }
   iteratePropEvents:
   for(const [
     $propEventSettings, $propEventListener

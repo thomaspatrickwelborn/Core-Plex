@@ -38,7 +38,8 @@ import { Core } from 'core-plex'
 ```
 
 ## Illustration
-### Configure Events With Impanded Syntax
+### Example A.1.
+#### Configure Events With Impanded Syntax
 ```
 function eventLog($event) { console.log($event.type, $event.detail) }
 const coreSettings = {
@@ -49,23 +50,8 @@ const coreSettings = {
   }
 }
 ```
-### Configure Events With Expanded Syntax
-```
-const coreSettings = {
-  events: [{
-    path: ":scope", type: "someEvent", listener: eventLog,
-    assign: "on", deassign: "off",
-  }, {
-    path: "some.property.path", type: "someEvent", listener: eventLog,
-    assign: "addEventListener", deassign: "removeEventListener",
-  }, {
-    path: "some.array.[0-9]", type: "someEvent", listener: eventLog,
-    assign: "addEventListener", deassign: "removeEventListener",
-  }]
-}
-```
 
-### Ministrate Events With API
+#### Ministrate Events With API
 ```
 const core = new Core()
 // Add Events
@@ -83,11 +69,23 @@ core.enableEvents([
 core.disableEvents({ listener: eventLog })
 // Reenable Events
 core.reenableEvents()
+
 ```
 
-### Configure Method Names With Property Definitions
+### Example A.2.
+#### Configure Events With Expanded Syntax, Property Definitions
 ```
-const alterCore = new Core(recursiveAssign({
+const coreSettings = {
+  events: [{
+    path: ":scope", type: "someEvent", listener: eventLog,
+    assign: "on", deassign: "off",
+  }, {
+    path: "some.property.path", type: "someEvent", listener: eventLog,
+    assign: "addEventListener", deassign: "removeEventListener",
+  }, {
+    path: "some.array.[0-9]", type: "someEvent", listener: eventLog,
+    assign: "addEventListener", deassign: "removeEventListener",
+  }],
   propertyDefinitions: {
     enableEvents: 'alterEnableEvents',
     getEvents: 'alterGetEvents',
@@ -96,8 +94,12 @@ const alterCore = new Core(recursiveAssign({
     enableEvents: 'alterEnableEvents',
     disableEvents: 'alterDisableEvents',
     reenableEvents: 'alterReenableEvents',
-  }
-}, $eventSettings))
+  },
+}
+```
+#### Configure Method Names With Property Definitions
+```
+const alterCore = new Core(coreSettings)
 // Add Events
 alterCore.alterAddEvents(coreSettings.events)
 // Get Events
@@ -116,7 +118,8 @@ alterCore.alterReenableEvents()
 ```
 
 ## Implementation
-### Define `target` with event-targetable properties  
+### Example B.1.
+#### Predefined `target` with event-targetable properties  
 ```
 const target = {
   propertyA: new EventTarget(),
@@ -134,7 +137,7 @@ const target = {
   }]
 }
 ```
-### Add, enable `target` property events with `Core.implement`  
+#### Add, enable `target` property events with `Core.implement`  
 ```
 Core.implement(target, {
   events: {
@@ -145,7 +148,7 @@ Core.implement(target, {
   enableEvents: true
 })
 ```
-### `dispatchEvent` from `target` properties  
+#### `dispatchEvent` from `target` properties  
 ```
 for(const $eventTarget of [
   target.propertyA,
@@ -159,22 +162,13 @@ for(const $eventTarget of [
   )
 }
 ```
-### `target` property event capture log
-```
-customEvent EventTarget {}
-customEvent EventTarget {}
-customEvent EventTarget {}
-customEvent EventTarget {}
-customEvent EventTarget {}
-```
 
 ## Inheritance
+### Example C.1.
 ```
 class CustomCore extends Core {
   static events = {
-    'eventTarget customEvent': function eventTargetCustomEvent($event) {
-      console.log($event.type, $event.detail)
-    }
+    'eventTarget customEvent': eventLog
   }
   eventTarget = new EventTarget()
   constructor() {
@@ -191,18 +185,30 @@ customCore.eventTarget.dispatchEvent(
 ```
 
 ## Instantiation
+### Example D.1.
 ```
+const eventTargetA = new EventTarget()
+const eventTargetB = new EventTarget()
+const eventTargetC = new EventTarget()
 const coreInstance = new Core({
-  events: {
-    'eventTarget customEvent': function eventTargetCustomEvent($event) {
-      console.log($event.type, $event.detail)
-    }
-  }
+  events: [{
+    path: "eventTargetA", type: "anotherEvent", 
+    target: eventTargetA, listener: eventLog,
+  }, {
+    path: "eventTargetB", type: "anotherEvent", 
+    target: eventTargetB, listener: eventLog,
+  }, {
+    path: "eventTargetC", type: "anotherEvent", 
+    target: eventTargetC, listener: eventLog,
+  }]
 })
-coreInstance.eventTarget = new EventTarget()
 coreInstance.enableEvents()
-coreInstance.eventTarget.dispatchEvent(
-  new CustomEvent('customEvent', { detail: true })
-)
+for(const $eventTarget of [
+  eventTargetA, eventTargetB, eventTargetC
+]) {
+  $eventTarget.dispatchEvent(
+    new CustomEvent('anotherEvent', { detail: {} })
+  )
+}
 ```
 

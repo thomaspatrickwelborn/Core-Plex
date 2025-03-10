@@ -13,15 +13,23 @@ export default function recursiveAssign() {
     ] of Object.entries($source)) {
       const typeOfSourcePropertyValue = typeOf($sourcePropertyValue)
       const typeOfTargetPropertyValue = typeOf($target[$sourcePropertyKey])
-      let target
       if(typeOfTargetPropertyValue === 'undefined') {
-        if(typeOfSourcePropertyValue === 'array') { target = [] }
-        else if(typeOfSourcePropertyValue === 'object') { target = {} }
+        if(typeOfSourcePropertyValue === 'array') {
+          $target[$sourcePropertyKey] = $sourcePropertyValue
+        }
+        else if(typeOfSourcePropertyValue === 'object') {
+          $target[$sourcePropertyKey] = Object.assign({}, $sourcePropertyValue)
+        }
+        else {
+          $target[$sourcePropertyKey] = $sourcePropertyValue
+        }
       }
-      else { target = $target[$sourcePropertyKey] }
-      if(['array', 'object'].includes(typeOfSourcePropertyValue)) {
+      else if(typeOfSourcePropertyValue === 'array') {
+        $target[$sourcePropertyKey] = $sourcePropertyValue
+      }
+      else if(typeOfSourcePropertyValue === 'object') {
         $target[$sourcePropertyKey] = recursiveAssign(
-          target, $sourcePropertyValue
+          $target[$sourcePropertyKey], $sourcePropertyValue
         )
       }
       else {
