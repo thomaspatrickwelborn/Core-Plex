@@ -177,7 +177,6 @@ var Settings$1 = Object.freeze({
   events: {},
   enableEvents: false,
   propertyDefinitions: Object.freeze({
-    events: 'events',
     getEvents: 'getEvents',
     addEvents: 'addEvents',
     removeEvents: 'removeEvents',
@@ -712,136 +711,170 @@ var Settings = {
   propertyDirectory: {
     maxDepth: 10,
   },
-  target: {
-    assign: function(target, $eventDefinition) {
-      const { type, listener, options } = $eventDefinition.settings;
-      return $target['addEventListener'](type, listener, options)
-    },  
-    deassign: function($target, $eventDefinition) {
-      const { type, listener, options } = $eventDefinition.settings;
-      return $target['removeEventListener'](type, listener, options)
-    }, 
-    accessors: ['[]', 'get'],
-  },
-  enable: false,
   path: ':scope',
+  enable: false,
+  accessors: ['[]', 'get'],
+  accessors: [
+    ($target, $property) => $target[$property],
+    ($target, $property) => $target?.get($property),
+  ],
+  target: undefined,
+  assign: 'addEventListener',
+  deassign: 'removeEventListener',
+  methods: {
+    assign: {
+      addEventListener: function($target) {
+        const { type, listener, settings } = this;
+        const { options, useCapture } = settings;
+        return $target['addEventListener'](type, listener, options || useCapture)
+      },
+      on: function($target) {
+        const { type, listener, settings } = this;
+        return $target['on'](type, listener)
+      },
+      once: function($target) {
+        const { type, listener } = this;
+        return $target['once'](type, listener)
+      },
+    },  
+    deassign: {
+      removeEventListener: function($target) {
+        const { type, listener, settings } = this;
+        const { options, useCapture } = settings;
+        return $target['removeEventListener'](type, listener, options || useCapture)
+      },
+      off: function($target) {
+        const { type, listener } = this;
+        return $target['off'](type, listener)
+      },
+    },
+  },
 };
 
 class EventDefinition {
   #settings
   #enable = false
   #listener
+  #path
+  #_target
   #_targets = []
+  #_assign
+  #_deassign
   constructor($settings) { 
     this.#settings = Object.assign({}, Settings, $settings);
-    this.enable = this.#settings.enable;
+    this.enable = this.settings.enable;
   }
-  // 
   get settings() { return this.#settings }
-  // 
-  get type() { return this.#settings.type }
-  // 
-  get path() { return this.#settings.path }
-  // 
-  get target() { return this.#settings.target }
-  // 
-  get listener() {
-    if(this.#listener !== undefined) { return this.#listener }
-    this.#listener = this.settings.listener.bind(this.#context);
-    return this.#listener
-  }
-  get #context() { return this.#settings.context }
+  get path() { return this.settings.path }
+  get type() { return this.settings.type }
+  get listener() { return this.settings.listener }
+  get #context() { return this.settings.context }
+  get #methods() { return this.settings.methods }
+  get #target() { return this.settings.target }
   get #targets() {
     const pretargets = this.#_targets;
-    let propertyDirectory = this.propertyDirectory;
+    let propertyDirectory = this.#propertyDirectory;
     const targetPaths = [];
     const targets = [];
-    const propertyPathMatcher = outmatch(this.path, {
-      separator: '.',
-    });
-    iteratePropertyPaths: 
-    for(const $propertyPath of propertyDirectory) {
-      const propertyPathMatch = propertyPathMatcher($propertyPath);
-      if(propertyPathMatch === true) { targetPaths.push($propertyPath); }
-    }
-    iterateTargetPaths: 
-    for(const $targetPath of targetPaths) {
+    const typeOfPath = typeOf(this.path);
+    if(this.target) {
       const pretargetElement = pretargets.find(
-        ($pretarget) => $pretarget?.path === $targetPath
+        ($pretarget) => $pretarget?.path === this.path
       );
-      let target = this.#context;
-      let targetElement;
-      const pathKeys = $targetPath.split('.');
-      let pathKeysIndex = 0;
-      iterateTargetPathKeys: 
-      while(pathKeysIndex < pathKeys.length) {
-        let pathKey = pathKeys[pathKeysIndex];
-        if(pathKeysIndex === 0 && pathKey === ':scope') {
-          break iterateTargetPathKeys
-        }
-        iterateTargetAccessors: 
-        for(const $targetAccessor of this.accessors) {
-          if(target === undefined) { break iterateTargetAccessors }
-          if($targetAccessor === '[]') {
-            target = target[pathKey];
-          }
-          else if($targetAccessor === 'get') {
-            target = target?.get(pathKey);
-          }
-          if(target !== undefined) { break iterateTargetAccessors }
-        }
-        pathKeysIndex++;
+      if(pretargetElement !== undefined) {
+        targets.push(pretargetElement);
       }
-      if(target !== undefined) {
-        if(target === pretargetElement?.target) {
-          targetElement = pretargetElement;
-        }
-        else {
-          targetElement = {
-            path: $targetPath,
-            target: target,
-            enable: false,
-          };
-        }
+      else if(pretargetElement === undefined) {
+        targets.push({
+          path: this.path,
+          target: this.target,
+          enable: false,
+        });
       }
-      if(targetElement !== undefined) { targets.push(targetElement); }
+    }
+    else if(['array', 'string'].includes(typeOfPath)) {
+      const propertyPathMatcher = outmatch(this.path, {
+        separator: '.',
+      });
+      iteratePropertyPaths: 
+      for(const $propertyPath of propertyDirectory) {
+        const propertyPathMatch = propertyPathMatcher($propertyPath);
+        if(propertyPathMatch === true) { targetPaths.push($propertyPath); }
+      }
+      iterateTargetPaths: 
+      for(const $targetPath of targetPaths) {
+        const pretargetElement = pretargets.find(
+          ($pretarget) => $pretarget?.path === $targetPath
+        );
+        let target = this.#context;
+        let targetElement;
+        const pathKeys = $targetPath.split('.');
+        let pathKeysIndex = 0;
+        iterateTargetPathKeys: 
+        while(pathKeysIndex < pathKeys.length) {
+          let pathKey = pathKeys[pathKeysIndex];
+          if(pathKeysIndex === 0 && pathKey === ':scope') {
+            break iterateTargetPathKeys
+          }
+          iterateTargetAccessors: 
+          for(const $targetAccessor of this.settings.accessors) {
+            if(target === undefined) { break iterateTargetAccessors }
+            target = $targetAccessor(target, pathKey);
+            if(target !== undefined) { break iterateTargetAccessors }
+          }
+          pathKeysIndex++;
+        }
+        if(target !== undefined) {
+          if(target === pretargetElement?.target) {
+            targetElement = pretargetElement;
+          }
+          else {
+            targetElement = {
+              path: $targetPath,
+              target: target,
+              enable: false,
+            };
+          }
+        }
+        if(targetElement !== undefined) { targets.push(targetElement); }
+      }
     }
     this.#_targets = targets;
     return this.#_targets
   }
-  get propertyDirectory() {
-    return propertyDirectory(this.#context, this.#settings.propertyDirectory)
+  get #propertyDirectory() {
+    return propertyDirectory(this.#context, this.settings.propertyDirectory)
   }
   get enable() { return this.#enable }
   set enable($enable) {
     const targets = this.#targets;
-    if(this.#targets.length === 0) { return }
-    const eventSign = (
-      $enable === true
-    ) ? this.#settings.target.assign
-      : this.#settings.target.deassign;
-    iterateTargets: 
+    iterateTargetElements: 
     for(const targetElement of targets) {
       const { path, target, enable } = targetElement;
-      if(enable === $enable) { continue iterateTargets }
-      if(target[eventSign]) {
-        target[eventSign](
-          this.type, this.#settings.listener.bind(this.#context), this.options
-        );
+      const settings = this.settings;
+      if(enable === $enable) { continue iterateTargetElements }
+      try {
+        if($enable === true) {
+          this.#assign(target);
+        }
+        else if($enable === false) {
+          this.#deassign(target);
+        }
         targetElement.enable = $enable;
       }
+      catch($err) { console.error($err); }
     }
     this.#enable = $enable;
   }
-  get assign() {
-    if(this.#assign !== undefined) { return this.#assign }
-    this.#assign = this.settings.assign.bind(this);
-    return this.#assign
+  get #assign() {
+    if(this.#_assign !== undefined) { return this.#_assign }
+    this.#_assign = this.settings.methods.assign[this.settings.assign].bind(this);
+    return this.#_assign
   }
-  get deassign() {
-    if(this.#deassign !== undefined) { return this.#deassign }
-    this.#deassign = this.settings.deassign.bind(this);
-    return this.#deassign
+  get #deassign() {
+    if(this.#_deassign !== undefined) { return this.#_deassign }
+    this.#_deassign = this.settings.methods.deassign[this.settings.deassign].bind(this);
+    return this.#_deassign
   }
 }
 
@@ -888,7 +921,7 @@ class Core extends EventTarget {
         value: function addEvents() {
           let $events;
           if(arguments[0] === undefined) {
-            $events = $target[settings.propertyDefinitions.events]();
+            $events = expandEvents(settings.events);
           }
           else {
             $events = expandEvents(arguments[0]);

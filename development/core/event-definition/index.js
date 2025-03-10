@@ -18,20 +18,16 @@ export default class EventDefinition {
   get path() { return this.settings.path }
   get type() { return this.settings.type }
   get listener() { return this.settings.listener }
-  // get listener() {
-  //   if(this.#listener !== undefined) { return this.#listener }
-  //   this.#listener = this.settings.listener.bind(this.#context)
-  //   return this.#listener
-  // }
   get #context() { return this.settings.context }
-  get #methods() { this.settings.methods }
+  get #methods() { return this.settings.methods }
+  get #target() { return this.settings.target }
   get #targets() {
     const pretargets = this.#_targets
-    let propertyDirectory = this.propertyDirectory
+    let propertyDirectory = this.#propertyDirectory
     const targetPaths = []
     const targets = []
     const typeOfPath = typeOf(this.path)
-    if(this.settings.target) {
+    if(this.target) {
       const pretargetElement = pretargets.find(
         ($pretarget) => $pretarget?.path === this.path
       )
@@ -41,7 +37,7 @@ export default class EventDefinition {
       else if(pretargetElement === undefined) {
         targets.push({
           path: this.path,
-          target: this.settings.target,
+          target: this.target,
           enable: false,
         })
       }
@@ -71,14 +67,9 @@ export default class EventDefinition {
             break iterateTargetPathKeys
           }
           iterateTargetAccessors: 
-          for(const $targetAccessor of this.accessors) {
+          for(const $targetAccessor of this.settings.accessors) {
             if(target === undefined) { break iterateTargetAccessors }
-            if($targetAccessor === '[]') {
-              target = target[pathKey]
-            }
-            else if($targetAccessor === 'get') {
-              target = target?.get(pathKey)
-            }
+            target = $targetAccessor(target, pathKey)
             if(target !== undefined) { break iterateTargetAccessors }
           }
           pathKeysIndex++
@@ -101,7 +92,7 @@ export default class EventDefinition {
     this.#_targets = targets
     return this.#_targets
   }
-  get propertyDirectory() {
+  get #propertyDirectory() {
     return propertyDirectory(this.#context, this.settings.propertyDirectory)
   }
   get enable() { return this.#enable }
@@ -127,12 +118,12 @@ export default class EventDefinition {
   }
   get #assign() {
     if(this.#_assign !== undefined) { return this.#_assign }
-    this.#_assign = this.settings.assign.bind(this)
+    this.#_assign = this.settings.methods.assign[this.settings.assign].bind(this)
     return this.#_assign
   }
   get #deassign() {
     if(this.#_deassign !== undefined) { return this.#_deassign }
-    this.#_deassign = this.settings.deassign.bind(this)
+    this.#_deassign = this.settings.methods.deassign[this.settings.deassign].bind(this)
     return this.#_deassign
   }
 }

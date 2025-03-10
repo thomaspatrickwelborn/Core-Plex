@@ -44,7 +44,7 @@ export default class Core extends EventTarget {
         value: function addEvents() {
           let $events
           if(arguments[0] === undefined) {
-            $events = $target[settings.propertyDefinitions.events]()
+            $events = expandEvents(settings.events)
           }
           else {
             $events = expandEvents(arguments[0])
