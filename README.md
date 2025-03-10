@@ -28,17 +28,24 @@ Manage events for any project with plexible inheritance, instantiation, and impl
 
 
 ## Installation
+Install `core-plex` via npm CLI.  
 ```
 npm install core-plex
 ```
 
 ## Importation
+`Core` Class is an ES Module exported from `core-plex`.  
 ```
 import { Core } from 'core-plex'
 ```
 
 ## Illustration
+Core-Plex is an event management system with flexible configuration options.  
 ### Example A.1.
+#### Instantiate `core` Instance
+```
+const core = new Core()
+```
 #### Configure Events With Impanded Syntax
 ```
 function eventLog($event) { console.log($event.type, $event.detail) }
@@ -53,7 +60,6 @@ const coreSettings = {
 
 #### Ministrate Events With API
 ```
-const core = new Core()
 // Add Events
 core.addEvents(coreSettings.events)
 // Get Events

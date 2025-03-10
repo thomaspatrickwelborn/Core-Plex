@@ -40,18 +40,20 @@ export default class EventDefinition {
     const targets = []
     const typeOfPath = typeOf(this.path)
     if(this.#target) {
-      const pretargetElement = pretargets.find(
-        ($pretarget) => $pretarget?.path === this.path
-      )
-      if(pretargetElement !== undefined) {
-        targets.push(pretargetElement)
-      }
-      else if(pretargetElement === undefined) {
-        targets.push({
-          path: this.path,
-          target: this.#target,
-          enable: false,
-        })
+      for(const $target of [].concat(this.#target)) {
+        const pretargetElement = pretargets.find(
+          ($pretarget) => $pretarget?.path === this.path
+        )
+        if(pretargetElement !== undefined) {
+          targets.push(pretargetElement)
+        }
+        else if(pretargetElement === undefined) {
+          targets.push({
+            path: this.path,
+            target: $target,
+            enable: false,
+          })
+        }
       }
     }
     else if(['array', 'string'].includes(typeOfPath)) {
