@@ -6,6 +6,8 @@ export default class EventDefinition {
   #enable = false
   #listener
   #path
+  #enabled = []
+  #disabled = []
   #_target
   #_targets = []
   #_assign
@@ -21,6 +23,16 @@ export default class EventDefinition {
   get #context() { return this.settings.context }
   get #methods() { return this.settings.methods }
   get #target() { return this.settings.target }
+  get #assign() {
+    if(this.#_assign !== undefined) { return this.#_assign }
+    this.#_assign = this.settings.methods.assign[this.settings.assign].bind(this)
+    return this.#_assign
+  }
+  get #deassign() {
+    if(this.#_deassign !== undefined) { return this.#_deassign }
+    this.#_deassign = this.settings.methods.deassign[this.settings.deassign].bind(this)
+    return this.#_deassign
+  }
   get #targets() {
     const pretargets = this.#_targets
     let propertyDirectory = this.#propertyDirectory
@@ -95,35 +107,39 @@ export default class EventDefinition {
   get #propertyDirectory() {
     return propertyDirectory(this.#context, this.settings.propertyDirectory)
   }
+  get enabled() { return this.#enabled }
+  get disabled() { return this.#disabled }
   get enable() { return this.#enable }
   set enable($enable) {
+    this.#enabled.length = 0
+    this.#disabled.length = 0
     const targets = this.#targets
     iterateTargetElements: 
     for(const targetElement of targets) {
       const { path, target, enable } = targetElement
       const settings = this.settings
       if(enable === $enable) { continue iterateTargetElements }
-      try {
-        if($enable === true) {
+      if($enable === true) {
+        try {
           this.#assign(target)
+          targetElement.enable = $enable
+          this.#enabled.push(targetElement)
         }
-        else if($enable === false) {
-          this.#deassign(target)
-        }
-        targetElement.enable = $enable
+        catch($err) { this.#disabled.push(targetElement) }
       }
-      catch($err) { console.error($err) }
+      else if($enable === false) {
+        try {
+          this.#deassign(target)
+          targetElement.enable = $enable
+          this.#disabled.push(targetElement)
+        }
+        catch($err) { this.#enabled.push(targetElement) }
+      }
     }
-    this.#enable = $enable
-  }
-  get #assign() {
-    if(this.#_assign !== undefined) { return this.#_assign }
-    this.#_assign = this.settings.methods.assign[this.settings.assign].bind(this)
-    return this.#_assign
-  }
-  get #deassign() {
-    if(this.#_deassign !== undefined) { return this.#_deassign }
-    this.#_deassign = this.settings.methods.deassign[this.settings.deassign].bind(this)
-    return this.#_deassign
+    if(
+      ($enable === true && this.#disabled.length === 0) || 
+      ($enable === false && this.#enabled.length === 0)
+    ) { this.#enable = $enable }
+    else { this.#enable = null }
   }
 }

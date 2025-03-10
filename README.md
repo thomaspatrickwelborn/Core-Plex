@@ -9,7 +9,9 @@
 > thomas.patrick.welborn@outlook.com
 
 # Core-Plex
-**JavaScript Property Ventilation**  
+**JavaScript Property Ventilation For Node Or Browser Environments**  
+Manage events for any project with plexible inheritance, instantiation, and implementation techniques, Target events for any property with scoped path notation and direct references.  
+
 ## Impetus
  - Managing event addition/removal is necessary for most application development. 
  - Add/Remove event statements are usually disparately located throughout codebases. 
@@ -24,67 +26,6 @@
  - Implement Core-Plex On Existing Objects
  - Extend Core-Plex On Custom Classes
 
-### Manage Any Events For Any Project
-#### Configure Events With Impanded Syntax
-```
-const coreSettings = {
-  events: {
-    "someEvent": eventLog,
-    "some.property.path someEvent": eventLog,
-    "some.array.[0-9] someEvent": eventLog,
-  }
-}
-```
-#### Configure Events With Expanded Syntax
-```
-const coreSettings = {
-  events: [{
-    path: ":scope", type: "someEvent", listener: eventLog,
-    target: {
-      assign: "on", deassign: "off",
-    }
-  }, {
-    path: "some.property.path", type: "someEvent", listener: eventLog,
-    target: {
-      assign: "addEventListener", deassign: "off",
-    }
-  }, {
-    path: "some.array.[0-9]", type: "someEvent", listener: eventLog,
-    target: {
-      assign: "addEventListener", deassign: "off",
-    }
-  }]
-}
-```
-
-#### Ministrate Events With API
-```
-const core = new Core({
-  events: {},
-  enableEvents: true
-})
-core.addEvents({ ... })
-core.getEvents({ ... })
-core.removeEvents({ ... })
-core.enableEvents({ ... })
-core.disableEvents({ ... })
-core.reenableEvents({ ... })
-```
-
-#### Configure Ministration With Settings
-```
-const core = new Core({
-  propertyDefinitions: {
-    enableEvents: 'alterEnableEvents',
-    getEvents: 'alterGetEvents',
-    addEvents: 'alterAddEvents',
-    removeEvents: 'alterRemoveEvents',
-    enableEvents: 'alterEnableEvents',
-    disableEvents: 'alterDisableEvents',
-    reenableEvents: 'alterReenableEvents',
-  }
-})
-```
 
 ## Installation
 ```
@@ -96,9 +37,86 @@ npm install core-plex
 import { Core } from 'core-plex'
 ```
 
+## Illustration
+### Configure Events With Impanded Syntax
+```
+function eventLog($event) { console.log($event.type, $event.detail) }
+const coreSettings = {
+  events: {
+    "someEvent": eventLog,
+    "some.property.path someEvent": eventLog,
+    "some.array.[0-9] someEvent": eventLog,
+  }
+}
+```
+### Configure Events With Expanded Syntax
+```
+const coreSettings = {
+  events: [{
+    path: ":scope", type: "someEvent", listener: eventLog,
+    assign: "on", deassign: "off",
+  }, {
+    path: "some.property.path", type: "someEvent", listener: eventLog,
+    assign: "addEventListener", deassign: "removeEventListener",
+  }, {
+    path: "some.array.[0-9]", type: "someEvent", listener: eventLog,
+    assign: "addEventListener", deassign: "removeEventListener",
+  }]
+}
+```
+
+### Ministrate Events With API
+```
+const core = new Core()
+// Add Events
+core.addEvents(coreSettings.events)
+// Get Events
+core.getEvents({ type: 'someEvent' })
+// Remove Events
+core.removeEvents({ path: ':scope' })
+// Enable Events
+core.enableEvents([
+  { path: 'some.property.path' },
+  { path: 'some.array.[0-9]' },
+])
+// Disable Events
+core.disableEvents({ listener: eventLog })
+// Reenable Events
+core.reenableEvents()
+```
+
+### Configure Method Names With Property Definitions
+```
+const alterCore = new Core(recursiveAssign({
+  propertyDefinitions: {
+    enableEvents: 'alterEnableEvents',
+    getEvents: 'alterGetEvents',
+    addEvents: 'alterAddEvents',
+    removeEvents: 'alterRemoveEvents',
+    enableEvents: 'alterEnableEvents',
+    disableEvents: 'alterDisableEvents',
+    reenableEvents: 'alterReenableEvents',
+  }
+}, $eventSettings))
+// Add Events
+alterCore.alterAddEvents(coreSettings.events)
+// Get Events
+alterCore.alterGetEvents({ type: 'someEvent' })
+// Remove Events
+alterCore.alterRemoveEvents({ path: ':scope' })
+// Enable Events
+alterCore.alterEnableEvents([
+  { path: 'some.property.path' },
+  { path: 'some.array.[0-9]' },
+])
+// Disable Events
+alterCore.alterDisableEvents({ listener: eventLog })
+// Reenable Events
+alterCore.alterReenableEvents()
+```
+
 ## Implementation
-### Example A.1.
-#### Define `target` with event-targetable properties  
+### Define `target` with event-targetable properties  
 ```
 const target = {
   propertyA: new EventTarget(),
@@ -116,9 +134,8 @@ const target = {
   }]
 }
 ```
-#### Add, enable `target` property events with `Core.implement`  
+### Add, enable `target` property events with `Core.implement`  
 ```
-function eventLog($event) { console.log($event.type, $event.detail) }
 Core.implement(target, {
   events: {
     'propertyA customEvent': eventLog,
@@ -128,7 +145,7 @@ Core.implement(target, {
   enableEvents: true
 })
 ```
-#### `dispatchEvent` from `target` properties  
+### `dispatchEvent` from `target` properties  
 ```
 for(const $eventTarget of [
   target.propertyA,
@@ -142,7 +159,7 @@ for(const $eventTarget of [
   )
 }
 ```
-#### `target` property event capture log
+### `target` property event capture log
 ```
 customEvent EventTarget {}
 customEvent EventTarget {}

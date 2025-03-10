@@ -1,4 +1,4 @@
-import { Core, CoreImplement } from '/dependencies/core-plex.js'
+import { Core } from '/dependencies/core-plex.js'
 function eventLog($event) { console.log($event.type, $event.detail) }
 const target = {
   propertyA: new EventTarget(),
