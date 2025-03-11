@@ -193,7 +193,8 @@ var Settings$1 = Object.freeze({
     enableEvents: 'enableEvents',
     disableEvents: 'disableEvents',
     reenableEvents: 'reenableEvents',
-  })
+  }),
+  assign: 'addEventListener', deassign: 'removeEventListener', 
 });
 
 function handleNoCommaBraces(span) {
@@ -729,8 +730,6 @@ var Settings = {
     ($target, $property) => $target?.get($property),
   ],
   target: undefined,
-  assign: 'addEventListener',
-  deassign: 'removeEventListener',
   methods: {
     assign: {
       addEventListener: function($target) {
@@ -763,6 +762,7 @@ var Settings = {
 
 class EventDefinition {
   #settings
+  #context
   #enable = false
   #listener
   #path
@@ -772,27 +772,16 @@ class EventDefinition {
   #_targets = []
   #_assign
   #_deassign
-  constructor($settings) { 
+  constructor($settings, $context) { 
     this.#settings = Object.assign({}, Settings, $settings);
+    this.#context = $context;
     this.enable = this.settings.enable;
   }
   get settings() { return this.#settings }
   get path() { return this.settings.path }
   get type() { return this.settings.type }
   get listener() { return this.settings.listener }
-  get #context() { return this.settings.context }
-  get #methods() { return this.settings.methods }
   get #target() { return this.settings.target }
-  get #assign() {
-    if(this.#_assign !== undefined) { return this.#_assign }
-    this.#_assign = this.settings.methods.assign[this.settings.assign].bind(this);
-    return this.#_assign
-  }
-  get #deassign() {
-    if(this.#_deassign !== undefined) { return this.#_deassign }
-    this.#_deassign = this.settings.methods.deassign[this.settings.deassign].bind(this);
-    return this.#_deassign
-  }
   get #targets() {
     const pretargets = this.#_targets;
     let propertyDirectory = this.#propertyDirectory;
@@ -866,6 +855,17 @@ class EventDefinition {
     this.#_targets = targets;
     return this.#_targets
   }
+  get #assign() {
+    if(this.#_assign !== undefined) { return this.#_assign }
+    this.#_assign = this.settings.methods.assign[this.settings.assign].bind(this);
+    return this.#_assign
+  }
+  get #deassign() {
+    if(this.#_deassign !== undefined) { return this.#_deassign }
+    this.#_deassign = this.settings.methods.deassign[this.settings.deassign].bind(this);
+    return this.#_deassign
+  }
+  get #methods() { return this.settings.methods }
   get #propertyDirectory() {
     return propertyDirectory(this.#context, this.settings.propertyDirectory)
   }
@@ -873,8 +873,11 @@ class EventDefinition {
   get disabled() { return this.#disabled }
   get enable() { return this.#enable }
   set enable($enable) {
-    this.#enabled.length = 0;
-    this.#disabled.length = 0;
+    if($enable === this.enable) { return }
+    const enabled = this.#enabled;
+    const disabled = this.#disabled;
+    enabled.length = 0;
+    disabled.length = 0;
     const targets = this.#targets;
     iterateTargetElements: 
     for(const targetElement of targets) {
@@ -885,24 +888,37 @@ class EventDefinition {
         try {
           this.#assign(target);
           targetElement.enable = $enable;
-          this.#enabled.push(targetElement);
+          enabled.push(targetElement);
         }
-        catch($err) { this.#disabled.push(targetElement); }
+        catch($err) { disabled.push(targetElement); }
       }
       else if($enable === false) {
         try {
           this.#deassign(target);
           targetElement.enable = $enable;
-          this.#disabled.push(targetElement);
+          disabled.push(targetElement);
         }
-        catch($err) { this.#enabled.push(targetElement); }
+        catch($err) { enabled.push(targetElement); }
       }
     }
-    if(
-      ($enable === true && this.#disabled.length === 0) || 
-      ($enable === false && this.#enabled.length === 0)
-    ) { this.#enable = $enable; }
-    else { this.#enable = null; }
+    if((
+      $enable === true && 
+      disabled.length === 0 &&
+      enabled.length > 0
+    ) || 
+    (
+      $enable === false && 
+      enabled.length === 0 && 
+      disabled.length > 0
+    )) { this.#enable = $enable; }
+    else if(
+      disabled.length === 0 &&
+      enabled.length === 0
+    ) { this.#enable = false; }
+    else if(
+      disabled.length > 0 &&
+      enabled.length > 0
+    ) { this.#enable = null; }
   }
 }
 
@@ -920,25 +936,28 @@ class Core extends EventTarget {
           const $events = [].concat(arguments[0]);
           iterateEvents: 
           for(const $event of $events) {
-            const { type, path, listener, enable } = $event;
             const eventFilterProperties = [];
-            if(type !== undefined) { eventFilterProperties.push(['type', type]); }
-            if(path !== undefined) { eventFilterProperties.push(['path', path]); }
-            if(listener !== undefined) { eventFilterProperties.push(['listener', listener]); }
-            if(enable !== undefined) { eventFilterProperties.push(['enable', enable]); }
-            getEvents.push(
-              ...events.filter(($existingEvent) => {
-                return eventFilterProperties.reduce(($match, [
-                  $eventFilterPropertyKey, $eventFilterPropertyValue
-                ]) => {
-                  const match = (
-                    $existingEvent[$eventFilterPropertyKey] === $eventFilterPropertyValue
-                  ) ? true : false;
-                  if($match !== false) { $match = match; }
-                  return $match
-                }, undefined)
-              })
-            );
+            iterateFilterProperties: 
+            for(const [
+              $propertyKey, $propertyValue
+            ] of Object.entries($event)) {
+              eventFilterProperties.push([$propertyKey, $propertyValue]);
+            }
+            iterateExistingEvents: 
+            for(const $existingEvent of events) {
+              let match;
+              iterateEventFilterProperty: 
+              for(const [
+                $eventFilterPropertyKey, $eventFilterPropertyValue
+              ] of eventFilterProperties) {
+                const eventFilterMatch = (
+                  $existingEvent[$eventFilterPropertyKey] === $eventFilterPropertyValue
+                );
+                if(match !== false) { match = eventFilterMatch; }
+                else { break iterateEventFilterProperty }
+              }
+              if(match === true) { getEvents.push($existingEvent); }
+            }
           }
           return getEvents
         }
@@ -950,8 +969,11 @@ class Core extends EventTarget {
           let $events = expandEvents(arguments[0]);
           iterateEvents: 
           for(let $event of $events) {
-            $event = recursiveAssign({ context: $target }, $event);
-            const eventDefinition = new EventDefinition($event);
+            const event = recursiveAssign({
+              assign: settings.assign,
+              deassign: settings.deassign,
+            }, $event);
+            const eventDefinition = new EventDefinition(event, $target);
             events.push(eventDefinition);
           }
           return $target

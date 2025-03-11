@@ -10,8 +10,6 @@ export default {
     ($target, $property) => $target?.get($property),
   ],
   target: undefined,
-  assign: 'addEventListener',
-  deassign: 'removeEventListener',
   methods: {
     assign: {
       addEventListener: function($target) {

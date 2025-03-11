@@ -15,25 +15,28 @@ export default class Core extends EventTarget {
           const $events = [].concat(arguments[0])
           iterateEvents: 
           for(const $event of $events) {
-            const { type, path, listener, enable } = $event
             const eventFilterProperties = []
-            if(type !== undefined) { eventFilterProperties.push(['type', type]) }
-            if(path !== undefined) { eventFilterProperties.push(['path', path]) }
-            if(listener !== undefined) { eventFilterProperties.push(['listener', listener]) }
-            if(enable !== undefined) { eventFilterProperties.push(['enable', enable]) }
-            getEvents.push(
-              ...events.filter(($existingEvent) => {
-                return eventFilterProperties.reduce(($match, [
-                  $eventFilterPropertyKey, $eventFilterPropertyValue
-                ]) => {
-                  const match = (
-                    $existingEvent[$eventFilterPropertyKey] === $eventFilterPropertyValue
-                  ) ? true : false
-                  if($match !== false) { $match = match }
-                  return $match
-                }, undefined)
-              })
-            )
+            iterateFilterProperties: 
+            for(const [
+              $propertyKey, $propertyValue
+            ] of Object.entries($event)) {
+              eventFilterProperties.push([$propertyKey, $propertyValue])
+            }
+            iterateExistingEvents: 
+            for(const $existingEvent of events) {
+              let match
+              iterateEventFilterProperty: 
+              for(const [
+                $eventFilterPropertyKey, $eventFilterPropertyValue
+              ] of eventFilterProperties) {
+                const eventFilterMatch = (
+                  $existingEvent[$eventFilterPropertyKey] === $eventFilterPropertyValue
+                )
+                if(match !== false) { match = eventFilterMatch }
+                else { break iterateEventFilterProperty }
+              }
+              if(match === true) { getEvents.push($existingEvent) }
+            }
           }
           return getEvents
         }
@@ -45,8 +48,11 @@ export default class Core extends EventTarget {
           let $events = expandEvents(arguments[0])
           iterateEvents: 
           for(let $event of $events) {
-            $event = recursiveAssign({ context: $target }, $event)
-            const eventDefinition = new EventDefinition($event)
+            const event = recursiveAssign({
+              assign: settings.assign,
+              deassign: settings.deassign,
+            }, $event)
+            const eventDefinition = new EventDefinition(event, $target)
             events.push(eventDefinition)
           }
           return $target
