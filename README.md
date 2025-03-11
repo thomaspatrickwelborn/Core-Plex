@@ -1,131 +1,87 @@
-> [!WARNING]  
-> Early Stage Development  
-
-> [!CAUTION]  
-> Use At Own Risk  
-
-> [!NOTE]  
-> Interested in Core-Plex? 
-> thomas.patrick.welborn@outlook.com
-
-# Core-Plex
+# ❖ Core-Plex
 **JavaScript Property Ventilation For Node Or Browser Environments**  
-Manage events for any project with plexible inheritance, instantiation, and implementation techniques, Target events for any property with scoped path notation and direct references.  
 
-## Impetus
- - Managing event addition/removal is necessary for most application development. 
- - Add/Remove event statements are usually disparately located throughout codebases. 
- - Event assignment/deassignment differentiate based on event-targetable class prototype. 
+ ⋄ Manage events for any project with plexible [inheritance](#-inheritance), [instantiation](#-instantiation), [implementation](#-implementation) techniques.  
+ ⋄ Target events on any properties with path notation or direct references.  
 
-## Introduction
+## ⁘ Impetus
+ ⋄ Managing event addition/removal is necessary for most application development.  
+ ⋄ Add/Remove event statements are usually disparately located throughout codebases.  
+ ⋄ Event assignment/deassignment differentiate based on event-targetable class prototype.  
+
+## ⁘ Introduction
  - Map Events To Scoped Event Targets With Property Paths
  - Add/Remove, Enable/Disable Pathed Events 
  - Define Property Paths With Dot-Notation, Globbing, And Pattern Matching
    - Supports [Outmatch Syntax](https://www.npmjs.com/package/outmatch#syntax)
  - Enable/Disable Events Dynamically
- - Implement Core-Plex On Existing Objects
+ - Implement Core-Plex On Existing Objects, Class Instances
  - Extend Core-Plex On Custom Classes
 
 
-## Installation
+## ⁘ Installation
 Install `core-plex` via npm CLI.  
 ```
 npm install core-plex
 ```
 
-## Importation
+## ⁘ Importation
 `Core` Class is an ES Module exported from `core-plex`.  
 ```
 import { Core } from 'core-plex'
 ```
 
-## Illustration
-Core-Plex is an event management system with flexible configuration options.  
-### Example A.1.
-#### Instantiate `core` Instance
+## ⁘ Illustrations
+Core-Plex is an event management system with plexible configuration options. Manage events for any event-targetable properties such as HTML Elements, Chokidar Watchers, WebSocket Instances, Mongoose Connections, etc. 
+
+### Browser HTML Example
+**Given some arbitray `app` structure**
 ```
-const core = new Core()
-```
-#### Configure Events With Impanded Syntax
-```
-function eventLog($event) { console.log($event.type, $event.detail) }
-const coreSettings = {
-  events: {
-    "someEvent": eventLog,
-    "some.property.path someEvent": eventLog,
-    "some.array.[0-9] someEvent": eventLog,
+const app = {
+  parentElement: document.querySelector('body'),
+  template: `
+    <app>
+      <nav class="menu">
+        <button data-id="menu-a">Menu A</button>
+        <button data-id="menu-b">Menu B</button>
+        <button data-id="menu-c">Menu C</button>
+      </nav>
+      <nav class="section">
+        <button data-id="section-a">Section A</button>
+        <button data-id="section-b">Section B</button>
+        <button data-id="section-c">Section C</button>
+      </nav>
+    </app>
+  `,
+  qs: Object.defineProperties({}, {
+    app: { get() { return document.querySelector('app') } },
+    menuButton: { get() { return document.querySelectorAll('app > nav.menu > button') } },
+    sectionButton: { get() { return document.querySelectorAll('app > nav.section > button') } },
+  }),
+  render: function() {
+    const app = this.qs.app
+    if(app) app.removeChild()
+    this.parentElement.insertAdjacentHTML('afterbegin', this.template)
+    return this
   }
-}
+}.render()
 ```
-
-#### Ministrate Events With API
+**Core enable `app` events**  
 ```
-// Add Events
-core.addEvents(coreSettings.events)
-// Get Events
-core.getEvents({ type: 'someEvent' })
-// Remove Events
-core.removeEvents({ path: ':scope' })
-// Enable Events
-core.enableEvents([
-  { path: 'some.property.path' },
-  { path: 'some.array.[0-9]' },
-])
-// Disable Events
-core.disableEvents({ listener: eventLog })
-// Reenable Events
-core.reenableEvents()
-
-```
-
-### Example A.2.
-#### Configure Events With Expanded Syntax, Property Definitions
-```
-const coreSettings = {
-  events: [{
-    path: ":scope", type: "someEvent", listener: eventLog,
-    assign: "on", deassign: "off",
-  }, {
-    path: "some.property.path", type: "someEvent", listener: eventLog,
-    assign: "addEventListener", deassign: "removeEventListener",
-  }, {
-    path: "some.array.[0-9]", type: "someEvent", listener: eventLog,
-    assign: "addEventListener", deassign: "removeEventListener",
-  }],
-  propertyDefinitions: {
-    enableEvents: 'alterEnableEvents',
-    getEvents: 'alterGetEvents',
-    addEvents: 'alterAddEvents',
-    removeEvents: 'alterRemoveEvents',
-    enableEvents: 'alterEnableEvents',
-    disableEvents: 'alterDisableEvents',
-    reenableEvents: 'alterReenableEvents',
+Core.implement(app, {
+  events: {
+    'qs.app click': function appClick($event) { console.log($event.type, $event.target) }
+    'qs.menuButton.[0-9] click': function menuButtonClick($event) { console.log($event.type, $event.target) },
+    'qs.sectionButton.[0-9] click': function sectionButtonClick($event) {
+      console.log($event.type, $event.target)
+    },
   },
-}
-```
-#### Configure Method Names With Property Definitions
-```
-const alterCore = new Core(coreSettings)
-// Add Events
-alterCore.alterAddEvents(coreSettings.events)
-// Get Events
-alterCore.alterGetEvents({ type: 'someEvent' })
-// Remove Events
-alterCore.alterRemoveEvents({ path: ':scope' })
-// Enable Events
-alterCore.alterEnableEvents([
-  { path: 'some.property.path' },
-  { path: 'some.array.[0-9]' },
-])
-// Disable Events
-alterCore.alterDisableEvents({ listener: eventLog })
-// Reenable Events
-alterCore.alterReenableEvents()
+  enableEvents: true,
+})
 ```
 
-## Implementation
-### Example B.1.
-#### Predefined `target` with event-targetable properties  
+## ⁘ Implementation
+### ⬦ Predefined `target` with event-targetable properties  
 ```
 const target = {
   propertyA: new EventTarget(),
@@ -143,7 +99,7 @@ const target = {
   }]
 }
 ```
-#### Add, enable `target` property events with `Core.implement`  
+### ⬦ Add, enable `target` property events with `Core.implement`  
 ```
 Core.implement(target, {
   events: {
@@ -154,7 +110,7 @@ Core.implement(target, {
   enableEvents: true
 })
 ```
-#### `dispatchEvent` from `target` properties  
+### ⬦ `dispatchEvent` from `target` properties  
 ```
 for(const $eventTarget of [
   target.propertyA,
@@ -169,8 +125,7 @@ for(const $eventTarget of [
 }
 ```
 
-## Inheritance
-### Example C.1.
+## ⁘ Inheritance
 ```
 class CustomCore extends Core {
   static events = {
@@ -190,8 +145,7 @@ customCore.eventTarget.dispatchEvent(
 )
 ```
 
-## Instantiation
-### Example D.1.
+## ⁘ Instantiation
 ```
 const eventTargetA = new EventTarget()
 const eventTargetB = new EventTarget()
@@ -217,4 +171,3 @@ for(const $eventTarget of [
   )
 }
 ```
-

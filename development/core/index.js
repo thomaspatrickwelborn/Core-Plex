@@ -45,8 +45,7 @@ export default class Core extends EventTarget {
           let $events = expandEvents(arguments[0])
           iterateEvents: 
           for(let $event of $events) {
-            $event = recursiveAssign({ context: $target }, $event)
-            const eventDefinition = new EventDefinition($event)
+            const eventDefinition = new EventDefinition($event, $target)
             events.push(eventDefinition)
           }
           return $target

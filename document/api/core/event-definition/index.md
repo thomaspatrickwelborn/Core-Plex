@@ -1,4 +1,4 @@
-# Event Definition
+# ❖ Core-Plex API \| Event Definition
 Core-Plex \| API \| Core \| *Event Definition*  
 
 ## Overview

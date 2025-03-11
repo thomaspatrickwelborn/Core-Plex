@@ -1,4 +1,4 @@
-# Event Definition
+# ❖ Core-Plex Guide \| Event Definition
 Core-Plex \| Guide \| Core \| *Event Definition*  
 
 ## Event Definition Syntax
