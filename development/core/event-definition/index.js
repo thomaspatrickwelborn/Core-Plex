@@ -13,6 +13,7 @@ export default class EventDefinition {
   #_targets = []
   #_assign
   #_deassign
+  #_transsign
   constructor($settings, $context) { 
     this.#settings = Object.assign({}, Settings, $settings)
     this.#context = $context
@@ -106,6 +107,11 @@ export default class EventDefinition {
     this.#_deassign = this.settings.methods.deassign[this.settings.deassign].bind(this)
     return this.#_deassign
   }
+  get #transsign() {
+    if(this.#_transsign !== undefined) { return this.#_transsign }
+    this.#_transsign = this.settings.methods.transsign[this.settings.transsign].bind(this)
+    return this.#_transsign
+  }
   get #methods() { return this.settings.methods }
   get #propertyDirectory() {
     return propertyDirectory(this.#context, this.settings.propertyDirectory)
@@ -160,5 +166,14 @@ export default class EventDefinition {
       disabled.length > 0 &&
       enabled.length > 0
     ) { this.#enable = null }
+  }
+  emit() {
+    const targets = this.#targets
+    iterateTargetElements: 
+    for(const $targetElement of targets) {
+      const { target } = $targetElement
+      this.#transsign(target, ...arguments)
+    }
+    return this
   }
 }

@@ -173,6 +173,15 @@ function recursiveAssignConcat() {
   return $target
 }
 
+function recursiveFreeze($target) {
+  for(const [$propertyKey, $propertyValue] of Object.entries($target)) {
+    if($propertyValue && typeof $propertyValue === 'object') {
+      recursiveFreeze($target);
+    }
+  }
+  return Object.freeze($target)
+}
+
 var index = /*#__PURE__*/Object.freeze({
   __proto__: null,
   expandEvents: expandEvents,
@@ -180,6 +189,7 @@ var index = /*#__PURE__*/Object.freeze({
   propertyDirectory: propertyDirectory,
   recursiveAssign: recursiveAssign,
   recursiveAssignConcat: recursiveAssignConcat,
+  recursiveFreeze: recursiveFreeze,
   typeOf: typeOf
 });
 
@@ -194,7 +204,9 @@ var Settings$1 = Object.freeze({
     disableEvents: 'disableEvents',
     reenableEvents: 'reenableEvents',
   }),
-  assign: 'addEventListener', deassign: 'removeEventListener', 
+  assign: 'addEventListener', 
+  deassign: 'removeEventListener', 
+  transsign: 'dispatchEvent',
 });
 
 function handleNoCommaBraces(span) {
@@ -722,7 +734,7 @@ var Settings = {
   propertyDirectory: {
     maxDepth: 10,
   },
-  path: ':scope',
+  path: undefined,
   enable: false,
   accessors: ['[]', 'get'],
   accessors: [
@@ -757,6 +769,18 @@ var Settings = {
         return $target['off'](type, listener)
       },
     },
+    transsign: {
+      dispatchEvent: function($target, $event) {
+        return $target['dispatchEvent']($event)
+      },
+      emit: function($target, ...$arguments) {
+        console.log();
+        return $target['emit']($arguments)
+      },
+      send: function($target, $data) {
+        return $target['send']($data)
+      },
+    },
   },
 };
 
@@ -772,6 +796,7 @@ class EventDefinition {
   #_targets = []
   #_assign
   #_deassign
+  #_transsign
   constructor($settings, $context) { 
     this.#settings = Object.assign({}, Settings, $settings);
     this.#context = $context;
@@ -865,6 +890,11 @@ class EventDefinition {
     this.#_deassign = this.settings.methods.deassign[this.settings.deassign].bind(this);
     return this.#_deassign
   }
+  get #transsign() {
+    if(this.#_transsign !== undefined) { return this.#_transsign }
+    this.#_transsign = this.settings.methods.transsign[this.settings.transsign].bind(this);
+    return this.#_transsign
+  }
   get #methods() { return this.settings.methods }
   get #propertyDirectory() {
     return propertyDirectory(this.#context, this.settings.propertyDirectory)
@@ -920,6 +950,15 @@ class EventDefinition {
       enabled.length > 0
     ) { this.#enable = null; }
   }
+  emit() {
+    const targets = this.#targets;
+    iterateTargetElements: 
+    for(const $targetElement of targets) {
+      const { target } = $targetElement;
+      this.#transsign(target, ...arguments);
+    }
+    return this
+  }
 }
 
 class Core extends EventTarget {
@@ -972,6 +1011,7 @@ class Core extends EventTarget {
             const event = recursiveAssign({
               assign: settings.assign,
               deassign: settings.deassign,
+              transsign: settings.transsign,
             }, $event);
             const eventDefinition = new EventDefinition(event, $target);
             events.push(eventDefinition);

@@ -9,5 +9,7 @@ export default Object.freeze({
     disableEvents: 'disableEvents',
     reenableEvents: 'reenableEvents',
   }),
-  assign: 'addEventListener', deassign: 'removeEventListener', 
+  assign: 'addEventListener', 
+  deassign: 'removeEventListener', 
+  transsign: 'dispatchEvent',
 })

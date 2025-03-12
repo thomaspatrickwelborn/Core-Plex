@@ -51,6 +51,7 @@ export default class Core extends EventTarget {
             const event = recursiveAssign({
               assign: settings.assign,
               deassign: settings.deassign,
+              transsign: settings.transsign,
             }, $event)
             const eventDefinition = new EventDefinition(event, $target)
             events.push(eventDefinition)

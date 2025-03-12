@@ -2,7 +2,7 @@ export default {
   propertyDirectory: {
     maxDepth: 10,
   },
-  path: ':scope',
+  path: undefined,
   enable: false,
   accessors: ['[]', 'get'],
   accessors: [
@@ -35,6 +35,18 @@ export default {
       off: function($target) {
         const { type, listener } = this
         return $target['off'](type, listener)
+      },
+    },
+    transsign: {
+      dispatchEvent: function($target, $event) {
+        return $target['dispatchEvent']($event)
+      },
+      emit: function($target, ...$arguments) {
+        console.log()
+        return $target['emit']($arguments)
+      },
+      send: function($target, $data) {
+        return $target['send']($data)
       },
     },
   },
