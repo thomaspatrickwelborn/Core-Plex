@@ -4,65 +4,52 @@ console.log(
   "\n", "------------",
 )
 import { Core } from '/dependencies/core-plex.js'
-function eventLog($event) { console.log($event.type, $event.detail) }
-const coreSettings = {
-  events: {
-    "someEvent": eventLog,
-    "some.property.path someEvent": eventLog,
-    "some.array.[0-9] someEvent": eventLog,
+const app = {
+  parentElement: document.querySelector('body'),
+  template: `
+    <app>
+      <nav class="menu">
+        <button data-id="menu-a">Menu A</button>
+        <button data-id="menu-b">Menu B</button>
+        <button data-id="menu-c">Menu C</button>
+      </nav>
+      <nav class="section">
+        <button data-id="section-a">Section A</button>
+        <button data-id="section-b">Section B</button>
+        <button data-id="section-c">Section C</button>
+      </nav>
+    </app>
+  `,
+  qs: Object.defineProperties({}, {
+    app: { get() { return document.querySelector('app') }, enumerable: true },
+    menuButton: { get() { return document.querySelectorAll('app > nav.menu > button') }, enumerable: true },
+    sectionButton: { get() { return document.querySelectorAll('app > nav.section > button') }, enumerable: true },
+  }),
+  render: function() {
+    const app = this.qs.app
+    this.disableEvents()
+    if(app) app.removeChild()
+    this.parentElement.insertAdjacentHTML('afterbegin', this.template)
+    this.enableEvents()
+    return this
   }
 }
-console.log(`const coreSettings = {
+Core.implement(app, {
   events: {
-    "someEvent": eventLog,
-    "some.property.path someEvent": eventLog,
-    "some.array.[0-9] someEvent": eventLog,
-  }
-}`)
-console.log(`{
-  events: {
-    "someEvent": eventLog,
-    "some.property.path someEvent": eventLog,
-    "some.array.[0-9] someEvent": eventLog,
-  }
-}`)
-const core = new Core()
-// Add Events
-core.addEvents(coreSettings.events)
-
-// Get Events
-core.getEvents({ type: 'someEvent' })
-console.log(
-  "\n", `core.addEvents(coreSettings.events)`,
-  "\n", core.getEvents({ type: 'someEvent' })
-)
-// Remove Events
-core.removeEvents({ path: ':scope' })
-console.log(
-  "\n", `core.removeEvents({ path: ':scope' })`,
-  "\n", core.getEvents({ type: 'someEvent' })
-)
-// Enable Events
-core.enableEvents([
-  { path: 'some.property.path' },
-  { path: 'some.array.[0-9]' },
-])
-console.log(
-  "\n", `core.enableEvents([
-    { path: 'some.property.path' },
-    { path: 'some.array.[0-9]' },
-  ])`,
-  "\n", core.getEvents({ enable: true })
-)
-// Disable Events
-core.disableEvents({ enable: true })
-console.log(
-  "\n", `disableEvents({ enable: true })`,
-  "\n", core.getEvents({ enable: false })
-)
-// Reenable Events
-core.reenableEvents()
-console.log(
-  "\n", `core.reenableEvents()`,
-  "\n", core.getEvents({ enable: true })
-)
+    'qs.app click': function appClick($event) {
+      console.log($event.type, $event.currentTarget.tagName)
+     },
+    'qs.menuButton.[0-9] click': function menuButtonClick($event) {
+      console.log($event.type, $event.currentTarget.innerText)
+    },
+    'qs.sectionButton.[0-9] click': function sectionButtonClick($event) {
+      console.log($event.type, $event.currentTarget.innerText)
+    },
+  },
+})
+.render()
+app
+.getEvents()
+.forEach(($eventDefinition) => $eventDefinition.emit(
+  new CustomEvent('click')
+))

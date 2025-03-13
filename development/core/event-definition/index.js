@@ -30,7 +30,7 @@ export default class EventDefinition {
     const targetPaths = []
     const targets = []
     const typeOfPath = typeOf(this.path)
-    if(this.#target) {
+    if(this.#target !== undefined) {
       for(const $target of [].concat(this.#target)) {
         const pretargetElement = pretargets.find(
           ($pretarget) => $pretarget?.path === this.path

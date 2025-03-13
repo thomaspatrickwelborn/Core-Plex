@@ -1,4 +1,5 @@
-export default {
+import { recursiveFreeze } from '../../../coutil/index.js'
+export default recursiveFreeze({
   propertyDirectory: {
     maxDepth: 10,
   },
@@ -50,4 +51,4 @@ export default {
       },
     },
   },
-}
+})

@@ -18,7 +18,7 @@ EventDefinition {
 }
 ```
 ### `eventDefinition.path`
-**Type**: `string` | `array[string]` | `undefined`  
+**Type**: `string` \| `array[string]` \| `undefined`  
 **Required**: `true`  
 **Descript**:  
  - Path or array of paths to event-targetable properties. 
