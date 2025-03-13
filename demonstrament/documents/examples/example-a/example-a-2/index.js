@@ -55,10 +55,10 @@ console.log(
   "\n", alterCore.alterGetEvents({ enable: true })
 )
 // Disable Events
-alterCore.alterDisableEvents({ enable: true })
+alterCore.alterDisableEvents({ enable: false })
 console.log(
-  "\n", `alterDisableEvents({ enable: true })`,
-  "\n", alterCore.alterGetEvents({ enable: false })
+  "\n", `alterDisableEvents({ enable: false })`,
+  "\n", alterCore.alterGetEvents({ enable: true })
 )
 // Reenable Events
 alterCore.alterReenableEvents()

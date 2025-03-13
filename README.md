@@ -32,9 +32,10 @@ import { Core } from 'core-plex'
 ```
 
 ## ❖ Illustrations
-Core-Plex is an event management system with plexible configuration options. Manage events for any event-targetable properties such as HTML Elements, Chokidar Watchers, WebSocket Instances, Mongoose Connections, etc. 
+Core-Plex is an event management system with plexible configuration. Manage events for any event-targetable properties such as HTML Elements, Chokidar Watchers, WebSocket Instances, Mongoose Connections, etc. 
 
 ### ⬦ Browser HTML Illustration
+#### Example A.1.
 **Core adds, enables `app` events**  
 ```
 Core.implement(app, {
@@ -52,7 +53,7 @@ Core.implement(app, {
   enableEvents: true,
 })
 ```
-**for arbitray `app` structure**
+**for arbitray `app` structure.**
 ```
 const app = {
   parentElement: document.querySelector('body'),
@@ -71,27 +72,50 @@ const app = {
     </app>
   `,
   qs: Object.defineProperties({}, {
-    app: { get() { return document.querySelector('app') } },
-    menuButton: { get() { return document.querySelectorAll('app > nav.menu > button') } },
-    sectionButton: { get() { return document.querySelectorAll('app > nav.section > button') } },
+    app: { get() {
+      return document.querySelector('app')
+    }, enumerable: true },
+    menuButton: { get() {
+      return document.querySelectorAll('app > nav.menu > button')
+    }, enumerable: true },
+    sectionButton: { get() {
+      return document.querySelectorAll('app > nav.section > button')
+    }, enumerable: true },
   }),
   render: function() {
     const app = this.qs.app
+    this.disableEvents()
     if(app) app.removeChild()
     this.parentElement.insertAdjacentHTML('afterbegin', this.template)
+    this.enableEvents()
     return this
   }
-}.render()
+}
+.render()
+.getEvents()
+.forEach(($eventDefinition) => $eventDefinition.emit(
+  new CustomEvent('click', { detail: $eventDefinition.path })
+)
+```
+*Logs*:  
+```
+click APP
+click Menu A
+click Menu B
+click Menu C
+click Section A
+click Section B
+click Section C
 ```
 
 ### ⬦ Node Chokidar Illustration
-**Core ministrates Chokidar watcher events**  
+**Core ministrates Chokidar watcher events.**  
 ```
 import chokidar from 'chokidar'
 const watchers = {
   styleWatcher: chokidar.watch('**/.css')
   scriptWatcher: chokidar.watch('**/.js')
-  structWatcher: chokidar.watch('**/.ejs')
+  structWatcher: chokidar.watch('**/.html')
 }
 const core = Core.implement(watchers, {
   events: {
@@ -146,14 +170,12 @@ Core.implement(target, {
 ```
 ### ⬦ `dispatchEvent` from `target` properties  
 ```
-for(const $eventTarget of [
-  target.propertyA,
-  target.propertyB.propertyC.propertyD,
-  target.propertyE[0].propertyF, 
-  target.propertyE[1].propertyF, 
-  target.propertyE[2].propertyF,
-]) {
-  $eventTarget.dispatchEvent(
+for(const $eventDefinition of this.getEvents([
+  { path: 'propertyA' },
+  { path: 'propertyB.propertyC.propertyD' },
+  { path: 'propertyE.[0-9].propertyF' },
+])) {
+  $eventDefinition.emit(
     new CustomEvent('customEvent', { detail: $eventTarget })
   )
 }
@@ -166,18 +188,25 @@ class CustomCore extends Core {
   static events = {
     'eventTarget customEvent': eventLog
   }
-  eventTarget = new EventTarget()
+  #eventTarget
+  get eventTarget() {
+    if(this.#eventTarget !== undefined) { return this.#eventTarget }
+    this.#eventTarget = new EventTarget()
+    return this.#eventTarget
+  }
   constructor() {
     super({
       events: CustomCore.events
     })
+    this
+      .enableEvents()
+      .getEvents()
+      .forEach(($eventDefinition) => $eventDefinition.emit(
+        new CustomEvent('customEvent', { detail: true })
+      ))
   }
 }
 const customCore = new CustomCore()
-customCore.enableEvents()
-customCore.eventTarget.dispatchEvent(
-  new CustomEvent('customEvent', { detail: true })
-)
 ```
 
 ## ❖ Instantiation
@@ -198,12 +227,14 @@ const coreInstance = new Core({
     target: eventTargetC, listener: eventLog,
   }]
 })
-coreInstance.enableEvents()
-for(const $eventTarget of [
-  eventTargetA, eventTargetB, eventTargetC
-]) {
-  $eventTarget.dispatchEvent(
+coreInstance
+  .enableEvents()
+  .getEvents([
+    { target: eventTargetA }, 
+    { target: eventTargetB }, 
+    { target: eventTargetC }, 
+  ])
+  .forEach(($eventDefinition) => $eventDefinition.dispatchEvent(
     new CustomEvent('anotherEvent', { detail: {} })
-  )
-}
+  ))
 ```

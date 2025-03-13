@@ -176,7 +176,7 @@ function recursiveAssignConcat() {
 function recursiveFreeze($target) {
   for(const [$propertyKey, $propertyValue] of Object.entries($target)) {
     if($propertyValue && typeof $propertyValue === 'object') {
-      recursiveFreeze($target);
+      recursiveFreeze($propertyValue);
     }
   }
   return Object.freeze($target)
@@ -193,17 +193,17 @@ var index = /*#__PURE__*/Object.freeze({
   typeOf: typeOf
 });
 
-var Settings$1 = Object.freeze({
+var Settings$1 = recursiveFreeze({
   events: {},
   enableEvents: false,
-  propertyDefinitions: Object.freeze({
+  propertyDefinitions: {
     getEvents: 'getEvents',
     addEvents: 'addEvents',
     removeEvents: 'removeEvents',
     enableEvents: 'enableEvents',
     disableEvents: 'disableEvents',
     reenableEvents: 'reenableEvents',
-  }),
+  },
   assign: 'addEventListener', 
   deassign: 'removeEventListener', 
   transsign: 'dispatchEvent',
@@ -730,7 +730,7 @@ function outmatch(pattern, options) {
     return fn;
 }
 
-var Settings = {
+var Settings = recursiveFreeze({
   propertyDirectory: {
     maxDepth: 10,
   },
@@ -782,7 +782,7 @@ var Settings = {
       },
     },
   },
-};
+});
 
 class EventDefinition {
   #settings
@@ -813,7 +813,7 @@ class EventDefinition {
     const targetPaths = [];
     const targets = [];
     const typeOfPath = typeOf(this.path);
-    if(this.#target) {
+    if(this.#target !== undefined) {
       for(const $target of [].concat(this.#target)) {
         const pretargetElement = pretargets.find(
           ($pretarget) => $pretarget?.path === this.path
