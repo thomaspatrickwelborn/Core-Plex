@@ -5,7 +5,6 @@ export default recursiveFreeze({
   },
   path: undefined,
   enable: false,
-  accessors: ['[]', 'get'],
   accessors: [
     ($target, $property) => $target[$property],
     ($target, $property) => $target?.get($property),

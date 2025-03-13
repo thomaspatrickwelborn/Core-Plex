@@ -1,15 +1,15 @@
 # ⁘ Core-Plex
 **JavaScript Property Ventilation For Node Or Browser Environments**  
+&emsp;⋄&emsp;Manage events for any project with plexible [inheritance](#-inheritance), [instantiation](#-instantiation), [implementation](#-implementation) techniques.  
+&emsp;⋄&emsp;Target events on any properties with path notation or direct references.  
 
- ⋄ Manage events for any project with plexible [inheritance](#-inheritance), [instantiation](#-instantiation), [implementation](#-implementation) techniques.  
- ⋄ Target events on any properties with path notation or direct references.  
+## ❖&ensp;Impetus
+&emsp;⋄&emsp;Managing event addition/removal/dispatch is necessary for most application development.  
+&emsp;⋄&emsp;Add/Remove/Dispatch event statements are usually disparately located throughout codebases.  
+&emsp;⋄&emsp;Event assignment/deassignment/transsignment differentiate based on event-targetable class prototype.  
 
-## ❖ Impetus
- ⋄ Managing event addition/removal/dispatch is necessary for most application development.  
- ⋄ Add/Remove/Dispatch event statements are usually disparately located throughout codebases.  
- ⋄ Event assignment/deassignment/transsignment differentiate based on event-targetable class prototype.  
-
-## ❖ Introduction
+## ❖&ensp;Introduction
+Core-Plex is an event management system with plexible configuration. Manage events for any event-targetable properties such as HTML Elements, Chokidar Watchers, WebSocket Instances, Mongoose Connections, etc. 
  - Map Events To Scoped Event Targets With Property Paths
  - Add/Remove, Enable/Disable Pathed Events 
  - Define Property Paths With Dot-Notation, Globbing, And Pattern Matching
@@ -19,24 +19,22 @@
  - Extend Core-Plex On Custom Classes
 
 
-## ❖ Installation
+## ❖&ensp;Installation
 Install `core-plex` via npm CLI.  
 ```
 npm install core-plex
 ```
 
-## ❖ Importation
+## ❖&ensp;Importation
 `Core` Class is an ES Module exported from `core-plex`.  
 ```
 import { Core } from 'core-plex'
 ```
 
-## ❖ Illustrations
-Core-Plex is an event management system with plexible configuration. Manage events for any event-targetable properties such as HTML Elements, Chokidar Watchers, WebSocket Instances, Mongoose Connections, etc. 
-
-### ⬦ Browser HTML Illustration
-#### Example A.1.
-**Core adds, enables `app` events**  
+## ❖&ensp;Implementation
+Manage events for properties on **provided `$target`**. 
+### ⬦&ensp;Example A.1. - Browser HTML Event Management
+**`Core.implement` adds, enables `click` events...**  
 ```
 Core.implement(app, {
   events: {
@@ -53,7 +51,7 @@ Core.implement(app, {
   enableEvents: true,
 })
 ```
-**for arbitray `app` structure.**
+**...for arbitray HTML `app` structure.**
 ```
 const app = {
   parentElement: document.querySelector('body'),
@@ -90,46 +88,49 @@ const app = {
     this.enableEvents()
     return this
   }
-}
-.render()
-.getEvents()
-.forEach(($eventDefinition) => $eventDefinition.emit(
-  new CustomEvent('click', { detail: $eventDefinition.path })
-)
-```
-*Logs*:  
-```
-click APP
-click Menu A
-click Menu B
-click Menu C
-click Section A
-click Section B
-click Section C
+}.render()
 ```
 
-### ⬦ Node Chokidar Illustration
+### ⬦&ensp;Example A.2. - Node Chokidar Event Management
 **Core ministrates Chokidar watcher events.**  
 ```
 import chokidar from 'chokidar'
 const watchers = {
-  styleWatcher: chokidar.watch('**/.css')
-  scriptWatcher: chokidar.watch('**/.js')
-  structWatcher: chokidar.watch('**/.html')
+  styleWatcher: chokidar.watch(path.join(__dirname, 'some-files/index.css')),
+  scriptWatcher: chokidar.watch(path.join(__dirname, 'some-files/index.js')),
+  structWatcher: chokidar.watch(path.join(__dirname, 'some-files/index.html')),
 }
 const core = Core.implement(watchers, {
   events: {
+    // Styles
+    'styleWatcher add': function styleWatcherAdd($path) {
+      console.log("add", $path)
+    },
     'styleWatcher change': function styleWatcherChange($path) {
-      console.log($path)
+      console.log("change", $path)
+    },
+    'styleWatcher unlink': function styleWatcherUnlink($path) {
+      console.log("unlink", $path)
+    },
+    // Scripts
+    'scriptWatcher add': function scriptWatcherAdd($path) {
+      console.log("add", $path)
     },
     'scriptWatcher change': function scriptWatcherChange($path) {
-      console.log($path)
+      console.log("change", $path)
+    },
+    'scriptWatcher unlink': function scriptWatcherUnlink($path) {
+      console.log("unlink", $path)
+    },
+    // Structs
+    'structWatcher add': function structWatcherAdd($path) {
+      console.log("add", $path)
     },
     'structWatcher change': function structWatcherChange($path) {
-      console.log($path)
+      console.log("change", $path)
     },
-    '*Watcher error': function styleWatcherError($path) {
-      console.log($path)
+    'structWatcher unlink': function structWatcherUnlink($path) {
+      console.log("unlink", $path)
     },
   },
   enableEvents: true,
@@ -137,11 +138,10 @@ const core = Core.implement(watchers, {
 })
 ```
 
-## ❖ Implementation
-Manage events for properties on **provided `$target`**.  
-### ⬦ Predefined `target` with event-targetable properties  
+### ⬦&ensp;Example A.3. - Node, Browser EventTarget
+**Add, enable `target` property events with `Core.implement`...**  
 ```
-const target = {
+const app = Core.implement(Object.assign(new EventTarget(), {
   propertyA: new EventTarget(),
   propertyB: {
     propertyC: {
@@ -155,61 +155,90 @@ const target = {
   }, {
     propertyF: new EventTarget()
   }]
-}
-```
-### ⬦ Add, enable `target` property events with `Core.implement`  
-```
-Core.implement(target, {
+}), {
   events: {
-    'propertyA customEvent': eventLog,
-    'propertyB.propertyC.propertyD customEvent': eventLog,
-    'propertyE.[0-9].propertyF customEvent': eventLog,
+    'customEvent': ($event) => console.log($event.type, $event.detail),
+    'propertyA customEvent': ($event) => console.log($event.type, $event.detail),
+    'propertyB.propertyC.propertyD customEvent': ($event) => console.log($event.type, $event.detail),
+    'propertyE.[0-9].propertyF customEvent': ($event) => console.log($event.type, $event.detail),
   },
   enableEvents: true
 })
 ```
-### ⬦ `dispatchEvent` from `target` properties  
+**...then `dispatchEvent` from `target` properties.**    
 ```
-for(const $eventDefinition of this.getEvents([
+for(const $eventDefinition of app.getEvents([
+  { path: ':scope' },
   { path: 'propertyA' },
   { path: 'propertyB.propertyC.propertyD' },
   { path: 'propertyE.[0-9].propertyF' },
 ])) {
   $eventDefinition.emit(
-    new CustomEvent('customEvent', { detail: $eventTarget })
+    new CustomEvent('customEvent', { detail: $eventDefinition })
   )
 }
 ```
 
-## ❖ Inheritance
+## ❖&ensp;Inheritance
 Manage events for properties on **new Core instance**.  
+### Example A.4. - `CustomCore` With `CustomCore` Subproperties
+`CustomCore` accepts a `$properties` argument that populates instance with nested `CustomCore` instances.  
 ```
 class CustomCore extends Core {
-  static events = {
-    'eventTarget customEvent': eventLog
-  }
-  #eventTarget
-  get eventTarget() {
-    if(this.#eventTarget !== undefined) { return this.#eventTarget }
-    this.#eventTarget = new EventTarget()
-    return this.#eventTarget
-  }
-  constructor() {
-    super({
-      events: CustomCore.events
-    })
-    this
-      .enableEvents()
-      .getEvents()
-      .forEach(($eventDefinition) => $eventDefinition.emit(
-        new CustomEvent('customEvent', { detail: true })
-      ))
+  constructor($settings, $properties = {}) {
+    super($settings)
+    for(const [
+      $propertyKey, $propertyValue
+    ] of Object.entries($properties)) {
+      if($propertyValue && typeof $propertyValue === 'object') {
+        const subpropertySettings = Object.assign({}, {
+          defineProperties: $settings.defineProperties
+        })
+        Object.defineProperty(this, $propertyKey, {
+          enumerable: true, writable: false,
+          value: new CustomCore({}, $propertyValue),
+        })
+      }
+      else {
+        Object.defineProperty(this, $propertyKey, {
+          enumerable: true, writable: false,
+          value: $propertyValue,
+        })
+      }
+    }
+    if($settings.enableEvents === true) { this.enableEvents() }
   }
 }
-const customCore = new CustomCore()
+const customCore = new CustomCore({
+  events: {
+    'propertyA customEvent': ($event) => {
+      console.log($event.type, $event.detail),
+    },
+    'propertyA.propertyB customEvent': ($event) => {
+      console.log($event.type, $event.detail),
+    },
+    'propertyD.[0-9] customEvent': ($event) => {
+      console.log($event.type, $event.detail),
+    },
+  },
+  enableEvents: true,
+}, {
+  propertyA: {
+    propertyB: {
+      propertyC: 333
+    }
+  },
+  propertyD: [{
+    propertyE: 555
+  }, {
+    propertyF: 666
+  }, {
+    propertyE: 777
+  }]
+})
 ```
 
-## ❖ Instantiation
+## ❖&ensp;Instantiation
 Manage events for properties defined on **Core instance events**.
 ```
 const eventTargetA = new EventTarget()

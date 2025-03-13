@@ -4,7 +4,7 @@ export default {
   path: '/',
   source: 'documents',
   target: 'localhost',
-  ignore: [],
+  ignore: ['examples/example-a/example-a-2'],
   main: 'index.html',
   pilers: {
     sans: [{

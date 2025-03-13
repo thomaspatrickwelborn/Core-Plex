@@ -3,66 +3,58 @@ console.log(
   "\n", "Example A.2.",
   "\n", "------------",
 )
-import { Core } from '/dependencies/core-plex.js'
-function eventLog($event) { console.log($event.type, $event.detail) }
-const coreSettings = {
-  events: [{
-    path: ":scope", type: "someEvent", listener: eventLog,
-    assign: "on", deassign: "off",
-  }, {
-    path: "some.property.path", type: "someEvent", listener: eventLog,
-    assign: "addEventListener", deassign: "removeEventListener",
-  }, {
-    path: "some.array.[0-9]", type: "someEvent", listener: eventLog,
-    assign: "addEventListener", deassign: "removeEventListener",
-  }],
-  propertyDefinitions: {
-    enableEvents: 'alterEnableEvents',
-    getEvents: 'alterGetEvents',
-    addEvents: 'alterAddEvents',
-    removeEvents: 'alterRemoveEvents',
-    enableEvents: 'alterEnableEvents',
-    disableEvents: 'alterDisableEvents',
-    reenableEvents: 'alterReenableEvents',
-  },
+import { fileURLToPath } from 'url'
+import path from 'path'
+import * as inspector from 'node:inspector/promises'
+import chokidar from 'chokidar'
+import { Core } from '../../../../../distributement/core-plex.js'
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+inspector.open()
+const watchers = {
+  styleWatcher: chokidar.watch(path.join(__dirname, 'some-files/index.css')),
+  scriptWatcher: chokidar.watch(path.join(__dirname, 'some-files/index.js')),
+  structWatcher: chokidar.watch(path.join(__dirname, 'some-files/index.html')),
 }
-
-const alterCore = new Core(coreSettings)
-// Add Events
-alterCore.alterAddEvents(coreSettings.events)
-// Get Events
-alterCore.alterGetEvents({ type: 'someEvent' })
-console.log(
-  "\n", `alterCore.alterAddEvents(coreSettings.events)`,
-  "\n", alterCore.alterGetEvents({ type: 'someEvent' })
-)
-// Remove Events
-alterCore.alterRemoveEvents({ path: ':scope' })
-console.log(
-  "\n", `alterCore.alterRemoveEvents({ path: ':scope' })`,
-  "\n", alterCore.alterGetEvents({ type: 'someEvent' })
-)
-// Enable Events
-alterCore.alterEnableEvents([
-  { path: 'some.property.path' },
-  { path: 'some.array.[0-9]' },
-])
-console.log(
-  "\n", `alterCore.alterEnableEvents([
-    { path: 'some.property.path' },
-    { path: 'some.array.[0-9]' },
-  ])`,
-  "\n", alterCore.alterGetEvents({ enable: true })
-)
-// Disable Events
-alterCore.alterDisableEvents({ enable: false })
-console.log(
-  "\n", `alterDisableEvents({ enable: false })`,
-  "\n", alterCore.alterGetEvents({ enable: true })
-)
-// Reenable Events
-alterCore.alterReenableEvents()
-console.log(
-  "\n", `alterCore.alterReenableEvents()`,
-  "\n", alterCore.alterGetEvents({ enable: true })
-)
+const core = Core.implement(watchers, {
+  events: {
+    // Styles
+    'styleWatcher add': function styleWatcherAdd($path) {
+      console.log("add", $path)
+    },
+    'styleWatcher change': function styleWatcherChange($path) {
+      console.log("change", $path)
+    },
+    'styleWatcher unlink': function styleWatcherUnlink($path) {
+      console.log("unlink", $path)
+    },
+    // Scripts
+    'scriptWatcher add': function scriptWatcherAdd($path) {
+      console.log("add", $path)
+    },
+    'scriptWatcher change': function scriptWatcherChange($path) {
+      console.log("change", $path)
+    },
+    'scriptWatcher unlink': function scriptWatcherUnlink($path) {
+      console.log("unlink", $path)
+    },
+    // Structs
+    'structWatcher add': function structWatcherAdd($path) {
+      console.log("add", $path)
+    },
+    'structWatcher change': function structWatcherChange($path) {
+      console.log("change", $path)
+    },
+    'structWatcher unlink': function structWatcherUnlink($path) {
+      console.log("unlink", $path)
+    },
+  },
+  enableEvents: true,
+  assign: 'on', deassign: 'off', 
+})
+core.getEvents().forEach(($eventDefinition) => {
+  $eventDefinition.enabled.forEach(($enabledEvent) => console.log(JSON.stringify({
+    enable: $enabledEvent.enable,
+    path: $enabledEvent.path,
+  }, null, 2)))
+})
