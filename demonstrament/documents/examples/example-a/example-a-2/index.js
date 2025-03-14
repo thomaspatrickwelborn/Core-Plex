@@ -3,6 +3,7 @@ console.log(
   "\n", "Example A.2.",
   "\n", "------------",
 )
+import { writeFile, rm } from 'node:fs/promises'
 import { fileURLToPath } from 'url'
 import path from 'path'
 import * as inspector from 'node:inspector/promises'
@@ -58,3 +59,30 @@ core.getEvents().forEach(($eventDefinition) => {
     path: $enabledEvent.path,
   }, null, 2)))
 })
+// Add Files
+for(const $filepath of [
+  './some-files/index.css', './some-files/index.html', './some-files/index.js'
+]) {
+  const filepath = path.join(__dirname, $filepath)
+  await writeFile(filepath, "", { encoding: 'utf8' })
+}
+// Change
+await new Promise(($resolve, $reject) => {
+  setTimeout(() => $resolve(), 1000)
+})
+for(const $filepath of [
+  './some-files/index.css', './some-files/index.html', './some-files/index.js'
+]) {
+  const filepath = path.join(__dirname, $filepath)
+  await writeFile(filepath, "", { encoding: 'utf8' })
+}
+// Unlink
+await new Promise(($resolve, $reject) => {
+  setTimeout(() => $resolve(), 1000)
+})
+for(const $filepath of [
+  './some-files/index.css', './some-files/index.html', './some-files/index.js'
+]) {
+  const filepath = path.join(__dirname, $filepath)
+  await rm(filepath, { force: true })
+}

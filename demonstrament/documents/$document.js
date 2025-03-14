@@ -4,7 +4,11 @@ export default {
   path: '/',
   source: 'documents',
   target: 'localhost',
-  ignore: ['examples/example-a/example-a-2'],
+  ignore: [
+    'examples/example-a/example-a-2',
+    'examples/example-a/example-a-3/node',
+    'examples/example-a/example-a-5',
+  ],
   main: 'index.html',
   pilers: {
     sans: [{

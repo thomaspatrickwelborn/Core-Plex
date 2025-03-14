@@ -1,6 +1,6 @@
 # ⁘ Core-Plex
 **JavaScript Property Ventilation For Node Or Browser Environments**  
-&emsp;⋄&emsp;Manage events for any project with plexible [inheritance](#-inheritance), [instantiation](#-instantiation), [implementation](#-implementation) techniques.  
+&emsp;⋄&emsp;Manage events for any project with plexible [inheritance](#implementation), [instantiation](#inheritance), [implementation](#implementation) techniques.  
 &emsp;⋄&emsp;Target events on any properties with path notation or direct references.  
 
 ## ❖&ensp;Impetus
@@ -34,8 +34,10 @@ import { Core } from 'core-plex'
 ## ❖&ensp;Implementation
 Manage events for properties on **provided `$target`**. 
 ### ⬦&ensp;Example A.1. - Browser HTML Event Management
+[Example A.1. Code](./demonstrament/documents/examples/example-a/example-a-1/index.js)  
 **`Core.implement` adds, enables `click` events...**  
 ```
+import { Core } from 'core-plex'
 Core.implement(app, {
   events: {
     'qs.app click': function appClick($event) {
@@ -92,9 +94,11 @@ const app = {
 ```
 
 ### ⬦&ensp;Example A.2. - Node Chokidar Event Management
+[Example A.2. Code](./demonstrament/documents/examples/example-a/example-a-2/index.js)  
 **Core ministrates Chokidar watcher events.**  
 ```
 import chokidar from 'chokidar'
+import { Core } from 'core-plex'
 const watchers = {
   styleWatcher: chokidar.watch(path.join(__dirname, 'some-files/index.css')),
   scriptWatcher: chokidar.watch(path.join(__dirname, 'some-files/index.js')),
@@ -139,8 +143,11 @@ const core = Core.implement(watchers, {
 ```
 
 ### ⬦&ensp;Example A.3. - Node, Browser EventTarget
+[Example A.3. Browser Code](./demonstrament/documents/examples/example-a/example-a-3/browser/index.js)  
+[Example A.3. Node Code](./demonstrament/documents/examples/example-a/example-a-3/node/index.js)  
 **Add, enable `target` property events with `Core.implement`...**  
 ```
+import { Core } from 'core-plex'
 const app = Core.implement(Object.assign(new EventTarget(), {
   propertyA: new EventTarget(),
   propertyB: {
@@ -182,8 +189,10 @@ for(const $eventDefinition of app.getEvents([
 ## ❖&ensp;Inheritance
 Manage events for properties on **new extended Core instance**.  
 ### ⬦&ensp;Example A.4. - `CustomCore` With `CustomCore` Subproperties
+[Example A.4. Code](./demonstrament/documents/examples/example-a/example-a-4/index.js)  
 `CustomCore` accepts a `$properties` argument that populates instance with nested `CustomCore` instances.  
 ```
+import { Core } from 'core-plex'
 class CustomCore extends Core {
   constructor($settings, $properties = {}) {
     super($settings)
@@ -241,30 +250,55 @@ const customCore = new CustomCore({
 ## ❖&ensp;Instantiation
 Manage events for properties defined on **Core instance events**.
 ### ⬦&ensp;Example A.5. - `Core` Instance With `EventDefinition.target` Definitions
+[Example A.5. Code](./demonstrament/documents/examples/example-a/example-a-5/index.js)  
 ```
-const eventTargetA = new EventTarget()
-const eventTargetB = new EventTarget()
-const eventTargetC = new EventTarget()
-const coreInstance = new Core({
-  events: [{
-    path: "eventTargetA", type: "anotherEvent", 
-    target: eventTargetA, listener: eventLog,
-  }, {
-    path: "eventTargetB", type: "anotherEvent", 
-    target: eventTargetB, listener: eventLog,
-  }, {
-    path: "eventTargetC", type: "anotherEvent", 
-    target: eventTargetC, listener: eventLog,
-  }]
-})
-coreInstance
-  .enableEvents()
-  .getEvents([
-    { target: eventTargetA }, 
-    { target: eventTargetB }, 
-    { target: eventTargetC }, 
-  ])
-  .forEach(($eventDefinition) => $eventDefinition.dispatchEvent(
-    new CustomEvent('anotherEvent', { detail: {} })
-  ))
+import chokidar from 'chokidar'
+import { Core } from 'core-plex'
+const styleWatcher = chokidar.watch(path.join(__dirname, 'some-files/index.css'))
+const scriptWatcher = chokidar.watch(path.join(__dirname, 'some-files/index.js'))
+const structWatcher = chokidar.watch(path.join(__dirname, 'some-files/index.html'))
+const coreInstance = new Core({ assign: 'on', deassign: 'off' })
+// Struct Events
+coreInstance.addEvents([{
+  path: "styleWatcher", type: "add", 
+  target: styleWatcher, listener: ($path) => console.log("add", $path),
+}, {
+  path: "styleWatcher", type: "change", 
+  target: styleWatcher, listener: ($path) => console.log("change", $path),
+}, {
+  path: "styleWatcher", type: "unlink", 
+  target: styleWatcher, listener: ($path) => console.log("unlink", $path),
+}, {
+  path: "styleWatcher", type: "error", 
+  target: styleWatcher, listener: ($err) => console.log("error", $err),
+}])
+// Script Events
+coreInstance.addEvents([{
+  path: "scriptWatcher", type: "add", 
+  target: scriptWatcher, listener: ($path) => console.log("add", $path),
+}, {
+  path: "scriptWatcher", type: "change", 
+  target: scriptWatcher, listener: ($path) => console.log("change", $path),
+}, {
+  path: "scriptWatcher", type: "unlink", 
+  target: scriptWatcher, listener: ($path) => console.log("unlink", $path),
+}, {
+  path: "scriptWatcher", type: "error", 
+  target: scriptWatcher, listener: ($err) => console.log("error", $err),
+}])
+// Struct Events
+coreInstance.addEvents([{
+  path: "structWatcher", type: "add", 
+  target: structWatcher, listener: ($path) => console.log("add", $path),
+}, {
+  path: "structWatcher", type: "change", 
+  target: structWatcher, listener: ($path) => console.log("change", $path),
+}, {
+  path: "structWatcher", type: "unlink", 
+  target: structWatcher, listener: ($path) => console.log("unlink", $path),
+}, {
+  path: "structWatcher", type: "error", 
+  target: structWatcher, listener: ($err) => console.log("error", $err),
+}])
+.enableEvents()
 ```
