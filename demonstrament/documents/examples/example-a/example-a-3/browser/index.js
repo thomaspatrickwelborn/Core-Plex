@@ -38,5 +38,3 @@ for(const $eventDefinition of app.getEvents([
     new CustomEvent('customEvent', { detail: $eventDefinition })
   )
 }
-console.log(app)
-console.log(app.getEvents())
