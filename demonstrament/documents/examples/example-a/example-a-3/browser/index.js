@@ -1,7 +1,7 @@
 console.log(
-  "\n", "------------",
-  "\n", "Example A.3.",
-  "\n", "------------",
+  "\n", "----------------------",
+  "\n", "Example A.3. (Browser)",
+  "\n", "----------------------",
 )
 import { Core } from '/dependencies/core-plex.js'
 const app = Core.implement(Object.assign(new EventTarget(), {
@@ -31,9 +31,12 @@ for(const $eventDefinition of app.getEvents([
   { path: ':scope' },
   { path: 'propertyA' },
   { path: 'propertyB.propertyC.propertyD' },
+  { path: 'propertyB.propertyC.propertyE' },
   { path: 'propertyE.[0-9].propertyF' },
 ])) {
   $eventDefinition.emit(
     new CustomEvent('customEvent', { detail: $eventDefinition })
   )
 }
+console.log(app)
+console.log(app.getEvents())

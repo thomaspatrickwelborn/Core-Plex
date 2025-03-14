@@ -99,6 +99,7 @@ function recursiveAssign() {
   if(!$target) { return $target}
   iterateSources: 
   for(const $source of $sources) {
+    if(!$source) continue iterateSources
     iterateSourceEntries: 
     for(const [
       $sourcePropertyKey, $sourcePropertyValue
@@ -193,21 +194,37 @@ var index = /*#__PURE__*/Object.freeze({
   typeOf: typeOf
 });
 
-var Settings$1 = recursiveFreeze({
-  events: {},
-  enableEvents: false,
-  propertyDefinitions: {
-    getEvents: 'getEvents',
-    addEvents: 'addEvents',
-    removeEvents: 'removeEvents',
-    enableEvents: 'enableEvents',
-    disableEvents: 'disableEvents',
-    reenableEvents: 'reenableEvents',
-  },
-  assign: 'addEventListener', 
-  deassign: 'removeEventListener', 
-  transsign: 'dispatchEvent',
-});
+var Settings$1 = ($settings = {}) => {
+  const Settings = {
+    events: {},
+    enableEvents: false,
+    propertyDefinitions: {
+      getEvents: 'getEvents',
+      addEvents: 'addEvents',
+      removeEvents: 'removeEvents',
+      enableEvents: 'enableEvents',
+      disableEvents: 'disableEvents',
+      reenableEvents: 'reenableEvents',
+    },
+    assign: 'addEventListener', 
+    deassign: 'removeEventListener', 
+    transsign: 'dispatchEvent',
+  };
+  for(const [$settingKey, $settingValue] of Object.entries($settings)) {
+    switch($settingKey) {
+      case 'enableEvents': 
+      case 'assign': case 'deassign': case 'transsign': 
+      case 'events': 
+      // default: 
+        Settings[$settingKey] = $settingValue;
+        break
+      case 'propertyDefinitions':
+        Settings[$settingKey] = Object.assign(Settings[$settingKey], $settingValue);
+        break
+    }
+  }
+  return Settings
+};
 
 function handleNoCommaBraces(span) {
     if (span.length < 3) {
@@ -730,58 +747,75 @@ function outmatch(pattern, options) {
     return fn;
 }
 
-var Settings = recursiveFreeze({
-  propertyDirectory: {
-    maxDepth: 10,
-  },
-  path: undefined,
-  enable: false,
-  accessors: [
-    ($target, $property) => $target[$property],
-    ($target, $property) => $target?.get($property),
-  ],
-  target: undefined,
-  methods: {
-    assign: {
-      addEventListener: function($target) {
-        const { type, listener, settings } = this;
-        const { options, useCapture } = settings;
-        return $target['addEventListener'](type, listener, options || useCapture)
+var Settings = ($settings = {}) => {
+  const Settings = {
+    propertyDirectory: { maxDepth: 10 },
+    enable: false,
+    accessors: [
+      ($target, $property) => $target[$property],
+      ($target, $property) => $target?.get($property),
+    ],
+    methods: {
+      assign: {
+        addEventListener: function($target) {
+          const { type, listener, settings } = this;
+          const { options, useCapture } = settings;
+          return $target['addEventListener'](type, listener, options || useCapture)
+        },
+        on: function($target) {
+          const { type, listener, settings } = this;
+          return $target['on'](type, listener)
+        },
+        once: function($target) {
+          const { type, listener } = this;
+          return $target['once'](type, listener)
+        },
+      },  
+      deassign: {
+        removeEventListener: function($target) {
+          const { type, listener, settings } = this;
+          const { options, useCapture } = settings;
+          return $target['removeEventListener'](type, listener, options || useCapture)
+        },
+        off: function($target) {
+          const { type, listener } = this;
+          return $target['off'](type, listener)
+        },
       },
-      on: function($target) {
-        const { type, listener, settings } = this;
-        return $target['on'](type, listener)
+      transsign: {
+        dispatchEvent: function($target, $event) {
+          return $target['dispatchEvent']($event)
+        },
+        emit: function($target, ...$arguments) {
+          return $target['emit']($arguments)
+        },
+        send: function($target, $data) {
+          return $target['send']($data)
+        },
       },
-      once: function($target) {
-        const { type, listener } = this;
-        return $target['once'](type, listener)
-      },
-    },  
-    deassign: {
-      removeEventListener: function($target) {
-        const { type, listener, settings } = this;
-        const { options, useCapture } = settings;
-        return $target['removeEventListener'](type, listener, options || useCapture)
-      },
-      off: function($target) {
-        const { type, listener } = this;
-        return $target['off'](type, listener)
-      },
-    },
-    transsign: {
-      dispatchEvent: function($target, $event) {
-        return $target['dispatchEvent']($event)
-      },
-      emit: function($target, ...$arguments) {
-        console.log();
-        return $target['emit']($arguments)
-      },
-      send: function($target, $data) {
-        return $target['send']($data)
-      },
-    },
-  },
-});
+    }
+  };
+  for(const [$settingKey, $settingValue] of Object.entries($settings)) {
+    switch($settingKey) {
+      case 'propertyDirectory':
+        Settings[$settingKey] = Object.assign(Settings[$settingKey], $settingValue);
+        break
+      case 'accessors':
+        Settings[$settingKey] = Settings[$settingKey].concat($settingValue);
+        break
+      case 'methods': 
+        Settings[$settingKey] = recursiveAssign(Settings[$settingKey], $settingValue);
+        break
+      case 'type': case 'path': case 'enable': 
+      case 'target': case 'listener': 
+      case 'assign': case 'deassign': case 'transsign': 
+      // default: 
+        Settings[$settingKey] = $settingValue;
+        break
+    }
+  }
+  return Settings
+};
 
 class EventDefinition {
   #settings
@@ -797,7 +831,7 @@ class EventDefinition {
   #_deassign
   #_transsign
   constructor($settings, $context) { 
-    this.#settings = Object.assign({}, Settings, $settings);
+    this.#settings = Settings($settings);
     this.#context = $context;
     this.enable = this.settings.enable;
   }
@@ -902,12 +936,15 @@ class EventDefinition {
   get disabled() { return this.#disabled }
   get enable() { return this.#enable }
   set enable($enable) {
-    if($enable === this.enable) { return }
+    const targets = this.#targets;
+    if(
+      targets.length === 0 ||
+      $enable === this.enable
+    ) { return }
     const enabled = this.#enabled;
     const disabled = this.#disabled;
     enabled.length = 0;
     disabled.length = 0;
-    const targets = this.#targets;
     iterateTargetElements: 
     for(const targetElement of targets) {
       const { path, target, enable } = targetElement;
@@ -919,7 +956,10 @@ class EventDefinition {
           targetElement.enable = $enable;
           enabled.push(targetElement);
         }
-        catch($err) { disabled.push(targetElement); }
+        catch($err) {
+          throw $err
+          disabled.push(targetElement);
+        }
       }
       else if($enable === false) {
         try {
@@ -934,8 +974,7 @@ class EventDefinition {
       $enable === true && 
       disabled.length === 0 &&
       enabled.length > 0
-    ) || 
-    (
+    ) || (
       $enable === false && 
       enabled.length === 0 && 
       disabled.length > 0
@@ -943,7 +982,7 @@ class EventDefinition {
     else if(
       disabled.length === 0 &&
       enabled.length === 0
-    ) { this.#enable = false; }
+    ) { this.#enable = null; }
     else if(
       disabled.length > 0 &&
       enabled.length > 0
@@ -962,7 +1001,7 @@ class EventDefinition {
 
 class Core extends EventTarget {
   static implement = function ($target, $settings) {
-    const settings = recursiveAssign({}, Settings$1, $settings);
+    const settings = Settings$1($settings);
     const events = [];
     Object.defineProperties($target, {
       // Get Events
@@ -1007,7 +1046,7 @@ class Core extends EventTarget {
           let $events = expandEvents(arguments[0]);
           iterateEvents: 
           for(let $event of $events) {
-            const event = recursiveAssign({
+            const event = Object.assign({
               assign: settings.assign,
               deassign: settings.deassign,
               transsign: settings.transsign,

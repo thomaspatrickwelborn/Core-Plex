@@ -15,7 +15,7 @@ export default class EventDefinition {
   #_deassign
   #_transsign
   constructor($settings, $context) { 
-    this.#settings = Object.assign({}, Settings, $settings)
+    this.#settings = Settings($settings)
     this.#context = $context
     this.enable = this.settings.enable
   }
@@ -120,12 +120,15 @@ export default class EventDefinition {
   get disabled() { return this.#disabled }
   get enable() { return this.#enable }
   set enable($enable) {
-    if($enable === this.enable) { return }
+    const targets = this.#targets
+    if(
+      targets.length === 0 ||
+      $enable === this.enable
+    ) { return }
     const enabled = this.#enabled
     const disabled = this.#disabled
     enabled.length = 0
     disabled.length = 0
-    const targets = this.#targets
     iterateTargetElements: 
     for(const targetElement of targets) {
       const { path, target, enable } = targetElement
@@ -137,7 +140,10 @@ export default class EventDefinition {
           targetElement.enable = $enable
           enabled.push(targetElement)
         }
-        catch($err) { disabled.push(targetElement) }
+        catch($err) {
+          throw $err
+          disabled.push(targetElement)
+        }
       }
       else if($enable === false) {
         try {
@@ -152,8 +158,7 @@ export default class EventDefinition {
       $enable === true && 
       disabled.length === 0 &&
       enabled.length > 0
-    ) || 
-    (
+    ) || (
       $enable === false && 
       enabled.length === 0 && 
       disabled.length > 0
@@ -161,7 +166,7 @@ export default class EventDefinition {
     else if(
       disabled.length === 0 &&
       enabled.length === 0
-    ) { this.#enable = false }
+    ) { this.#enable = null }
     else if(
       disabled.length > 0 &&
       enabled.length > 0

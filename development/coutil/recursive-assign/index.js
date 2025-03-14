@@ -7,6 +7,7 @@ export default function recursiveAssign() {
   if(!$target) { return $target}
   iterateSources: 
   for(const $source of $sources) {
+    if(!$source) continue iterateSources
     iterateSourceEntries: 
     for(const [
       $sourcePropertyKey, $sourcePropertyValue

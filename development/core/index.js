@@ -1,9 +1,9 @@
-import { expandEvents, recursiveAssign, propertyDirectory } from '../coutil/index.js'
+import { expandEvents, propertyDirectory } from '../coutil/index.js'
 import Settings from './settings/index.js'
 import EventDefinition from './event-definition/index.js'
 export default class Core extends EventTarget {
   static implement = function ($target, $settings) {
-    const settings = recursiveAssign({}, Settings, $settings)
+    const settings = Settings($settings)
     const events = []
     Object.defineProperties($target, {
       // Get Events
@@ -48,7 +48,7 @@ export default class Core extends EventTarget {
           let $events = expandEvents(arguments[0])
           iterateEvents: 
           for(let $event of $events) {
-            const event = recursiveAssign({
+            const event = Object.assign({
               assign: settings.assign,
               deassign: settings.deassign,
               transsign: settings.transsign,

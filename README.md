@@ -180,8 +180,8 @@ for(const $eventDefinition of app.getEvents([
 ```
 
 ## ❖&ensp;Inheritance
-Manage events for properties on **new Core instance**.  
-### Example A.4. - `CustomCore` With `CustomCore` Subproperties
+Manage events for properties on **new extended Core instance**.  
+### ⬦&ensp;Example A.4. - `CustomCore` With `CustomCore` Subproperties
 `CustomCore` accepts a `$properties` argument that populates instance with nested `CustomCore` instances.  
 ```
 class CustomCore extends Core {
@@ -240,6 +240,7 @@ const customCore = new CustomCore({
 
 ## ❖&ensp;Instantiation
 Manage events for properties defined on **Core instance events**.
+### ⬦&ensp;Example A.5. - `Core` Instance With `EventDefinition.target` Definitions
 ```
 const eventTargetA = new EventTarget()
 const eventTargetB = new EventTarget()
