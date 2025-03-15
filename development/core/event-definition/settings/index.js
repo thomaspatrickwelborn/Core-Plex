@@ -10,7 +10,7 @@ export default ($settings = {}) => {
     methods: {
       assign: {
         // Event Target Add Event Listener
-        addEventListener: function addEventListener($target) {
+        addEventListener: function addEventListener($eventDefinition, $target) {
           const { type, listener, settings } = $eventDefinition
           const { options, useCapture } = settings
           return $target['addEventListener'](type, listener, options || useCapture)
