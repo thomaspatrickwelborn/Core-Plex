@@ -47,7 +47,7 @@ export default class EventDefinition {
         }
       }
     }
-    else if(['array', 'string'].includes(typeOfPath)) {
+    else if(typeOfPath === 'string') {
       const propertyPathMatcher = outmatch(this.path, {
         separator: '.',
       })
@@ -99,17 +99,17 @@ export default class EventDefinition {
   }
   get #assign() {
     if(this.#_assign !== undefined) { return this.#_assign }
-    this.#_assign = this.settings.methods.assign[this.settings.assign].bind(this)
+    this.#_assign = this.settings.methods.assign[this.settings.assign].bind(null, this)
     return this.#_assign
   }
   get #deassign() {
     if(this.#_deassign !== undefined) { return this.#_deassign }
-    this.#_deassign = this.settings.methods.deassign[this.settings.deassign].bind(this)
+    this.#_deassign = this.settings.methods.deassign[this.settings.deassign].bind(null, this)
     return this.#_deassign
   }
   get #transsign() {
     if(this.#_transsign !== undefined) { return this.#_transsign }
-    this.#_transsign = this.settings.methods.transsign[this.settings.transsign].bind(this)
+    this.#_transsign = this.settings.methods.transsign[this.settings.transsign].bind(null, this)
     return this.#_transsign
   }
   get #methods() { return this.settings.methods }

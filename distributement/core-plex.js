@@ -749,10 +749,6 @@ function outmatch(pattern, options) {
 
 var Settings = ($settings = {}) => {
   const Settings = {
-    // type: undefined,
-    // path: undefined, 
-    // target: undefined,
-    // listener: undefined, 
     propertyDirectory: { maxDepth: 10 },
     enable: false,
     accessors: [
@@ -761,40 +757,44 @@ var Settings = ($settings = {}) => {
     assign: 'addEventListener', deassign: 'removeEventListener', transsign: 'dispatchEvent',
     methods: {
       assign: {
+        // Event Target Add Event Listener
         addEventListener: function addEventListener($target) {
-          const { type, listener, settings } = this;
+          const { type, listener, settings } = $eventDefinition;
           const { options, useCapture } = settings;
           return $target['addEventListener'](type, listener, options || useCapture)
         },
-        on: function on($target) {
-          const { type, listener, settings } = this;
+        // Event Emitter On
+        on: function on($eventDefinition, $target) {
+          const { type, listener } = $eventDefinition;
           return $target['on'](type, listener)
         },
-        once: function once($target) {
-          const { type, listener } = this;
+        // Event Emitter Once
+        once: function once($eventDefinition, $target) {
+          const { type, listener } = $eventDefinition;
           return $target['once'](type, listener)
         },
       },  
       deassign: {
-        removeEventListener: function removeEventListener($target) {
-          const { type, listener, settings } = this;
+        // Event Target Remove Event Listener
+        removeEventListener: function removeEventListener($eventDefinition, $target) {
+          const { type, listener, settings } = $eventDefinition;
           const { options, useCapture } = settings;
           return $target['removeEventListener'](type, listener, options || useCapture)
         },
-        off: function off($target) {
-          const { type, listener } = this;
+        // Event Emitter Off
+        off: function off($eventDefinition, $target) {
+          const { type, listener } = $eventDefinition;
           return $target['off'](type, listener)
         },
       },
       transsign: {
-        dispatchEvent: function dispatchEvent($target, $event) {
+        // Event Target Dispatch Event
+        dispatchEvent: function dispatchEvent($eventDefinition, $target, $event) {
           return $target['dispatchEvent']($event)
         },
-        emit: function emit($target, $type, ...$arguments) {
+        // Event Emitter Emit
+        emit: function emit($eventDefinition, $target, $type, ...$arguments) {
           return $target['emit']($type, ...$arguments)
-        },
-        send: function send($target, $data) {
-          return $target['send']($data)
         },
       },
     },
@@ -810,9 +810,6 @@ var Settings = ($settings = {}) => {
       case 'methods': 
         Settings[$settingKey] = recursiveAssign(Settings[$settingKey], $settingValue);
         break
-      case 'type': case 'path': case 'enable': 
-      case 'target': case 'listener': 
-      case 'assign': case 'deassign': case 'transsign': 
       default: 
         Settings[$settingKey] = $settingValue;
         break
@@ -867,7 +864,7 @@ class EventDefinition {
         }
       }
     }
-    else if(['array', 'string'].includes(typeOfPath)) {
+    else if(typeOfPath === 'string') {
       const propertyPathMatcher = outmatch(this.path, {
         separator: '.',
       });
@@ -919,17 +916,17 @@ class EventDefinition {
   }
   get #assign() {
     if(this.#_assign !== undefined) { return this.#_assign }
-    this.#_assign = this.settings.methods.assign[this.settings.assign].bind(this);
+    this.#_assign = this.settings.methods.assign[this.settings.assign].bind(null, this);
     return this.#_assign
   }
   get #deassign() {
     if(this.#_deassign !== undefined) { return this.#_deassign }
-    this.#_deassign = this.settings.methods.deassign[this.settings.deassign].bind(this);
+    this.#_deassign = this.settings.methods.deassign[this.settings.deassign].bind(null, this);
     return this.#_deassign
   }
   get #transsign() {
     if(this.#_transsign !== undefined) { return this.#_transsign }
-    this.#_transsign = this.settings.methods.transsign[this.settings.transsign].bind(this);
+    this.#_transsign = this.settings.methods.transsign[this.settings.transsign].bind(null, this);
     return this.#_transsign
   }
   get #methods() { return this.settings.methods }
