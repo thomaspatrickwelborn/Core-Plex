@@ -4,10 +4,11 @@ Core-Plex \| API \| Core \| Event Definition \| *Settings*
 ## Event Definition Settings
 **Type**: `object`  
 **Descript**:  
-Event Definition Settings are applied to an Event Definition Class instance. Properties describe: 
+Event Definition Settings are applied to Event Definition Class instances. Properties describe: 
  - how events assign (e.g. `addEventListener`, `on`), deassign (e.g. `removeEventListener`, `off`), and transsign (e.g. `dispatchEvent`, `emit`) from event targets and event types;  
  - how event targets are accessed - either path notation with customizable accessor API or direct target, array of targets; 
- - and how event targets are enabled where `true` indicates events *assigned* to targets while `false` indicates events *deassigned* from targets. 
+ - and how event targets are enabled where `true` indicates events *assigned* to targets while `false` indicates events *deassigned* from targets.  
+
 **Schema**:  
 ```
 {
@@ -42,20 +43,18 @@ Event Definition Settings are applied to an Event Definition Class instance. Pro
 **Required**: `true`  
 **Default**: `undefined`  
 **Descript**:  
- - Path to event-targetable properties or name of a event target(s).   
+ - Path to event-targetable properties or name of event target(s).   
    - Supports globbing with ["Outmatch"](https://www.npmjs.com/package/outmatch#syntax).  
  - When `EventDefinition.target`: 
-   - **is not defined**, `path` references matching targets from context.  
-   - **is defined** `path` references target name; 
+   - **is not defined** `path` references matching targets from context;  
+   - **is defined** `path` references target name.  
 
 ### `EventDefinition.type`
 **Type**: `string`  
 **Required**: `true`  
 **Default**: `undefined`  
 **Descript**:  
-Event type (e.g. `click`, `ready`, `message`) that is listened for. When `type`:  
- - **is provided** it is used in `assign`, `deassign` method classes. When `type`
- - **is not provided**, it may still be used as a listener for "events" or callback hooks with no type (such as `https.listen`). 
+Event type (e.g. `click`, `ready`, `message`) that is listened for. 
 
 ### `EventDefinition.listener`
 **Type**: `function`  
@@ -71,8 +70,8 @@ Function evoked when some event of `EventDefinition.type` occurs.
 **Descript**:  
  - Event-targetable object or array of event-targetable objects. 
  - When `target`: 
-   - **is defined**, `EventDefinition.path` references target name;  
-   - **is not defined**, `EventDefinition.path` references matching targets from context. 
+   - **is defined** `EventDefinition.path` references target name;  
+   - **is not defined** `EventDefinition.path` references matching targets from context. 
 
 ### `EventDefinition.enable`
 **Type**: `boolean`  
@@ -119,27 +118,27 @@ Function evoked when some event of `EventDefinition.type` occurs.
 ```
 {
   assign: {
-    addEventListener: function addEventListener($target) { ... },
-    on: function on($target) { ... },
-    once: function once($target) { ... },
+    addEventListener: function addEventListener($eventDefinition, $target) { ... },
+    on: function on($eventDefinition, $target) { ... },
+    once: function once($eventDefinition, $target) { ... },
   },  
   deassign: {
-    removeEventListener: function removeEventListener($target) { ... },
-    off: function off($target) { ... },
+    removeEventListener: function removeEventListener($eventDefinition, $target) { ... },
+    off: function off($eventDefinition, $target) { ... },
   },
   transsign: {
-    dispatchEvent: function dispatchEvent($target, $event) { ... },
-    emit: function emit($target, $type, ...$arguments) { ... },
-    send: function send($target, $data) { ... },
+    dispatchEvent: function dispatchEvent($eventDefinition, $target, $event) { ... },
+    emit: function emit($eventDefinition, $target, $type, ...$arguments) { ... },
+    send: function send($eventDefinition, $target, $data) { ... },
   },
 }
 ```
 **Descript**:  
-There are three event definition method classes: `assign`, `deassign`, and `transsign`. Each method class function evokes a target's event signment with parametered properties from scoped `EventDefinition` instance (`this`). Event definition methods may be replaced *and* alternate event definition methods may be applied. For example, to overwrite `assign.once` and add `transsign.broadcast`:  
+There are three event definition method classes: `assign`, `deassign`, `transsign`. Each method class function evokes a target's event signment with arguments `$eventDefinition`, `$target`, others. Event definition methods may be replaced *and* **alternate** event definition methods may be applied. For example, to overwrite `assign.once` and add `transsign.broadcast`:  
 ```
 { methods: {
-  assign: { once: function once($target) { ... } } },
-  transsign: { broadcast: function broadcast($target, ...$arguments) { ... } } }
+  assign: { once: function once($eventDefinition, $target) { ... } } },
+  transsign: { broadcast: function broadcast($eventDefinition, $target, ...$arguments) { ... } } }
 }
 ```
 
@@ -147,8 +146,8 @@ There are three event definition method classes: `assign`, `deassign`, and `tran
 **Type**:  `function`  
 **Default**:  
 ```
-function addEventListener($target) {
-  const { type, listener, settings } = this 
+function addEventListener($eventDefinition, $target) {
+  const { type, listener, settings } = $eventDefinition 
   const { options, useCapture } = settings
   return $target['addEventListener'](type, listener, options || useCapture)
 }
@@ -162,8 +161,8 @@ function addEventListener($target) {
 **Type**:  `function`  
 **Default**:  
 ```
-function on($target) {
-  const { type, listener, settings } = this
+function on($eventDefinition, $target) {
+  const { type, listener, settings } = $eventDefinition
   return $target['on'](type, listener)
 }
 ```
@@ -175,8 +174,8 @@ function on($target) {
 **Type**:  `function`  
 **Default**:  
 ```
-function once($target) {
-  const { type, listener } = this
+function once($eventDefinition, $target) {
+  const { type, listener } = $eventDefinition
   return $target['once'](type, listener)
 }
 ```
@@ -188,8 +187,8 @@ function once($target) {
 **Type**:  `function`  
 **Default**:  
 ```
-function removeEventListener($target) {
-  const { type, listener, settings } = this
+function removeEventListener($eventDefinition, $target) {
+  const { type, listener, settings } = $eventDefinition
   const { options, useCapture } = settings
   return $target['removeEventListener'](type, listener, options || useCapture)
 }
@@ -203,8 +202,8 @@ function removeEventListener($target) {
 **Type**:  `function`  
 **Default**:  
 ```
-function off($target) {
-  const { type, listener } = this
+function off($eventDefinition, $target) {
+  const { type, listener } = $eventDefinition
   return $target['off'](type, listener)
 }
 ```
@@ -217,7 +216,7 @@ function off($target) {
 **Type**:  `function`  
 **Default**:  
 ```
-function dispatchEvent($target, $event) {
+function dispatchEvent($eventDefinition, $target, $event) {
   return $target['dispatchEvent']($event)
 }
 ```
@@ -231,7 +230,7 @@ function dispatchEvent($target, $event) {
 **Type**:  `function`  
 **Default**:  
 ```
-function emit($target, $type, ...$arguments) {
+function emit($eventDefinition, $target, $type, ...$arguments) {
   return $target['emit']($type, ...$arguments)
 }
 ```

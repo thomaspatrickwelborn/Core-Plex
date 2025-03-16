@@ -1,6 +1,6 @@
 {
   "name": "core-plex",
-  "version": "1.6.7",
+  "version": "1.6.8",
   "description": "JavaScript Property Ventilation For Node Or Browser Environments\n⋄ Manage events for any project with plexible inheritance, instantiation, and implementation techniques. \n⋄ Target events on any properties with path notation or direct references.",
   "homepage": "https://github.com/thomaspatrickwelborn/Core-Plex#readme",
   "bugs": {
@@ -11,7 +11,13 @@
     "url": "git+https://github.com/thomaspatrickwelborn/Core-Plex.git"
   },
   "keywords": [
-    "event management framework", "event management system", "application event management"
+    "event management framework", 
+    "event management system", 
+    "application event management",
+    "javascript property ventilation",
+    "event mapping system", 
+    "event storage system", 
+    "event enable/disable system"
   ],
   "license": "ISC",
   "author": "Thomas Patrick Welborn",
