@@ -1,27 +1,27 @@
 # ⁘ Core-Plex
 **JavaScript Property Ventilation For Node Or Browser Environments**  
-&emsp;⋄&emsp;Manage events for any project with plexible [implementation](#implementation), [inheritance](#implementation), [instantiation](#inheritance).  
-&emsp;⋄&emsp;Target events on any event-targetable properties with path notation or direct references.  
-&emsp;&emsp;&emsp;⬥&emsp;Supports [Outmatch Syntax](https://www.npmjs.com/package/outmatch#syntax)  
-&emsp;⋄&emsp;Default event-target API support:  
-&emsp;&emsp;&emsp;⬥&emsp;Browser [`EventTarget`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget) (including [`HTMLElement`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement)),  
-&emsp;&emsp;&emsp;⬥&emsp;Node [`EventTarget`](https://nodejs.org/api/events.html#class-eventtarget), [`EventEmitter`](https://nodejs.org/api/events.html#class-eventemitter).  
-&emsp;⋄&emsp;Custom event target API support for anything else.    
+&ensp;⋄&ensp;Manage events for any project with plexible [implementation](#implementation), [inheritance](#implementation), and [instantiation](#inheritance).  
+&ensp;⋄&ensp;Target events on any event-targetable properties with path notation or direct references.  
+&ensp;&ensp;&ensp;⬥&ensp;Supports [Outmatch Syntax](https://www.npmjs.com/package/outmatch#syntax)  
+&ensp;⋄&ensp;Default event-target API support:  
+&ensp;&ensp;&ensp;⬥&ensp;Browser [`EventTarget`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget) (including [`HTMLElement`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement)),  
+&ensp;&ensp;&ensp;⬥&ensp;Node [`EventTarget`](https://nodejs.org/api/events.html#class-eventtarget), [`EventEmitter`](https://nodejs.org/api/events.html#class-eventemitter).  
+&ensp;⋄&ensp;Custom event target API support for anything else.    
 
 ## ❖&ensp;Impetus
-&emsp;⋄&emsp;Managing event addition/removal/dispatch is necessary for *most* application development.  
-&emsp;⋄&emsp;Add/Remove/Dispatch event statements are *usually* disparately located throughout codebases.  
-&emsp;⋄&emsp;Event assignment/deassignment/transsignment *differentiate* based on event-targetable class prototype.  
-&emsp;&emsp;&emsp;⬥&emsp;e.g. `EventTarget` versus `EventEmitter`.  
+&ensp;⋄&ensp;Managing event addition/removal/dispatch is necessary for *most* application development.  
+&ensp;⋄&ensp;Add/Remove/Dispatch event statements are *usually* disparately located throughout codebases.  
+&ensp;⋄&ensp;Event assignment/deassignment/transsignment *differentiate* based on event-targetable class prototype.  
+&ensp;&ensp;&ensp;⬥&ensp;e.g. `EventTarget` versus `EventEmitter`.  
 
 ## ❖&ensp;Introduction
 **Core-Plex Is An Event Management System For Frontend/backend Applications.**  
-&emsp;⋄&emsp;Map Events To Scoped Event Targets With Property Paths  
-&emsp;⋄&emsp;Add/Remove, Enable/Disable Pathed Events   
-&emsp;⋄&emsp;Define Property Paths With Dot-Notation, Globbing, And Pattern Matching  
-&emsp;⋄&emsp;Enable/Disable Events, Emit Events Dynamically  
-&emsp;⋄&emsp;Implement Core-Plex On Existing Objects, Class Instances  
-&emsp;⋄&emsp;Extend Core-Plex On Custom Classes  
+&ensp;⋄&ensp;Map Events To Scoped Event Targets With Property Paths  
+&ensp;⋄&ensp;Add/Remove, Enable/Disable Pathed Events   
+&ensp;⋄&ensp;Define Property Paths With Dot-Notation, Globbing, And Pattern Matching  
+&ensp;⋄&ensp;Enable/Disable Events, Emit Events Dynamically  
+&ensp;⋄&ensp;Implement Core-Plex On Existing Objects, Class Instances  
+&ensp;⋄&ensp;Extend Core-Plex On Custom Classes  
 
 
 ## ❖&ensp;Installation

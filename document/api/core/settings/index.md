@@ -63,8 +63,10 @@ Impanded/expanded event definition formats.
   ]
 }
 ```
-
+### `Core.enableEvents`
+**Type**: `boolean`  
 **Default**: `false`  
+
 ### `Core.propertyDefinitions`
 #### `Core.propertyDefinitionsgetEvents`
 **Type**: `string`  
