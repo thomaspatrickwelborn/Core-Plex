@@ -1,7 +1,13 @@
 # ⁘ Core-Plex
 **JavaScript Property Ventilation For Node Or Browser Environments**  
-&emsp;⋄&emsp;Manage events for any project with plexible [inheritance](#implementation), [instantiation](#inheritance), [implementation](#implementation) techniques.  
-&emsp;⋄&emsp;Target events on any properties with path notation or direct references.  
+Core-Plex is an event management system that ministrates targeted event enability and emission through plexible event definition syntax.  
+&emsp;⋄&emsp;Manage events for any project with plexible [implementation](#implementation), [inheritance](#implementation), [instantiation](#inheritance) techniques.  
+&emsp;⋄&emsp;Target events on any event-targetable properties with path notation or direct references.  
+&emsp;⋄&emsp;Default event-target API support:  
+&emsp;&emsp;&emsp;⋄&emsp;Browser [`EventTarget`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget) (including [`HTMLElement`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement)),  
+&emsp;&emsp;&emsp;⋄&emsp;Node [`EventTarget`](https://nodejs.org/api/events.html#class-eventtarget),  
+&emsp;&emsp;&emsp;⋄&emsp;Node [`EventEmitter`](https://nodejs.org/api/events.html#class-eventemitter).  
+&emsp;⋄&emsp;Customizable event-target API support for anything else.    
 
 ## ❖&ensp;Impetus
 &emsp;⋄&emsp;Managing event addition/removal/dispatch is necessary for most application development.  
@@ -9,7 +15,6 @@
 &emsp;⋄&emsp;Event assignment/deassignment/transsignment differentiate based on event-targetable class prototype.  
 
 ## ❖&ensp;Introduction
-Core-Plex is an event management system with plexible configuration. Manage events for any event-targetable properties such as HTML Elements, Chokidar Watchers, WebSocket Instances, Mongoose Connections, etc. 
  - Map Events To Scoped Event Targets With Property Paths
  - Add/Remove, Enable/Disable Pathed Events 
  - Define Property Paths With Dot-Notation, Globbing, And Pattern Matching
