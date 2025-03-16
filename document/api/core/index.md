@@ -1,73 +1,28 @@
-# ❖ Core-Plex API \| Core
-Core-Plex \| API \| *Core*  
+| [⁘ Core-Plex](../../../README.md) | [API](../index.md) | *Core* |
+| :-- | :-- | :-- |
+# ⁘ Core-Plex API \| Core Class
+| [Core Settings](./settings/index.md) | [Event Definition Class](./event-definition/index.md) |
+| :-- | --- |
 
-## Core `Settings`
-**Type**: `object`  
-**Default**:  
-```
-{
-  events: {},
-  enableEvents: false,
-  propertyDefinitions: {
-    getEvents: 'getEvents',
-    addEvents: 'addEvents',
-    removeEvents: 'removeEvents',
-    enableEvents: 'enableEvents',
-    disableEvents: 'disableEvents',
-    reenableEvents: 'reenableEvents',
-  },
-  assign: 'addEventListener', 
-  deassign: 'removeEventListener', 
-  transsign: 'dispatchEvent',
-} 
-```
-### `Settings.events`
-**Type**: `object` \| `array[object]`  
-**Descript**: Object/array of impanded/expanded Event Definitions.  
-### `Settings.enableEvents`
-**Type**: `boolean`  
-**Descript**: Enable events after addition.  
-### `Settings.propertyDefinitions`
-**Type**: `object`  
-**Descript**: Key/value pairs are default/custom property names.  
-#### `Settings.propertyDefinitions.getEvents`
-**Type**: `string`  
-**Descript**: `getEvents` name.  
-#### `Settings.propertyDefinitions.addEvents`
-**Type**: `string`  
-**Descript**: `addEvents` name.  
-#### `Settings.propertyDefinitions.removeEvents`
-**Type**: `string`  
-**Descript**: `removeEvents` name.  
-#### `Settings.propertyDefinitions.enableEvents`
-**Type**: `string`  
-**Descript**: `enableEvents` name.  
-#### `Settings.propertyDefinitions.disableEvents`
-**Type**: `string`  
-**Descript**: `disableEvents` name.  
-#### `Settings.propertyDefinitions.reenableEvents`
-**Type**: `string`  
-**Descript**: `reenableEvents` name.  
-### Settings.assign
-**Type**: `string`  
-**Descript**: Default event addition method name such as `addEventListener`, `on`.  
-### Settings.deassign
-**Type**: `string`  
-**Descript**: Default event removal method name such as `removeEventListener`, `off`.  
-### Settings.transsign
-**Type**: `string`  
-**Descript**: Default event dispatch method name such as `dispatchEvent`, `emit`.  
-
-## `Core.constructor`
+## `Core.constructor` Method
 **Type**: `function`  
-**Arguments**: `$settings`  
+**Arguments**: `($settings = {})`  
+**Returns** `Core.implement(this, $settings)`  
+**Descript**:  
+Implements `this` with `$settings`.  
+### `Core.constructor` `$settings` Argument
+**Type**: `object`  
+**Required**: `false`  
+**Default**: `{}`  
+**Reference**:  
+ - [Core Settings](./settings/index.md)  
 
 ## Static Methods
-### `static` `Core.implement`
+### `Core.implement`
 **Type**: `function`  
 **Arguments**: `($target, $settings)`  
 **Descript**:  
-Defines methods on a `$target` (with optional custom method names):  
+Defines methods on `$target` (with optional custom method names):  
  - `getEvents`
  - `addEvents`
  - `removeEvents`
@@ -75,35 +30,105 @@ Defines methods on a `$target` (with optional custom method names):
  - `disableEvents`
  - `reenableEvents`
 
-#### `static` `Core.implement` `$target`
+#### `Core.implement` `$target` Argument
 **Type**: `object` \| `array`  
-**Descript**: `$target` is where Core methods are defined.  
-#### `static` `Core.implement` `$settings`
+**Required**: `true`  
+**Default**:  `undefined`  
+**Descript**:  
+When `$target`:  
+ - **is defined** Core methods are defined on `$target`;    
+ - **is undefined** returns `undefined`.  
+
+#### `Core.implement` `$settings` Argument
 **Type**: `object`  
-**Descript**: [Core Settings](#core-settings)
+**Required**: `true`  
+**Default**:  `undefined`  
+**Descript**:  
+When `$settings`:  
+ - **is defined** Core methods are defined on `$target`;  
+ - **is undefined** returns `undefined`.  
+
+**Reference**:  
+ - [Core Settings](./settings/index.md)  
 
 ## Public Methods
+ - Public method names may be modified with [`$settings.propertyDefinitions`](./settings/index.md#settingspropertydefinitions-property) property.  
+ - Public methods are **not** `enumerable` and **not** `writable`.  
 ### `getEvents` Method
 **Type**: `function`  
-**Arguments**: (eventFilters)
+**Arguments**: `($eventFilters)`  
+**Returns**: `array[eventDefinition]`  
+#### `getEvents` `$eventFilters` Arguments
+**Type**: `object`  
+**Required**: `false`  
+**Default**: `undefined`  
+**Descript**:  
+When `$filterEvents`:  
+ - **is defined** iterates event definitions then returns select properties that match all `$eventFilters` properties;  
+ - **is undefined** returns *all event definitions*.  
 
 ### `addEvents` Method
 **Type**: `function`  
 **Arguments**: ($eventDefinitions)  
+**Returns**: `this`  
+#### `addEvents` `$eventDefinitions` Argument
+**Type**: `object`  
+**Default**: `undefined`  
+**Required**: `true`  
+**Descript**:  
+When `$eventDefinitions`:  
+ - **is defined** creates new `EventDefinition` class instances, pushes them to `Core.implement` `events` property;  
+ - **is undefined** returns `$target`.  
 
 ### `removeEvents` Method
 **Type**: `function`  
-**Arguments**: ($eventFilters)  
+**Arguments**: `($eventFilters)`  
+**Returns**: `this`  
+#### `removeEvents` `$eventFilters` Argument
+**Type**: `object`  
+**Default**: `undefined`  
+**Required**: `false`  
+**Descript**:  
+When `$eventFilters`:  
+ - **is defined** removes *added* `EventDefinition` class instances from `this.getEvents($eventFilters)` invocation;  
+ - **is undefined** removes *all* `EventDefinition` class instances from `this.getEvents()` invocation.  
 
 ### `enableEvents` Method
 **Type**: `function`  
-**Arguments**: ($eventFilters)  
+**Arguments**: `($eventFilters)`  
+**Returns**: `this`  
+#### `enableEvents` `$eventFilters` Argument
+**Type**: `object`  
+**Default**: `undefined`  
+**Required**: `false`  
+**Descript**:  
+When `$eventFilters`:  
+ - **is defined** enables *added* `EventDefinition` class instances from `this.getEvents($eventFilters)` invocation;  
+ - **is undefined** enables *all* `EventDefinition` class instances from `this.getEvents()` invocation.  
 
 ### `disableEvents` Method
 **Type**: `function`  
-**Arguments**: ($eventFilters)  
+**Arguments**: `($eventFilters)`  
+**Returns**: `this`  
+#### `disableEvents` `$eventFilters` Argument
+**Type**: `object`  
+**Default**: `undefined`  
+**Required**: `false`  
+**Descript**:  
+When `$eventFilters`:  
+ - **is defined** disables *added* `EventDefinition` class instances from `this.getEvents($eventFilters)` invocation;  
+ - **is undefined** disables *all* `EventDefinition` class instances from `this.getEvents()` invocation.  
 
 ### `reenableEvents` Method
 **Type**: `function`  
-**Arguments**: ($eventFilters)  
+**Arguments**: `($eventFilters)`  
+**Returns**: `this`  
+#### `reenableEvents` `$eventFilters` Argument
+**Type**: `object`  
+**Default**: `undefined`  
+**Required**: `false`  
+**Descript**:  
+When `$eventFilters`:  
+ - **is defined** reenables *added* `EventDefinition` class instances from `this.getEvents($eventFilters)` invocation;  
+ - **is undefined** reenables *all* `EventDefinition` class instances from `this.getEvents()` invocation.  
 

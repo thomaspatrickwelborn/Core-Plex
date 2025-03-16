@@ -1,6 +1,6 @@
-# ❖ Core-Plex Guide \| Event Definition
-Core-Plex \| Guide \| Core \| *Event Definition*  
-
+| [⁘ Core-Plex](../../../../README.md) | [Guide](../../index.md) | [Core](../index.md) | *Event Definition* |
+| :-- | :-- | :-- | :-- |
+# ⁘ Core-Plex Guide \| Event Definition
 ## Event Definition Syntax
 ### Impanded/Expanded Event Syntax
 Event Definitions are composed with "impanded", "expanded" syntax.  

@@ -1,2 +1,5 @@
-# ❖ Core-Plex API
-Core-Plex \| *API*  
+| [⁘ Core-Plex](../../README.md) | *API* | 
+| :-- | :-- |
+# ⁘ Core-Plex API
+| [Core Class](./core/index.md) |
+| :-- |

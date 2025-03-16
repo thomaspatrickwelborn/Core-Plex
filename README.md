@@ -1,10 +1,14 @@
-# ⁘ Core-Plex
+# ⁘&ensp;Core-Plex
+**&ensp;◈&ensp;Event Management System**  
+| [**API**](./document/api/index.md) | [**Guide**](./document/guide/index.md) |
+| :-- | :-- |
+
 **JavaScript Property Ventilation For Node Or Browser Environments**  
 &ensp;⋄&ensp;Manage events for any project with plexible [implementation](#implementation), [inheritance](#implementation), and [instantiation](#inheritance).  
 &ensp;⋄&ensp;Target events on any event-targetable properties with path notation or direct references.  
-&ensp;&ensp;&ensp;⬥&ensp;Supports [Outmatch Syntax](https://www.npmjs.com/package/outmatch#syntax)  
-&ensp;⋄&ensp;Default event-target API support:  
-&ensp;&ensp;&ensp;⬥&ensp;Browser [`EventTarget`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget) (including [`HTMLElement`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement)),  
+&ensp;&ensp;&ensp;⬥&ensp;Supports [Outmatch Syntax](https://www.npmjs.com/package/outmatch#syntax).  
+&ensp;⋄&ensp;Browser, Node event target API support.   
+&ensp;&ensp;&ensp;⬥&ensp;Browser [`EventTarget`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget) (including [`HTMLElement`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement)).  
 &ensp;&ensp;&ensp;⬥&ensp;Node [`EventTarget`](https://nodejs.org/api/events.html#class-eventtarget), [`EventEmitter`](https://nodejs.org/api/events.html#class-eventemitter).  
 &ensp;⋄&ensp;Custom event target API support for anything else.    
 
@@ -12,16 +16,15 @@
 &ensp;⋄&ensp;Managing event addition/removal/dispatch is necessary for *most* application development.  
 &ensp;⋄&ensp;Add/Remove/Dispatch event statements are *usually* disparately located throughout codebases.  
 &ensp;⋄&ensp;Event assignment/deassignment/transsignment *differentiate* based on event-targetable class prototype.  
-&ensp;&ensp;&ensp;⬥&ensp;e.g. `EventTarget` versus `EventEmitter`.  
 
 ## ❖&ensp;Introduction
-**Core-Plex Is An Event Management System For Frontend/backend Applications.**  
-&ensp;⋄&ensp;Map Events To Scoped Event Targets With Property Paths  
-&ensp;⋄&ensp;Add/Remove, Enable/Disable Pathed Events   
-&ensp;⋄&ensp;Define Property Paths With Dot-Notation, Globbing, And Pattern Matching  
-&ensp;⋄&ensp;Enable/Disable Events, Emit Events Dynamically  
-&ensp;⋄&ensp;Implement Core-Plex On Existing Objects, Class Instances  
-&ensp;⋄&ensp;Extend Core-Plex On Custom Classes  
+**Core-Plex Is An Event Management System For Frontend/Backend Applications.**  
+&ensp;⋄&ensp;Map events to scoped event targets with property paths.  
+&ensp;⋄&ensp;Add/remove then enable/disable pathed events.  
+&ensp;⋄&ensp;Define property paths with dot-notation, globbing, and pattern matching.  
+&ensp;⋄&ensp;Enable/disable events, emit events dynamically.  
+&ensp;⋄&ensp;Implement core-plex on existing objects, class instances.  
+&ensp;⋄&ensp;Extend core-plex on custom classes.  
 
 
 ## ❖&ensp;Installation

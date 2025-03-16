@@ -1,22 +1,30 @@
-# ❖ Core-Plex API \| Event Definition \| Settings
-Core-Plex \| API \| Core \| Event Definition \| *Settings*  
+| [⁘ Core-Plex](../../../../../README.md) | [API](../../../index.md) | [Core](../../index.md) | [Event Definition](../index.md) | *Settings* |
+| :-- | :-- | :-- | :-- | :-- |
+# ⁘ Core-Plex API \| Event Definition Settings
 
-## Event Definition Settings
+## `Settings` Method
+**Type**: `function`  
+**Arguments**: `($settings)`  
+**Returns**: `Settings`  
+**Descript**:  
+Method assigns `$settings` argument properties to `Settings` property and returns to [`EventDefinition.constructor`](./index.md#constructor-method) invocation. 
+Properties describe: 
+ - how events assign (e.g. `addEventListener`, `on`, `once`), deassign (e.g. `removeEventListener`, `off`), and transsign (e.g. `dispatchEvent`, `emit`) from event targets and event types;  
+ - how event targets are accessed - either `path` notation with customizable accessor API (`accessors`) or direct `target`/`array[target]`; 
+ - and how event targets are `enabled` where `true` indicates events *assigned* to targets while `false` indicates events *deassigned* from targets.  
+### `$settings` Argument
 **Type**: `object`  
 **Descript**:  
-Event Definition Settings are applied to Event Definition Class instances. Properties describe: 
- - how events assign (e.g. `addEventListener`, `on`), deassign (e.g. `removeEventListener`, `off`), and transsign (e.g. `dispatchEvent`, `emit`) from event targets and event types;  
- - how event targets are accessed - either path notation with customizable accessor API or direct target, array of targets; 
- - and how event targets are enabled where `true` indicates events *assigned* to targets while `false` indicates events *deassigned* from targets.  
-
-**Schema**:  
 ```
 {
+  // Required
   path: string, 
   type: string, 
   listener: function, 
+  // Optional
   target: object | array[object] | undefined, 
-  enable: boolean,
+  enable: boolean | object | array[object],
+  // ...
   assign: string,
   deassign: string,
   transsign: string,
@@ -38,7 +46,15 @@ Event Definition Settings are applied to Event Definition Class instances. Prope
   },
 }
 ```
-### `EventDefinition.path`
+ - Required `$settings` Properties
+   - `$settings.path`, `$settings.type`, and `$settings.listener`
+ - Optional `$settings` Properties
+   - `$settings.$target`, `$settings.$enable`
+   - `$settings.assign`, `$settings.deassign`, `$settings.transsign`, `$settings.accessors`, and `$settings.methods`.  
+ - Custom-assign `Settings` properties by complementary `$settings` properties.  
+   - e.g. Define `$settings.useCapture` and assign value to `Settings.useCapture`.  
+
+### `$settings.path` Property
 **Type**: `string`  
 **Required**: `true`  
 **Default**: `undefined`  
@@ -49,21 +65,21 @@ Event Definition Settings are applied to Event Definition Class instances. Prope
    - **is not defined** `path` references matching targets from context;  
    - **is defined** `path` references target name.  
 
-### `EventDefinition.type`
+### `$settings.type` Property
 **Type**: `string`  
 **Required**: `true`  
 **Default**: `undefined`  
 **Descript**:  
 Event type (e.g. `click`, `ready`, `message`) that is listened for. 
 
-### `EventDefinition.listener`
+### `$settings.listener` Property
 **Type**: `function`  
 **Required**: `true`  
 **Default**: `undefined`  
 **Descript**:  
 Function evoked when some event of `EventDefinition.type` occurs.  
 
-### `EventDefinition.target`
+### `$settings.target` Property
 **Type**: `object` \| array[object] \| `undefined`  
 **Required**: `false`  
 **Default**: `undefined`  
@@ -73,37 +89,41 @@ Function evoked when some event of `EventDefinition.type` occurs.
    - **is defined** `EventDefinition.path` references target name;  
    - **is not defined** `EventDefinition.path` references matching targets from context. 
 
-### `EventDefinition.enable`
-**Type**: `boolean`  
-**Required**: `true`  
+### `$settings.enable` Property
+**Type**: `boolean` \| `object` \| `array[object]`
+**Required**: `false`  
 **Default**: `false`  
 **Descript**:  
-`enable` describes whether event definition target should be initially enabled. When `enable` is `true` and there are no/some event target paths defined, `enable` sets to `false` or `null`.  
+ - `enable` describes event definition targets that should be initially enabled.  
+ - When `enable`:  
+   - **is `true`** all events initially enabled; 
+   - **is `object`**, all events matching `object` properties enabled;  
+   - **is `array[object]`**, all events matching all `array[object]` properties enabled.  
 
-### `EventDefinition.assign`
+### `$settings.assign` Property
 **Type**: `string`  
-**Required**: `true`  
+**Required**: `false`  
 **Default**:  `addEventListener`  
 **Descript**:  
 `assign` describes which event definition method class function to evoke during target event assignment.  
 
-### `EventDefinition.deassign`
+### `$settings.deassign` Property
 **Type**: `string`  
-**Required**: `true`  
+**Required**: `false`  
 **Default**:  `removeEventListener`  
 **Descript**:  
 `deassign` describes which event definition method class function to evoke during target event deassignment.  
 
-### `EventDefinition.transsign`
+### `$settings.transsign` Property
 **Type**: `string`  
-**Required**: `true`  
+**Required**: `false`  
 **Default**:  `dispatchEvent`  
 **Descript**:  
 `transsign` describes which event definition method class function to evoke during target event dispatch.  
 
-### `EventDefinition.accessors`
+### `$settings.accessors` Property
 **Type**: `array[function]`  
-**Required**: `true`  
+**Required**: `false`  
 **Default**: `[ ($target, $property) => $target[$property] ]`  
 **Descript**:  
 `accessors` are functions that return an Event Definition target property when `EventDefinition.enable` is set. Including additional accessors in settings concatenates functions. By default a direct property accessor is defined. For example, to access properties from target that is map:  
@@ -111,9 +131,9 @@ Function evoked when some event of `EventDefinition.type` occurs.
 { accessors: [ ($target, $property) => $target.get($property) ] }
 ```
 
-### `EventDefinition.methods`
+### `$settings.methods` Property
 **Type**: `array[function]`  
-**Required**: `true`  
+**Required**: `false`  
 **Default**:  
 ```
 {
@@ -142,8 +162,9 @@ There are three event definition method classes: `assign`, `deassign`, `transsig
 }
 ```
 
-#### `EventDefinition.methods.assign.addEventListener`
+#### `$settings.methods.assign.addEventListener` Property
 **Type**:  `function`  
+**Required**: `false`  
 **Default**:  
 ```
 function addEventListener($eventDefinition, $target) {
@@ -157,8 +178,9 @@ function addEventListener($eventDefinition, $target) {
  - [Browser EventTarget `addEventListener`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener)
  - [Node EventTarget `addEventListener`](https://nodejs.org/api/events.html#eventtargetaddeventlistenertype-listener-options)
 
-#### `EventDefinition.methods.assign.on`
+#### `$settings.methods.assign.on` Property
 **Type**:  `function`  
+**Required**: `false`  
 **Default**:  
 ```
 function on($eventDefinition, $target) {
@@ -170,8 +192,9 @@ function on($eventDefinition, $target) {
 `on` adds an event listener to a target with paramtered `type`, `listener` properties.  
  - [Node EventEmitter `on`](https://nodejs.org/api/events.html#emitteroneventname-listener)
 
-#### `EventDefinition.methods.assign.once`
+#### `$settings.methods.assign.once` Property
 **Type**:  `function`  
+**Required**: `false`  
 **Default**:  
 ```
 function once($eventDefinition, $target) {
@@ -183,8 +206,9 @@ function once($eventDefinition, $target) {
 `once` adds an event listener to a target with paramtered `type`, `listener` properties that emits only once.  
  - [Node EventEmitter `once`](https://nodejs.org/api/events.html#emitteronceeventname-listener)
  
-#### `EventDefinition.methods.deassign.removeEventListener`
+#### `$settings.methods.deassign.removeEventListener` Property
 **Type**:  `function`  
+**Required**: `false`  
 **Default**:  
 ```
 function removeEventListener($eventDefinition, $target) {
@@ -198,8 +222,9 @@ function removeEventListener($eventDefinition, $target) {
  - [Browser EventTarget `removeEventListener`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener)
  - [Node EventTarget `removeEventListener`](https://nodejs.org/api/events.html#eventtargetremoveeventlistenertype-listener-options)
 
-#### `EventDefinition.methods.deassign.off`
+#### `$settings.methods.deassign.off` Property
 **Type**:  `function`  
+**Required**: `false`  
 **Default**:  
 ```
 function off($eventDefinition, $target) {
@@ -212,8 +237,9 @@ function off($eventDefinition, $target) {
  - [Node EventEmitter `off`](https://nodejs.org/api/events.html#emitteroffeventname-listener)
 
 
-#### `EventDefinition.methods.transsign.dispatchEvent`
+#### `$settings.methods.transsign.dispatchEvent` Property
 **Type**:  `function`  
+**Required**: `false`  
 **Default**:  
 ```
 function dispatchEvent($eventDefinition, $target, $event) {
@@ -226,8 +252,9 @@ function dispatchEvent($eventDefinition, $target, $event) {
  - [Node EventTarget `dispatchEvent`](https://nodejs.org/api/events.html#eventtargetdispatcheventevent)
 
 
-#### `EventDefinition.methods.transsign.emit`
+#### `$settings.methods.transsign.emit` Property
 **Type**:  `function`  
+**Required**: `false`  
 **Default**:  
 ```
 function emit($eventDefinition, $target, $type, ...$arguments) {

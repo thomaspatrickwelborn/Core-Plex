@@ -1,43 +1,41 @@
-# ❖ Core-Plex API \| Event Definition
-Core-Plex \| API \| Core \| *Event Definition*  
-
-## Overview
-Event Definitions contain properties that describe an event including:
- - path to event-target **or** an event-target.  
- - event type, 
- - event listener, 
+| [⁘ Core-Plex](../../../../README.md) | [API](../../index.md) | [Core](../index.md) | *Event Definition* |
+| :-- | :-- | :-- | :-- |
+# ⁘ Core-Plex API \| Event Definition Class
+| [Event Definition Settings](./settings/index.md) |
+| :-- |
 
 ## Constructor
-constructor
+### `constructor` Method
 
 ## Public Properties
-settings
-path
-type
-listener
-enabled
-disabled
-enable
+### `EventDefinition.settings` Property
+### `EventDefinition.path` Property
+### `EventDefinition.type` Property
+### `EventDefinition.listener` Property
+### `EventDefinition.enabled` Property
+### `EventDefinition.disabled` Property
+### `EventDefinition.enable` Property
 
 ## Public Methods
+### `EventDefinition.emit` Method
 
 ## Private Properties
-#settings
-#context
-#enable = false
-#listener
-#path
-#enabled = []
-#disabled = []
-#_target
-#target
-#_targets = []
-#targets
-#_assign
-#assign
-#_deassign
-#deassign
-#_transsign
-#transsign
-#methods
-#propertyDirectory
+### `EventDefinition.#settings` Property
+### `EventDefinition.#context` Property
+### `EventDefinition.#enable` =  Property
+### `EventDefinition.#listener` Property
+### `EventDefinition.#path` Property
+### `EventDefinition.#enabled` Property
+### `EventDefinition.#disabled` Property
+### `EventDefinition.#_target` Property
+### `EventDefinition.#target` Property
+### `EventDefinition.#_targets` Property
+### `EventDefinition.#targets` Property
+### `EventDefinition.#_assign` Property
+### `EventDefinition.#assign` Property
+### `EventDefinition.#_deassign` Property
+### `EventDefinition.#deassign` Property
+### `EventDefinition.#_transsign` Property
+### `EventDefinition.#transsign` Property
+### `EventDefinition.#methods` Property
+### `EventDefinition.#propertyDirectory` Property
