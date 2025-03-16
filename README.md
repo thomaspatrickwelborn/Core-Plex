@@ -1,8 +1,8 @@
 # ⁘ Core-Plex
 **JavaScript Property Ventilation For Node Or Browser Environments**  
-Core-Plex is an event management system that ministrates targeted event enability and emission through plexible event definition syntax.  
 &emsp;⋄&emsp;Manage events for any project with plexible [implementation](#implementation), [inheritance](#implementation), [instantiation](#inheritance) techniques.  
 &emsp;⋄&emsp;Target events on any event-targetable properties with path notation or direct references.  
+&emsp;&emsp;&emsp;⋄&emsp;Supports [Outmatch Syntax](https://www.npmjs.com/package/outmatch#syntax)  
 &emsp;⋄&emsp;Default event-target API support:  
 &emsp;&emsp;&emsp;⋄&emsp;Browser [`EventTarget`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget) (including [`HTMLElement`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement)),  
 &emsp;&emsp;&emsp;⋄&emsp;Node [`EventTarget`](https://nodejs.org/api/events.html#class-eventtarget),  
@@ -18,7 +18,6 @@ Core-Plex is an event management system that ministrates targeted event enabilit
  - Map Events To Scoped Event Targets With Property Paths
  - Add/Remove, Enable/Disable Pathed Events 
  - Define Property Paths With Dot-Notation, Globbing, And Pattern Matching
-   - Supports [Outmatch Syntax](https://www.npmjs.com/package/outmatch#syntax)
  - Enable/Disable Events, Emit Events Dynamically
  - Implement Core-Plex On Existing Objects, Class Instances
  - Extend Core-Plex On Custom Classes
