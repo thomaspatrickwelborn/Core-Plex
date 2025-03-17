@@ -1,16 +1,15 @@
 # ⁘&ensp;Core-Plex
-**&ensp;◈&ensp;Event Management System**  
 | [**API**](./document/api/index.md) | [**Guide**](./document/guide/index.md) |
 | :-- | :-- |
 
-**JavaScript Property Ventilation For Node Or Browser Environments**  
-&ensp;⋄&ensp;Manage events for any project with plexible [implementation](#implementation), [inheritance](#implementation), and [instantiation](#inheritance).  
-&ensp;⋄&ensp;Target events on any event-targetable properties with path notation or direct references.  
-&ensp;&ensp;&ensp;⬥&ensp;Supports [Outmatch Syntax](https://www.npmjs.com/package/outmatch#syntax).  
-&ensp;⋄&ensp;Browser, Node event target API support.   
-&ensp;&ensp;&ensp;⬥&ensp;Browser [`EventTarget`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget) (including [`HTMLElement`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement)).  
-&ensp;&ensp;&ensp;⬥&ensp;Node [`EventTarget`](https://nodejs.org/api/events.html#class-eventtarget), [`EventEmitter`](https://nodejs.org/api/events.html#class-eventemitter).  
-&ensp;⋄&ensp;Custom event target API support for anything else.    
+**&ensp;◈&ensp;JavaScript Property Ventilation For Node Or Browser Environments**  
+&ensp;&ensp;&ensp;⋄&ensp;Manage events for any project with plexible [implementation](#implementation), [inheritance](#implementation), and [instantiation](#inheritance).  
+&ensp;&ensp;&ensp;⋄&ensp;Target events on any event-targetable properties with path notation or direct references.  
+&ensp;&ensp;&ensp;&ensp;&ensp;⬥&ensp;Supports [Outmatch Syntax](https://www.npmjs.com/package/outmatch#syntax).  
+&ensp;&ensp;&ensp;⋄&ensp;Browser, Node event target API support.   
+&ensp;&ensp;&ensp;&ensp;&ensp;⬥&ensp;Browser [`EventTarget`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget) (including [`HTMLElement`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement)).  
+&ensp;&ensp;&ensp;&ensp;&ensp;⬥&ensp;Node [`EventTarget`](https://nodejs.org/api/events.html#class-eventtarget), [`EventEmitter`](https://nodejs.org/api/events.html#class-eventemitter).  
+&ensp;&ensp;&ensp;⋄&ensp;Custom event target API support for anything else.    
 
 ## ❖&ensp;Impetus
 &ensp;⋄&ensp;Managing event addition/removal/dispatch is necessary for *most* application development.  

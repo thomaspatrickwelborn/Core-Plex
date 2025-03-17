@@ -1,7 +1,6 @@
 | [⁘ Core-Plex](../../../../../README.md) | [API](../../../index.md) | [Core](../../index.md) | [Event Definition](../index.md) | *Settings* |
 | :-- | :-- | :-- | :-- | :-- |
 # ⁘ Core-Plex API \| Event Definition Settings
-
 ## `Settings` Method
 **Type**: `function`  
 **Arguments**: `($settings)`  
@@ -51,7 +50,7 @@ Properties describe:
  - Optional `$settings` Properties
    - `$settings.$target`, `$settings.$enable`
    - `$settings.assign`, `$settings.deassign`, `$settings.transsign`, `$settings.accessors`, and `$settings.methods`.  
- - Custom-assign `Settings` properties by complementary `$settings` properties.  
+ - Custom-assign `Settings` properties from complementary `$settings` properties.  
    - e.g. Define `$settings.useCapture` and assign value to `Settings.useCapture`.  
 
 ### `$settings.path` Property
