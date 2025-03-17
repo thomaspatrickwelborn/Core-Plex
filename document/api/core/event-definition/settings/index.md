@@ -3,12 +3,12 @@
 # ⁘ Core-Plex API \| Event Definition Settings
 ## `Settings` Method
 **Type**: `function`  
-**Arguments**: `($settings)`  
+**Arguments**: `($settings = {})`  
 **Returns**: `Settings`  
 **Descript**:  
 Method assigns `$settings` argument properties to `Settings` property and returns to [`EventDefinition.constructor`](./index.md#constructor-method) invocation. 
 Properties describe: 
- - how events assign (e.g. `addEventListener`, `on`, `once`), deassign (e.g. `removeEventListener`, `off`), and transsign (e.g. `dispatchEvent`, `emit`) from event targets and event types;  
+ - how events `assign` (e.g. `addEventListener`, `on`, `once`), `deassign` (e.g. `removeEventListener`, `off`), and `transsign` (e.g. `dispatchEvent`, `emit`) from event targets and event types;  
  - how event targets are accessed - either `path` notation with customizable accessor API (`accessors`) or direct `target`/`array[target]`; 
  - and how event targets are `enabled` where `true` indicates events *assigned* to targets while `false` indicates events *deassigned* from targets.  
 ### `$settings` Argument
@@ -45,13 +45,15 @@ Properties describe:
   },
 }
 ```
- - Required `$settings` Properties
-   - `$settings.path`, `$settings.type`, and `$settings.listener`
- - Optional `$settings` Properties
-   - `$settings.$target`, `$settings.$enable`
-   - `$settings.assign`, `$settings.deassign`, `$settings.transsign`, `$settings.accessors`, and `$settings.methods`.  
- - Custom-assign `Settings` properties from complementary `$settings` properties.  
-   - e.g. Define `$settings.useCapture` and assign value to `Settings.useCapture`.  
+**Required `$settings` Properties**  
+ - `$settings.path`, `$settings.type`, and `$settings.listener`  
+
+**Optional `$settings` Properties**  
+ - `$settings.$target`, `$settings.$enable`,  
+ - `$settings.assign`, `$settings.deassign`, `$settings.transsign`, `$settings.accessors`, and `$settings.methods`.  
+
+**Custom-assign `Settings` properties from complementary `$settings` properties.**  
+ - e.g. Define `$settings.useCapture` and assign value to `Settings.useCapture`.  
 
 ### `$settings.path` Property
 **Type**: `string`  
@@ -79,7 +81,7 @@ Event type (e.g. `click`, `ready`, `message`) that is listened for.
 Function evoked when some event of `EventDefinition.type` occurs.  
 
 ### `$settings.target` Property
-**Type**: `object` \| array[object] \| `undefined`  
+**Type**: `object` \| `array[object]` \| `undefined`  
 **Required**: `false`  
 **Default**: `undefined`  
 **Descript**:  
@@ -89,7 +91,7 @@ Function evoked when some event of `EventDefinition.type` occurs.
    - **is not defined** `EventDefinition.path` references matching targets from context. 
 
 ### `$settings.enable` Property
-**Type**: `boolean` \| `object` \| `array[object]`
+**Type**: `boolean` \| `object` \| `array[object]`  
 **Required**: `false`  
 **Default**: `false`  
 **Descript**:  

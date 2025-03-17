@@ -18,7 +18,7 @@ Implements `this` with `$settings`.
  - [Core Settings](./settings/index.md)  
 
 ## Static Methods
-### `Core.implement`
+### `Core.implement` Method
 **Type**: `function`  
 **Arguments**: `($target, $settings)`  
 **Descript**:  
@@ -58,7 +58,7 @@ When `$settings`:
 **Type**: `function`  
 **Arguments**: `($eventFilters)`  
 **Returns**: `array[eventDefinition]`  
-#### `getEvents` `$eventFilters` Arguments
+#### `getEvents` `$eventFilters` Argument
 **Type**: `object`  
 **Required**: `false`  
 **Default**: `undefined`  
@@ -69,7 +69,7 @@ When `$filterEvents`:
 
 ### `addEvents` Method
 **Type**: `function`  
-**Arguments**: ($eventDefinitions)  
+**Arguments**: `($eventDefinitions)`  
 **Returns**: `this`  
 #### `addEvents` `$eventDefinitions` Argument
 **Type**: `object`  

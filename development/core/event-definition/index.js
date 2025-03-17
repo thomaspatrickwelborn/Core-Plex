@@ -5,16 +5,15 @@ export default class EventDefinition {
   #settings
   #context
   #enable = false
-  #listener
   #path
   #enabled = []
   #disabled = []
-  #_target
   #_targets = []
   #_assign
   #_deassign
   #_transsign
   constructor($settings, $context) { 
+    if(!$settings || !$context) { return this }
     this.#settings = Settings($settings)
     this.#context = $context
     this.enable = this.settings.enable
@@ -23,13 +22,66 @@ export default class EventDefinition {
   get path() { return this.settings.path }
   get type() { return this.settings.type }
   get listener() { return this.settings.listener }
+  get enable() { return this.#enable }
+  set enable($enable) {
+    if(![true, false].includes($enable)) { return }
+    const targets = this.#targets
+    if(targets.length === 0) { return }
+    const enabled = this.#enabled
+    const disabled = this.#disabled
+    enabled.length = 0
+    disabled.length = 0
+    iterateTargetElements: 
+    for(const $targetElement of targets) {
+      const { path, target, enable } = $targetElement
+      const settings = this.settings
+      if(enable === $enable) { continue iterateTargetElements }
+      if($enable === true) {
+        try {
+          this.#assign(target)
+          $targetElement.enable = $enable
+          enabled.push($targetElement)
+        }
+        catch($err) {
+          throw $err
+          disabled.push($targetElement)
+        }
+      }
+      else if($enable === false) {
+        try {
+          this.#deassign(target)
+          $targetElement.enable = $enable
+          disabled.push($targetElement)
+        }
+        catch($err) { enabled.push($targetElement) }
+      }
+    }
+    if((
+      $enable === true && 
+      disabled.length === 0 &&
+      enabled.length > 0
+    ) || (
+      $enable === false && 
+      enabled.length === 0 && 
+      disabled.length > 0
+    )) { this.#enable = $enable }
+    else if(
+      disabled.length === 0 &&
+      enabled.length === 0
+    ) { this.#enable = null }
+    else if(
+      disabled.length > 0 &&
+      enabled.length > 0
+    ) { this.#enable = null }
+  }
+  get enabled() { return this.#enabled }
+  get disabled() { return this.#disabled }
   get #target() { return this.settings.target }
   get #targets() {
     const pretargets = this.#_targets
     let propertyDirectory = this.#propertyDirectory
     const targetPaths = []
     const targets = []
-    const typeOfPath = typeOf(this.path)
     if(this.#target !== undefined) {
       for(const $target of [].concat(this.#target)) {
         const pretargetElement = pretargets.find(
@@ -47,7 +99,7 @@ export default class EventDefinition {
         }
       }
     }
-    else if(typeOfPath === 'string') {
+    else if(typeOf(this.path) === 'string') {
       const propertyPathMatcher = outmatch(this.path, {
         separator: '.',
       })
@@ -115,62 +167,6 @@ export default class EventDefinition {
   get #methods() { return this.settings.methods }
   get #propertyDirectory() {
     return propertyDirectory(this.#context, this.settings.propertyDirectory)
-  }
-  get enabled() { return this.#enabled }
-  get disabled() { return this.#disabled }
-  get enable() { return this.#enable }
-  set enable($enable) {
-    const targets = this.#targets
-    if(
-      targets.length === 0 ||
-      $enable === this.enable
-    ) { return }
-    const enabled = this.#enabled
-    const disabled = this.#disabled
-    enabled.length = 0
-    disabled.length = 0
-    iterateTargetElements: 
-    for(const targetElement of targets) {
-      const { path, target, enable } = targetElement
-      const settings = this.settings
-      if(enable === $enable) { continue iterateTargetElements }
-      if($enable === true) {
-        try {
-          this.#assign(target)
-          targetElement.enable = $enable
-          enabled.push(targetElement)
-        }
-        catch($err) {
-          throw $err
-          disabled.push(targetElement)
-        }
-      }
-      else if($enable === false) {
-        try {
-          this.#deassign(target)
-          targetElement.enable = $enable
-          disabled.push(targetElement)
-        }
-        catch($err) { enabled.push(targetElement) }
-      }
-    }
-    if((
-      $enable === true && 
-      disabled.length === 0 &&
-      enabled.length > 0
-    ) || (
-      $enable === false && 
-      enabled.length === 0 && 
-      disabled.length > 0
-    )) { this.#enable = $enable }
-    else if(
-      disabled.length === 0 &&
-      enabled.length === 0
-    ) { this.#enable = null }
-    else if(
-      disabled.length > 0 &&
-      enabled.length > 0
-    ) { this.#enable = null }
   }
   emit() {
     const targets = this.#targets
