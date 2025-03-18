@@ -43,11 +43,7 @@ export default class Core extends EventTarget {
           let $addEvents = expandEvents(arguments[0])
           iterateAddEvents: 
           for(let $addEvent of $addEvents) {
-            const event = Object.assign({
-              assign: settings.assign,
-              deassign: settings.deassign,
-              transsign: settings.transsign,
-            }, $addEvent)
+            const event = Object.assign({}, settings, $addEvent)
             const eventDefinition = new EventDefinition(event, $target)
             events.push(eventDefinition)
           }

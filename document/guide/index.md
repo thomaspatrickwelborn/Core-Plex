@@ -1,5 +1,7 @@
 | [⁘ Core-Plex](../../README.md) | *Guide* |
 | :-- | :-- |
 # ⁘ Core-Plex Guide
-| [Core Class](./core/index.md) |
-| :-- |
+| [Event Ministration](./event-ministration/index.md) | [Event Definitions](./event-definitions/index.md) |
+| :-- | :-- |
+
+

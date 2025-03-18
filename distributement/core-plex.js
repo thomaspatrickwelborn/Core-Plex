@@ -206,18 +206,12 @@ var Settings$1 = ($settings = {}) => {
       disableEvents: 'disableEvents',
       reenableEvents: 'reenableEvents',
     },
-    assign: 'addEventListener', 
-    deassign: 'removeEventListener', 
-    transsign: 'dispatchEvent',
   };
   for(const [$settingKey, $settingValue] of Object.entries($settings)) {
     switch($settingKey) {
       case 'propertyDefinitions':
         Settings[$settingKey] = Object.assign(Settings[$settingKey], $settingValue);
         break
-      case 'enableEvents': 
-      case 'assign': case 'deassign': case 'transsign': 
-      case 'events': 
       default: 
         Settings[$settingKey] = $settingValue;
         break
@@ -1038,11 +1032,7 @@ class Core extends EventTarget {
           let $addEvents = expandEvents(arguments[0]);
           iterateAddEvents: 
           for(let $addEvent of $addEvents) {
-            const event = Object.assign({
-              assign: settings.assign,
-              deassign: settings.deassign,
-              transsign: settings.transsign,
-            }, $addEvent);
+            const event = Object.assign({}, settings, $addEvent);
             const eventDefinition = new EventDefinition(event, $target);
             events.push(eventDefinition);
           }
