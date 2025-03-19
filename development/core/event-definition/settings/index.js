@@ -63,6 +63,7 @@ export default ($settings = {}) => {
       case 'methods': 
         Settings[$settingKey] = recursiveAssign(Settings[$settingKey], $settingValue)
         break
+      case 'enableEvents': break
       default: 
         Settings[$settingKey] = $settingValue
         break

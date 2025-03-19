@@ -91,7 +91,22 @@ export default class EventDefinition {
     let propertyDirectory = this.#propertyDirectory
     const targetPaths = []
     const targets = []
-    if(this.#target !== undefined) {
+    if(this.path === ':scope') {
+      const pretargetElement = pretargets.find(
+        ($pretarget) => $pretarget?.path === this.path
+      )
+      if(pretargetElement !== undefined) {
+        targets.push(pretargetElement)
+      }
+      else if(pretargetElement === undefined) {
+        targets.push({
+          path: this.path,
+          target: this.#context,
+          enable: false,
+        })
+      }
+    }
+    else if(this.#target !== undefined) {
       for(const $target of [].concat(this.#target)) {
         const pretargetElement = pretargets.find(
           ($pretarget) => $pretarget?.path === this.path
@@ -129,9 +144,6 @@ export default class EventDefinition {
         iterateTargetPathKeys: 
         while(pathKeysIndex < pathKeys.length) {
           let pathKey = pathKeys[pathKeysIndex]
-          if(pathKeysIndex === 0 && pathKey === ':scope') {
-            break iterateTargetPathKeys
-          }
           iterateTargetAccessors: 
           for(const $targetAccessor of this.settings.accessors) {
             if(target === undefined) { break iterateTargetAccessors }
