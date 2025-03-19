@@ -31,6 +31,7 @@ Events may also be *added to* [existing core instances/implementations](#after-c
 
 #### During Core Implementation
 Events added **during core implementation** may be initially enabled through `enableEvents` property *when* the event targets are already instantiated.  
+[Example B.1.]()
 ```
 function listenerLogA() { console.log("listenerLogA", $event.type, $event.detail) }
 function listenerLogB() { console.log("listenerLogB", $event.type, $event.detail) }
@@ -72,6 +73,7 @@ const application = Core.implement(Object.defineProperties(new EventTarget(), {
 
 #### During Core Class Inheritance \| Superclass Invocation
 Events added **during core superclass invocation** may be initially enabled through `enableEvents` property *when* the event targets are already instantiated.  
+[Example B.2.]()
 ```
 class Application extends Core {
   constructor($settings, $properties) {
@@ -116,6 +118,7 @@ const application = new Application({
 
 #### During Core Class Inheritance \| Construction
 Events added **during core superclass inheritance** may be initially enabled through `enableEvents` property *when* the event targets are already instantiated.  
+[Example B.3.]()
 ```
 class Application extends Core {
   constructor($settings, $properties) {
@@ -158,6 +161,7 @@ const application = new Application({ enableEvents: true }, {
 
 #### During Core Instantiation
 Events added **during core instantiation** may be enabled through `enableEvents` method *after* the event targets are instantiated.  
+[Example B.4.]()
 ```
 const application = Object.assign(new Core({
   events: {
@@ -194,6 +198,7 @@ const application = Object.assign(new Core({
 ```
 #### After Core Instantiation
 Events added **after core instantiation** may be enabled through `enableEvents` method *after* the event targets are instantiated.  
+[Example B.5.]()
 ```
 const application = Object.assign(new Core(), {
   propertyA: Object.assign(new EventTarget(), {
@@ -228,7 +233,92 @@ const application = Object.assign(new Core(), {
 .enableEvents()
 ```
 ### `core.getEvents` Method
+[Example B.6.]()
+Given some arbitrary application structure:  
+```
+const application = {
+  parentElement: document.querySelector('body'),
+  templates: {
+    application: ($content) => `
+      <app>
+        <header>
+          ${$content.nav.map(($nav) => `
+            <nav class="${$nav.class}">
+              ${$nav.button.map(($button) => `
+                <button data-id="${$button.id}">${$button.text}</button>
+              `)}
+            </nav>
+
+          `)}
+        </header>
+        <main>
+          ${$content.sections.map(($section) => `
+            <section data-id="$section.id">${$section.text}</section>
+          `)}
+        </main>
+      </app>
+    `,
+    style: `
+      <style>
+        * { box-sizing: border-box; display: flex; }
+        body { width: 100%; height: 100%; }
+        app {
+          display: flex; flex-direction: row; 
+        }
+      </style>
+    `
+  },
+  qs: Object.defineProperties({}, {
+    app: { get() { return document.querySelector('app') }, enumerable: true },
+    style: { get() { return document.querySelector('style') }, enumerable: true },
+  }),
+  render: function($content) {
+    const app = this.qs.app
+    const style = this.qs.style
+    if(app) app.removeChild()
+    if(style) style.removeChild()
+    this.disableEvents()
+    this.parentElement.insertAdjacentHTML('afterbegin', this.templates.application($content))
+    this.parentElement.insertAdjacentHTML('afterbegin', this.templates.style())
+    this.enableEvents()
+    return this
+  },
+}
+Core.implement(application, {
+  events: {},
+})
+.render({
+  nav: [{
+    class: 'section-nav',
+    button: [{
+      id: 'button-a',
+      text: 'Section A',
+    }, {
+      id: 'button-b',
+      text: 'Section B',
+    }, {
+      id: 'button-c',
+      text: 'Section C',
+    }, {
+      id: 'button-d',
+      text: 'Section D',
+    }, {
+      id: 'button-d',
+      text: 'Section D',
+    }],
+  }],
+  section: [
+    { text: 'Section A' },
+    { text: 'Section B' },
+    { text: 'Section C' },
+    { text: 'Section D' },
+    { text: 'Section E' }
+  ], 
+})
+```
+
 #### Get All Events
+[Example B.5.]()
 ```
 application.getEvents()
 ```

@@ -7,6 +7,7 @@ export default ($settings = {}) => {
       ($target, $property) => $target[$property],
     ],
     assign: 'addEventListener', deassign: 'removeEventListener', transsign: 'dispatchEvent',
+    bindListener: true,
     methods: {
       assign: {
         // Event Target Add Event Listener

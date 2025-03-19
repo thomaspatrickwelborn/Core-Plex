@@ -749,6 +749,7 @@ var Settings = ($settings = {}) => {
       ($target, $property) => $target[$property],
     ],
     assign: 'addEventListener', deassign: 'removeEventListener', transsign: 'dispatchEvent',
+    bindListener: true,
     methods: {
       assign: {
         // Event Target Add Event Listener
@@ -815,6 +816,7 @@ var Settings = ($settings = {}) => {
 class EventDefinition {
   #settings
   #context
+  #listener
   #enable = false
   #path
   #enabled = []
@@ -832,7 +834,15 @@ class EventDefinition {
   get settings() { return this.#settings }
   get path() { return this.settings.path }
   get type() { return this.settings.type }
-  get listener() { return this.settings.listener }
+  get listener() {
+    if(this.#listener !== undefined) { return this.#listener }
+    const listener = this.settings.listener;
+    if(this.settings.bindListener === true) {
+      this.#listener = listener.bind(this.#context);
+    }
+    else { this.#listener = listener; }
+    return this.#listener
+  }
   get enable() { return this.#enable }
   set enable($enable) {
     if(![true, false].includes($enable)) { return }

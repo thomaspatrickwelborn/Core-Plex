@@ -1,6 +1,6 @@
 {
   "name": "core-plex",
-  "version": "1.6.13",
+  "version": "1.6.14",
   "description": "JavaScript Property Ventilation For Node Or Browser Environments\n⋄ Manage events for any project with plexible inheritance, instantiation, and implementation techniques. \n⋄ Target events on any properties with path notation or direct references.",
   "homepage": "https://github.com/thomaspatrickwelborn/Core-Plex#readme",
   "bugs": {
