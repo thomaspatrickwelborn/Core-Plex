@@ -1,7 +1,7 @@
 {
   "name": "core-plex",
-  "version": "1.6.17",
-  "description": "❖ Store And Access Events From A Single Object\n◈ Property Ventilation For Node Or Browser Environments\n◈ Core-Plex Is An Event Management System For Frontend/Backend Applications.",
+  "version": "1.6.18",
+  "description": "⁘ Core-Plex \n ❖ **Store & Access Event Definitions From Single API**\n ❖ **Enable & Disable Event Listeners, Dispatch Events**",
   "homepage": "https://github.com/thomaspatrickwelborn/Core-Plex#readme",
   "bugs": {
     "url": "https://github.com/thomaspatrickwelborn/Core-Plex/issues"
@@ -11,28 +11,25 @@
     "url": "git+https://github.com/thomaspatrickwelborn/Core-Plex.git"
   },
   "keywords": [
-    "event management framework", 
-    "event management system", 
-    "event cache system",
-    "application event management",
-    "javascript property ventilation",
-    "event mapping system", 
-    "event storage system", 
-    "event enable/disable system",
-    "event enabler/disabler",
-    "event aggregator",
-    "cache events", 
-    "event cacher",
-    "event storage"
+    "event management", "event listener management",
+    "event management framework", "event listener management framework", 
+    "event management system", "event listener management system", 
+    "application/website event listener management", "application/website event listener management",
+    "javascript property ventilation", "javascript property ventilation", 
+    "event mapping system", "event listener mapping system", 
+    "event storage system", "event listener storage system", 
+    "event enable/disable system", "event listener enable/disable system", 
+    "event enabler/disabler", "event listener enabler/disabler", 
+    "event aggregator", "event listener aggregator"
   ],
   "license": "ISC",
   "author": "Thomas Patrick Welborn",
   "type": "module",
   "exports": {
     ".": "./distributement/core-plex.js",
-    "./development": "./development/index.js",
-    "./distributement/core-plex.js": "./distributement/core-plex.js",
-    "./distributement/core-plex.min.js": "./distributement/core-plex.min.js"
+    "./development": "./development/index.js", 
+    "./distributement/core-plex.js": "./distributement/core-plex.js", 
+    "./distributement/core-plex.min.js": "./distributement/core-plex.min.js" 
   },
   "scripts": {
     "demonstrate:start": "concurrently \"npm run start --workspace development\" \"npm run start --workspace demonstrament\"",
