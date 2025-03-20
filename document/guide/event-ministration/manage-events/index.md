@@ -20,7 +20,7 @@ Event definitions may also be *added to* [existing core instances/implementation
 
 ### During Core Implementation
 Event definitions added **during core implementation** may be initially enabled through `enableEvents` property *when* the event targets are already instantiated.  
-[Example B.1.](../../../../demonstrament/documents/examples/example-b/example-b-1/index.js)
+[Example B.1.](../../../../demonstrament/documents/examples/example-b/example-b-1)
 ```
 function listenerLogA() { console.log("listenerLogA", $event.type, $event.detail) }
 function listenerLogB() { console.log("listenerLogB", $event.type, $event.detail) }
@@ -62,7 +62,7 @@ const application = Core.implement(Object.defineProperties(new EventTarget(), {
 
 ### During Core Class Inheritance \| Superclass Invocation
 Event definitions added **during core superclass invocation** may be initially enabled through `enableEvents` property *when* the event targets are already instantiated.  
-[Example B.2.](../../../../demonstrament/documents/examples/example-b/example-b-2/index.js)
+[Example B.2.](../../../../demonstrament/documents/examples/example-b/example-b-2)
 ```
 class Application extends Core {
   constructor($settings, $properties) {
@@ -107,7 +107,7 @@ const application = new Application({
 
 ### During Core Class Inheritance \| Construction
 Event definitions added **during core superclass inheritance** may be initially enabled through `enableEvents` property *when* the event targets are already instantiated.  
-[Example B.3.](../../../../demonstrament/documents/examples/example-b/example-b-3/index.js)
+[Example B.3.](../../../../demonstrament/documents/examples/example-b/example-b-3)
 ```
 class Application extends Core {
   constructor($settings, $properties) {
@@ -150,7 +150,7 @@ const application = new Application({ enableEvents: true }, {
 
 ### During Core Instantiation
 Event definitions added **during core instantiation** may be enabled through `enableEvents` method *after* the event targets are instantiated.  
-[Example B.4.](../../../../demonstrament/documents/examples/example-b/example-b-4/index.js)
+[Example B.4.](../../../../demonstrament/documents/examples/example-b/example-b-4)
 ```
 const application = Object.assign(new Core({
   events: {
@@ -187,7 +187,7 @@ const application = Object.assign(new Core({
 ```
 ### After Core Instantiation
 Event definitions added **after core instantiation** may be enabled through `enableEvents` method *after* the event targets are instantiated.  
-[Example B.5.](../../../../demonstrament/documents/examples/example-b/example-b-5/index.js)
+[Example B.5.](../../../../demonstrament/documents/examples/example-b/example-b-5)
 ```
 const application = Object.assign(new Core(), {
   propertyA: Object.assign(new EventTarget(), {
@@ -222,7 +222,7 @@ const application = Object.assign(new Core(), {
 .enableEvents()
 ```
 ## `core.getEvents` Method
-[Example B.6.]()
+[Example B)
 Given some arbitrary application structure:  
 ```
 const application = Object.assign(new Core(), {

@@ -73,11 +73,10 @@ export default class EventDefinition {
       $enable === false && 
       enabled.length === 0 && 
       disabled.length > 0
-    )) { this.#enable = $enable }
-    else if(
+    ) || (
       disabled.length === 0 &&
       enabled.length === 0
-    ) { this.#enable = null }
+    )) { this.#enable = $enable }
     else if(
       disabled.length > 0 &&
       enabled.length > 0
