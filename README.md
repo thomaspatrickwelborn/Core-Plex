@@ -2,6 +2,8 @@
 &ensp;❖&ensp;**Store & Access Event Definitions From Single API**  
 &ensp;❖&ensp;**Enable & Disable Event Listeners, Dispatch Events**  
 
+Manages events for [MVC Framework](https://www.npmjs.com/package/mvc-framework) and [Document Process Manager](https://www.npmjs.com/package/document-process-manager).  
+
 | [**API**](./document/api/index.md) | [**Guide**](./document/guide/index.md) |
 | :-- | :-- |
 

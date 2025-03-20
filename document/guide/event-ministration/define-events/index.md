@@ -2,10 +2,8 @@
 | :-- | :-- | :-- | :-- |
 # ⁘ Core-Plex Guide \| Define Events
  - [`EventDefinition` Defaults](#event-definition-defaults)
- - [Impanded EventDefinition Syntax](#impanded-eventDefinition-syntax)
- - [Expanded EventDefinition Syntax](#expanded-eventDefinition-syntax)
- - [Overwrite `EventDefinition` Signment](#overwrite-event-definition-signment)
- - [Custom `EventDefinition` Signment](#custom-event-definition-signment)
+ - [Impanded EventDefinition Syntax](#impanded-eventdefinition-syntax)
+ - [Expanded EventDefinition Syntax](#expanded-eventdefinition-syntax)
 
 ## `EventDefinition` Defaults
 ### Automatic `EventTarget` Signment
@@ -105,31 +103,14 @@ Configure Events With Expanded Syntax
 const coreSettings = {
   events: [{
     path: ":scope", type: "someEvent", listener: eventLog,
-    target: {
-      assign: "on", deassign: "off",
-    }
+    assign: "on", deassign: "off",
   }, {
     path: "some.property.path", type: "someEvent", listener: eventLog,
-    target: {
-      assign: "addEventListener", deassign: "off",
-    }
+    assign: "addEventListener", deassign: "off",
   }, {
     path: "some.array.[0-9]", type: "someEvent", listener: eventLog,
-    target: {
-      assign: "addEventListener", deassign: "off",
-    }
+    assign: "addEventListener", deassign: "off",
   }]
 }
 ```
 
-## Overwrite `EventDefinition` Signment
-
-## Custom `EventDefinition` Signment
-```
-const application = Object.assign(new Core.implement(new CustomEventTarget(), {
-  
-}), {
-  propertyA: new CustomEventTarget(),
-  propertyB: [new CustomEventTaret()],
-})
-```
