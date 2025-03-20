@@ -34,7 +34,8 @@ const application = Object.assign(new Core(), {
 .addEvents(events)
 
 const consoleLog = ($eventDefinition) => console.log(
-  `> ${$eventDefinition.path}    ${$eventDefinition.type}    ${$eventDefinition.enable}`
+  '\n', `> ${$eventDefinition.path}    ${$eventDefinition.type}    ${$eventDefinition.enable}`, 
+  '\n', $eventDefinition
 )
 
 console.log('#####')
@@ -109,7 +110,6 @@ console.log(`application.enableEvents()`)
 console.log('-----')
 application.enableEvents()
 application.getEvents({ enable: true }).forEach(consoleLog)
-
 console.log('#####')
 console.log(`application.disableEvents()`)
 application.disableEvents()
