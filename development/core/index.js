@@ -23,9 +23,17 @@ export default class Core extends EventTarget {
               for(const [
                 $filterEventPropertyKey, $filterEventPropertyValue
               ] of Object.entries($filterEvent)) {
-                const eventFilterMatch = (
-                  $event[$filterEventPropertyKey] === $filterEventPropertyValue
-                )
+                let eventFilterMatch
+                if($filterEventPropertyKey === 'listener') {
+                  eventFilterMatch = (
+                    $event.settings[$filterEventPropertyKey] === $filterEventPropertyValue
+                  )
+                }
+                else {
+                  eventFilterMatch = (
+                    $event[$filterEventPropertyKey] === $filterEventPropertyValue
+                  )
+                }
                 if(match !== false) { match = eventFilterMatch }
                 else { break iterateEventFilterProperties }
               }
@@ -60,14 +68,10 @@ export default class Core extends EventTarget {
             $events = $target[settings.propertyDefinitions.getEvents](arguments[0])
           }
           if($events.length === 0) return $target
-          let eventsIndex = $events.length - 1
-          iterateEvents: 
+          let eventsIndex = events.length - 1
           while(eventsIndex > -1) {
-            const event = $events[eventsIndex]
-            const removeEventIndex = events.findIndex(
-              ($event) => $event === event
-            )
-            if(removeEventIndex !== -1) {
+            const event = events[eventsIndex]
+            if($events.includes(event)) {
               event.enable = false
               events.splice(eventsIndex, 1)
             }
