@@ -1,9 +1,11 @@
 # ⁘&ensp;Core-Plex
+&ensp;❖&ensp;**Store And Access Events From A *Single Object***  
 | [**API**](./document/api/index.md) | [**Guide**](./document/guide/index.md) |
 | :-- | :-- |
 
-**&ensp;◈&ensp;JavaScript Property Ventilation For Node Or Browser Environments**  
-&ensp;&ensp;&ensp;⋄&ensp;Manage events for any project with plexible [implementation](#implementation), [inheritance](#implementation), and [instantiation](#inheritance).  
+## ❖&ensp;Introduction
+&ensp;◈&ensp;**Property Ventilation For *Node* Or *Browser Environments***  
+&ensp;&ensp;&ensp;⋄&ensp;Manage events for *any* project with plexible [implementation](#implementation), [inheritance](#implementation), and [instantiation](#inheritance).  
 &ensp;&ensp;&ensp;⋄&ensp;Target events on any event-targetable properties with path notation or direct references.  
 &ensp;&ensp;&ensp;&ensp;&ensp;⬥&ensp;Supports [Outmatch Syntax](https://www.npmjs.com/package/outmatch#syntax).  
 &ensp;&ensp;&ensp;⋄&ensp;Browser, Node event target API support.   
@@ -16,14 +18,14 @@
 &ensp;⋄&ensp;Add/Remove/Dispatch event statements are *usually* disparately located throughout codebases.  
 &ensp;⋄&ensp;Event assignment/deassignment/transsignment *differentiate* based on event-targetable class prototype.  
 
-## ❖&ensp;Introduction
-**Core-Plex Is An Event Management System For Frontend/Backend Applications.**  
-&ensp;⋄&ensp;Map events to scoped event targets with property paths.  
-&ensp;⋄&ensp;Add/remove then enable/disable pathed events.  
-&ensp;⋄&ensp;Define property paths with dot-notation, globbing, and pattern matching.  
-&ensp;⋄&ensp;Enable/disable events, emit events dynamically.  
-&ensp;⋄&ensp;Implement core-plex on existing objects, class instances.  
-&ensp;⋄&ensp;Extend core-plex on custom classes.  
+## ❖&ensp;Impact
+&ensp;◈&ensp;**Core-Plex Is An Event Management System For Frontend/Backend Applications**  
+&ensp;&ensp;&ensp;⋄&ensp;Map events to scoped event targets with property paths.  
+&ensp;&ensp;&ensp;⋄&ensp;Add/remove then enable/disable pathed events.  
+&ensp;&ensp;&ensp;⋄&ensp;Define property paths with dot-notation, globbing, and pattern matching.  
+&ensp;&ensp;&ensp;⋄&ensp;Enable/disable events, emit events dynamically.  
+&ensp;&ensp;&ensp;⋄&ensp;Implement core-plex on existing objects, class instances.  
+&ensp;&ensp;&ensp;⋄&ensp;Extend core-plex on custom classes.  
 
 
 ## ❖&ensp;Installation

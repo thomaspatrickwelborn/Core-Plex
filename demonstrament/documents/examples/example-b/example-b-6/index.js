@@ -124,7 +124,7 @@ Core.implement(application, {
     }
   }
 })
-.enableEvents()
+.enableEvents({ type: 'render' })
 .render({
   headline: 'Example B.6.',
   nav: [{
@@ -159,4 +159,4 @@ Core.implement(application, {
     text: 'Section E'
   }], 
 })
-console.log(application.getEvents())
+.enableEvents()

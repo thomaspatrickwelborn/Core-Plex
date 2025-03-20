@@ -1,7 +1,7 @@
 {
   "name": "core-plex",
-  "version": "1.6.15",
-  "description": "JavaScript Property Ventilation For Node Or Browser Environments\n⋄ Manage events for any project with plexible inheritance, instantiation, and implementation techniques. \n⋄ Target events on any properties with path notation or direct references.",
+  "version": "1.6.16",
+  "description": "❖ Store And Access Events From A Single Object\n◈ Property Ventilation For Node Or Browser Environments\n◈ Core-Plex Is An Event Management System For Frontend/Backend Applications.",
   "homepage": "https://github.com/thomaspatrickwelborn/Core-Plex#readme",
   "bugs": {
     "url": "https://github.com/thomaspatrickwelborn/Core-Plex/issues"
@@ -13,11 +13,17 @@
   "keywords": [
     "event management framework", 
     "event management system", 
+    "event cache system",
     "application event management",
     "javascript property ventilation",
     "event mapping system", 
     "event storage system", 
-    "event enable/disable system"
+    "event enable/disable system",
+    "event enabler/disabler",
+    "event aggregator",
+    "cache events", 
+    "event cacher",
+    "event storage"
   ],
   "license": "ISC",
   "author": "Thomas Patrick Welborn",

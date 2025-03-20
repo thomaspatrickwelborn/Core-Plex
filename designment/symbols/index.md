@@ -9,6 +9,7 @@
  ◆ - https://www.compart.com/en/unicode/U+25C6  
  ◇ - https://www.compart.com/en/unicode/U+25C7  
  ◈ - https://www.compart.com/en/unicode/U+25C8  
+ ⟐ - https://www.compart.com/en/unicode/U+27D0  
  ⬥ - https://www.compart.com/en/unicode/U+2B25
  ⬦ - https://www.compart.com/en/unicode/U+2B26  
  ⬩ - https://www.compart.com/en/unicode/U+2B29  
