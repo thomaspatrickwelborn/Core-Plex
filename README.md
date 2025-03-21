@@ -1,7 +1,8 @@
 # ⁘&ensp;Core-Plex
-&ensp;❖&ensp;**Store & Access Event Definitions From Single API**  
-&ensp;❖&ensp;**Enable & Disable Event Listeners, Dispatch Events**  
-
+&ensp;❖&ensp;**Event Listener Management System**  
+&ensp;&ensp;&ensp;&ensp;⟐&ensp;**Store & Access Event Definitions From Single API**  
+&ensp;&ensp;&ensp;&ensp;⟐&ensp;**Enable & Disable Event Listeners, Dispatch Events**  
+&ensp;&ensp;&ensp;&ensp;⟐&ensp;**Browser & NodeJS Compatibility**  
 | [**API**](./document/api/index.md) | [**Guide**](./document/guide/index.md) |
 | :-- | :-- |
 
@@ -14,7 +15,6 @@
    - [`Socket` Class](https://github.com/thomaspatrickwelborn/Document-Process-Manager/blob/main/development/sockets/socket/index.js)
 
 ## ❖&ensp;Introduction
-&ensp;◈&ensp;**Core-Plex Is An Event Management System For Frontend/Backend Applications**  
 &ensp;&ensp;&ensp;⋄&ensp;Manage event listeners for *any* project with plexible [implementation](#implementation), [inheritance](#implementation), and [instantiation](#inheritance).  
 &ensp;&ensp;&ensp;⋄&ensp;Ministrate events and event listeners on any event-targetable properties with path notation or direct references.  
 &ensp;&ensp;&ensp;&ensp;&ensp;⬥&ensp;Supports [Outmatch Syntax](https://www.npmjs.com/package/outmatch#syntax).  
@@ -24,14 +24,12 @@
 &ensp;&ensp;&ensp;⋄&ensp;Custom event target API support for anything else.    
 
 ## ❖&ensp;Impetus
-&ensp;◈&ensp;**Website/Application Event Management Could Be More Convenient And Predictable**  
 &ensp;&ensp;&ensp;⋄&ensp;Managing event listener addition/removal/dispatch is necessary for *most* application development.  
 &ensp;&ensp;&ensp;⋄&ensp;Add/Remove event listener statements are *usually* disparately located throughout codebases.  
 &ensp;&ensp;&ensp;⋄&ensp;Event assignment/deassignment/transsignment *differentiate* based on event-targetable class prototype.  
 &ensp;&ensp;&ensp;⋄&ensp;Maintaining event listener scope for complementary addition/removal can be challenging.  
 
 ## ❖&ensp;Impact
-&ensp;◈&ensp;**Property Ventilation For *Node* Or *Browser Environments***  
 &ensp;&ensp;&ensp;⋄&ensp;Map event listeners to scoped event targets with property paths.  
 &ensp;&ensp;&ensp;⋄&ensp;Add/remove then enable/disable pathed event listeners.  
 &ensp;&ensp;&ensp;⋄&ensp;Define event-targetable property paths with dot-notation, globbing, and pattern matching.  
