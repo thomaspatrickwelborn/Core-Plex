@@ -1,16 +1,27 @@
+console.log(
+  "\n", "------------",
+  "\n", "Example B.3.",
+  "\n", "------------",
+)
+import { Core } from '/dependencies/core-plex.js'
+function listenerLogA($event) { console.log("listenerLogA", $event.detail.type, $event.detail.path) }
+function listenerLogB($event) { console.log("listenerLogB", $event.detail.type, $event.detail.path) }
 class Application extends Core {
   constructor($settings, $properties) {
-    super($settings)
+    super()
     Object.assign(this, $properties)
-    this.addEvents({
-      'application:event': listenerLogA,
-      'propertyA.propertyB application:event': listenerLogB,
-      'propertyD.[0-9].propertyE application:event': listenerLogB,
-    })
-    if(this.settings.enableEvents) { this.enableEvents() }
+    this.addEvents($settings.events)
+    if($settings.enableEvents) { this.enableEvents() }
   }
 }
-const application = new Application({ enableEvents: true }, {
+const application = new Application({
+  events: {
+    'application:event': listenerLogA,
+    'propertyA.propertyB application:event': listenerLogB,
+    'propertyD.[0-9].propertyE application:event': listenerLogB,
+  },
+  enableEvents: true,
+}, {
   propertyA: Object.assign(new EventTarget(), {
     propertyB: Object.assign(new EventTarget(), {
       propertyC: 3
@@ -35,3 +46,10 @@ const application = new Application({ enableEvents: true }, {
   ],
   propertyG: 7,
 })
+application.getEvents({ type: 'application:event' }).forEach(
+  ($eventDefinition) => {
+    $eventDefinition.emit(
+      new CustomEvent('application:event', { detail: $eventDefinition })
+    )
+  }
+)

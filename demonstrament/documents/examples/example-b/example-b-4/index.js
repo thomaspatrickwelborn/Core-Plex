@@ -1,3 +1,11 @@
+console.log(
+  "\n", "------------",
+  "\n", "Example B.4.",
+  "\n", "------------",
+)
+import { Core } from '/dependencies/core-plex.js'
+function listenerLogA($event) { console.log("listenerLogA", $event.detail.type, $event.detail.path) }
+function listenerLogB($event) { console.log("listenerLogB", $event.detail.type, $event.detail.path) }
 const application = Object.assign(new Core({
   events: {
     'application:event': listenerLogA,
@@ -30,3 +38,10 @@ const application = Object.assign(new Core({
   propertyG: 7,
 }))
 .enableEvents()
+application.getEvents({ type: 'application:event' }).forEach(
+  ($eventDefinition) => {
+    $eventDefinition.emit(
+      new CustomEvent('application:event', { detail: $eventDefinition })
+    )
+  }
+)

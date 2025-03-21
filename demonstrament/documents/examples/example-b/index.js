@@ -1,1 +1,6 @@
+import exampleB1 from './example-b-1/index.js'
+import exampleB2 from './example-b-2/index.js'
+import exampleB3 from './example-b-3/index.js'
+import exampleB4 from './example-b-4/index.js'
+import exampleB5 from './example-b-5/index.js'
 import exampleB6 from './example-b-6/index.js'

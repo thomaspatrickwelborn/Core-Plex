@@ -1,11 +1,24 @@
 | [⁘ Core-Plex](../../../../README.md) | [Guide](../../index.md) | [Event Ministration](../index.md) | *Manage Events* |
 | :-- | :-- | :-- | :-- |
 # ⁘ Core-Plex Guide \| Manage Events
- - [`core.addEvents`](#coreaddevents-method) - Add event definitions with `path`/`target`, `type`, `listener`, and other settings. 
- - [`core.getEvents`](#coregetEvents-method) - Get added event definitions by event definition properties; 
- - [`core.enableEvents`](#coreenableEvents-method) - Enable added events (invoking `addEventListener`, `on`, `once`, etc.). 
- - [`core.disableEvents`](#coredisableEvents-method) - Disable added events (invoking `removeEventListener`, `off`, etc.).  
- - [`core.removeEvents`](#coreremoveEvents-method) - Remove added event definitions.  
+ - [`core.addEvents`](#coreaddevents-method) - Add event definitions with `path`/`target`, `type`, `listener`, others. 
+   - [During Core Implementation](#during-core-implementation)
+   - [During Core Class Inheritance \| Superclass Invocation](#during-core-class-inheritance--superclass-invocation)
+   - [During Core Class Inheritance \| Construction](#during-core-class-inheritance--construction)
+   - [During Core Instantiation](#during-core-instantiation)
+   - [After Core Instantiation](#after-core-instantiation)
+ - [`core.getEvents`](#coregetevents-method) - Get added event definitions by event definition properties; 
+   - [Get Events By `type`](#get-events-by-type)
+   - [Get Events By `path` With `:scope`](#get-events-by-path-with-scope)
+   - [Get Events By `path` With Property Path](#get-events-by-path-with-property-path)
+   - [Get Events By Multiple Filter Object Properties](#get-events-by-multiple-filter-object-properties)
+   - [Get Events By Multiple Filter Objects](#get-events-by-multiple-filter-objects)
+ - [`core.enableEvents`/`core.disableEvents` Methods](#coreenableeventscoredisableevents-methods) - Enable added events (invoke `addEventListener`, `on`, `once`, etc.). 
+   - [Enable/Disable All Events](#enabledisable-all-events)
+   - [Enable/Disable Some Events](#enabledisable-some-events)
+ - [`core.removeEvents`](#coreremoveevents-method) - Remove added event definitions.  
+    - [Remove All Events](#remove-all-events)
+    - [Remove Some Events](#remove-some-events)
  - [Custom Core API Method Names](#custom-core-api-method-names)
 
 ## `core.addEvents` Method
@@ -22,30 +35,30 @@ Event definitions may also be *added to* [existing core instances/implementation
 Event definitions added **during core implementation** may be initially enabled through `enableEvents` property *when* the event targets are already instantiated.  
 [Example B.1.](../../../../demonstrament/documents/examples/example-b/example-b-1)
 ```
-function listenerLogA() { console.log("listenerLogA", $event.type, $event.detail) }
-function listenerLogB() { console.log("listenerLogB", $event.type, $event.detail) }
+function listenerLogA($event) { console.log("listenerLogA", $event.type, $event.detail) }
+function listenerLogB($event) { console.log("listenerLogB", $event.type, $event.detail) }
 ```
 ```
 const application = Core.implement(Object.defineProperties(new EventTarget(), {
-  propertyA: { value: Object.defineProperties(new EventTarget(), {
-    propertyB: { value: Object.defineProperties(new EventTarget(), {
-      propertyC: 3
+  propertyA: { enumerable: true, value: Object.defineProperties(new EventTarget(), {
+    propertyB: { enumerable: true, value: Object.defineProperties(new EventTarget(), {
+      propertyC: { enumerable: true, value: 3 }
     }) }
   }) },
-  propertyD: { value: [
+  propertyD: { enumerable: true, value: [
     Object.defineProperties(new EventTarget(), {
-      propertyE: { value: Object.defineProperties(new EventTarget(), {
-        propertyF: { value: 6 }
+      propertyE: { enumerable: true, value: Object.defineProperties(new EventTarget(), {
+        propertyF: { enumerable: true, value: 6 }
       } ) }
     }),
     Object.defineProperties(new EventTarget(), {
-      propertyE: { value: Object.defineProperties(new EventTarget(), {
-        propertyF: { value: "6" }
+      propertyE: { enumerable: true, value: Object.defineProperties(new EventTarget(), {
+        propertyF: { enumerable: true, value: "6" }
       } ) }
     }),
     Object.defineProperties(new EventTarget(), {
-      propertyE: { value: Object.defineProperties(new EventTarget(), {
-        propertyF: { value: null }
+      propertyE: { enumerable: true, value: Object.defineProperties(new EventTarget(), {
+        propertyF: { enumerable: true, value: null }
       } ) }
     }),
   ] },
@@ -66,20 +79,20 @@ Event definitions added **during core superclass invocation** may be initially e
 ```
 class Application extends Core {
   constructor($settings, $properties) {
-    super(Object.assign({}, $settings, {
-      events: {
-        'application:event': listenerLogA,
-        'propertyA.propertyB application:event': listenerLogB,
-        'propertyD.[0-9].propertyE application:event': listenerLogB,
-      },
-    }))
+    super($settings)
     Object.assign(this, $properties)
+    if($settings.enableEvents === true) { this.enableEvents() }
   }
 }
 const application = new Application({
+  events: {
+    'application:event': listenerLogA,
+    'propertyA.propertyB application:event': listenerLogB,
+    'propertyD.[0-9].propertyE application:event': listenerLogB,
+  },
   enableEvents: true, 
 }, {
-  propertyA: Object.assign(new EventTarget(), {
+    propertyA: Object.assign(new EventTarget(), {
     propertyB: Object.assign(new EventTarget(), {
       propertyC: 3
     })
@@ -111,17 +124,20 @@ Event definitions added **during core superclass inheritance** may be initially 
 ```
 class Application extends Core {
   constructor($settings, $properties) {
-    super($settings)
+    super()
     Object.assign(this, $properties)
-    this.addEvents({
-      'application:event': listenerLogA,
-      'propertyA.propertyB application:event': listenerLogB,
-      'propertyD.[0-9].propertyE application:event': listenerLogB,
-    })
-    if(this.settings.enableEvents) { this.enableEvents() }
+    this.addEvents($settings.events)
+    if($settings.enableEvents) { this.enableEvents() }
   }
 }
-const application = new Application({ enableEvents: true }, {
+const application = new Application({
+  events: {
+    'application:event': listenerLogA,
+    'propertyA.propertyB application:event': listenerLogB,
+    'propertyD.[0-9].propertyE application:event': listenerLogB,
+  },
+  enableEvents: true,
+}, {
   propertyA: Object.assign(new EventTarget(), {
     propertyB: Object.assign(new EventTarget(), {
       propertyC: 3
@@ -146,6 +162,7 @@ const application = new Application({ enableEvents: true }, {
   ],
   propertyG: 7,
 })
+
 ```
 
 ### During Core Instantiation
@@ -222,7 +239,7 @@ const application = Object.assign(new Core(), {
 .enableEvents()
 ```
 ## `core.getEvents` Method
-[Example B)
+[Example B.6.](../../../../demonstrament/documents/examples/example-b/example-b-6)
 Given some arbitrary application structure:  
 ```
 const application = Object.assign(new Core(), {
@@ -256,7 +273,6 @@ const application = Object.assign(new Core(), {
   'propertyD.[0-9].propertyE application:eventB': listenerLogB,
 })
 ```
-
 ### Get All Events
 ```
 application.getEvents()
@@ -302,12 +318,7 @@ application.getEvents([
 application.enableEvents()
 application.disableEvents()
 ```
-*or*  
-```
-application
-.enableEvents()
-.disableEvents()
-```
+
 ### Enable/Disable Some Events
 Enabling/disabling some events is achieved using [filter objects](#get-filtered-events).  
 ```
