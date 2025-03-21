@@ -1,12 +1,12 @@
-| [⁘ Core-Plex](../../../../../README.md) | [API](../../../index.md) | [Core](../../index.md) | [Event Definition](../index.md) | *Settings* |
-| :-- | :-- | :-- | :-- | :-- |
+| [⁘ Core-Plex](../../../../README.md) | [API](../../index.md) | [Event Definition](../index.md) | *Settings* |
+| :-- | :-- | :-- | :-- |
 # ⁘ Core-Plex API \| Event Definition Settings
 ## `Settings` Method
 **Type**: `function`  
 **Arguments**: `($settings = {})`  
 **Returns**: `Settings`  
 **Descript**:  
-Method assigns `$settings` argument properties to `Settings` property and returns to [`EventDefinition.constructor`](./index.md#constructor-method) invocation. 
+Method assigns `$settings` argument properties to `Settings` property and returns to [`EventDefinition.constructor`](../index.md#constructor-method) invocation. 
 Properties describe: 
  - how events `assign` (e.g. `addEventListener`, `on`, `once`), `deassign` (e.g. `removeEventListener`, `off`), and `transsign` (e.g. `dispatchEvent`, `emit`) from event targets and event types;  
  - how event targets are accessed - either `path` notation with customizable accessor API (`accessors`) or direct `target`/`array[target]`; 

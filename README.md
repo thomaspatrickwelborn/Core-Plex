@@ -2,10 +2,16 @@
 &ensp;❖&ensp;**Store & Access Event Definitions From Single API**  
 &ensp;❖&ensp;**Enable & Disable Event Listeners, Dispatch Events**  
 
-Manages events for [MVC Framework](https://www.npmjs.com/package/mvc-framework) and [Document Process Manager](https://www.npmjs.com/package/document-process-manager).  
-
 | [**API**](./document/api/index.md) | [**Guide**](./document/guide/index.md) |
 | :-- | :-- |
+
+## ❖&ensp;In Practice
+ - [MVC Framework](https://www.npmjs.com/package/mvc-framework) 
+   - [`MVCFrameworkCore` (extends Core-Plex `Core`)](https://github.com/thomaspatrickwelborn/MVC-Framework/blob/master/development/core/index.js)
+   - [MVC Framework `View` (extends `MVCFrameworkCore`)](https://github.com/thomaspatrickwelborn/MVC-Framework/blob/master/development/view/index.js)
+ - [Document Process Manager](https://www.npmjs.com/package/document-process-manager).  
+   - [`Processes` Class](https://github.com/thomaspatrickwelborn/Document-Process-Manager/blob/main/development/processes/index.js)
+   - [`Socket` Class](https://github.com/thomaspatrickwelborn/Document-Process-Manager/blob/main/development/sockets/socket/index.js)
 
 ## ❖&ensp;Introduction
 &ensp;◈&ensp;**Core-Plex Is An Event Management System For Frontend/Backend Applications**  
@@ -33,7 +39,6 @@ Manages events for [MVC Framework](https://www.npmjs.com/package/mvc-framework) 
 &ensp;&ensp;&ensp;⋄&ensp;Emit events dynamically.  
 &ensp;&ensp;&ensp;⋄&ensp;Implement core-plex on existing objects, class instances.  
 &ensp;&ensp;&ensp;⋄&ensp;Extend core-plex on custom classes.  
-
 
 ## ❖&ensp;Installation
 Install `core-plex` via npm CLI.  

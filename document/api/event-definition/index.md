@@ -1,5 +1,5 @@
-| [⁘ Core-Plex](../../../../README.md) | [API](../../index.md) | [Core](../index.md) | *Event Definition* |
-| :-- | :-- | :-- | :-- |
+| [⁘ Core-Plex](../../../README.md) | [API](../index.md) | *Event Definition* |
+| :-- | :-- | :-- |
 # ⁘ Core-Plex API \| Event Definition Class
 | [Event Definition Settings](./settings/index.md) |
 | :-- |
@@ -22,7 +22,7 @@ Assigns:
 **Required**: `true`  
 **Descript**:  
 `$context` specifies which property `this.path` is rooted.  
- - New `EventDefinition` class instances invoked by `Core.addEvents` specify `$context` is [**`$target` argument**](../index.md#coreimplement-target-argument).  
+ - New `EventDefinition` class instances invoked by `Core.addEvents` specify `$context` is [**`$target` argument**](../core/index.md#coreimplement-target-argument).  
  - New `EventDefinition` class instances invoked directly specify `$context` is **some provided `object`**.  
 
 ## Public Properties
