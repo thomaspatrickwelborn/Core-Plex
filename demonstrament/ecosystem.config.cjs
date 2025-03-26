@@ -8,9 +8,7 @@ const EcosystemConfig = {
         "package.json",
         "dpm.config.documents.js",
         "ecosystem.config.cjs",
-        "node_modules/document-process-manager/development",
-        "../distributement",
-        "../../Document-Process-Manager/development",
+        "../distributement"
       ],
       args: "--config dpm.config.documents.js",
       autorestart: false,

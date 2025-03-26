@@ -1,10 +1,14 @@
 # ⁘&ensp;Core-Plex
 &ensp;❖&ensp;**Event Listener Management System**  
-&ensp;&ensp;&ensp;&ensp;⟐&ensp;**Store & Access Event Definitions From Single API**  
+&ensp;&ensp;&ensp;&ensp;⟐&ensp;**Select Event-Targetable Properties With Path Notation**  
 &ensp;&ensp;&ensp;&ensp;⟐&ensp;**Enable & Disable Event Listeners, Dispatch Events**  
 &ensp;&ensp;&ensp;&ensp;⟐&ensp;**Browser & NodeJS Compatibility**  
+
+&ensp;⬗&ensp;[**Objecture**](https://www.npmjs.com/package/objecture) - **Object Watcher, Property Manager**  
+
 | [**API**](./document/api/index.md) | [**Guide**](./document/guide/index.md) |
 | :-- | :-- |
+
 
 ## ❖&ensp;In Practice
  - [MVC Framework](https://www.npmjs.com/package/mvc-framework) 

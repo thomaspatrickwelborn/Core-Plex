@@ -1,6 +1,6 @@
 {
   "name": "core-plex",
-  "version": "1.7.5",
+  "version": "1.7.6",
   "description": "⁘ Core-Plex \n ❖ **Store & Access Event Definitions From Single API**\n ❖ **Enable & Disable Event Listeners, Dispatch Events**",
   "homepage": "https://github.com/thomaspatrickwelborn/Core-Plex#readme",
   "bugs": {
@@ -11,16 +11,16 @@
     "url": "git+https://github.com/thomaspatrickwelborn/Core-Plex.git"
   },
   "keywords": [
-    "event management", "event listener management",
-    "event management framework", "event listener management framework", 
-    "event management system", "event listener management system", 
-    "application/website event listener management", "application/website event listener management",
-    "javascript property ventilation", "javascript property ventilation", 
-    "event mapping system", "event listener mapping system", 
-    "event storage system", "event listener storage system", 
-    "event enable/disable system", "event listener enable/disable system", 
-    "event enabler/disabler", "event listener enabler/disabler", 
-    "event aggregator", "event listener aggregator"
+    "object watcher", "property watcher",
+    "object listener", "property listener", 
+    "object monitor", "property monitor",
+    "object observer", "property observer",
+    "event listener management",
+    "event listener mapping system", 
+    "event listener storage system", 
+    "event listener enable/disable system", 
+    "event listener enabler/disabler", 
+    "event listener aggregator"
   ],
   "license": "ISC",
   "author": "Thomas Patrick Welborn",

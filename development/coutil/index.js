@@ -4,6 +4,7 @@ import recursiveAssign from './recursive-assign/index.js'
 import recursiveAssignConcat from './recursive-assign-concat/index.js'
 import recursiveFreeze from './recursive-freeze/index.js'
 import typeOf from './typeOf/index.js'
+import * as variables from './variables/index.js'
 
 export {
   impandEvents, expandEvents, 
@@ -12,4 +13,5 @@ export {
   recursiveAssignConcat, 
   recursiveFreeze, 
   typeOf, 
+  variables, 
 }

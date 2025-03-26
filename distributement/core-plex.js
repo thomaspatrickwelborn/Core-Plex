@@ -91,11 +91,7 @@ const typeOf = ($data) => Object
   .toString
   .call($data).slice(8, -1).toLowerCase();
 
-function recursiveAssign() {
-  const $arguments = [...arguments];
-  const $target = $arguments.shift();
-  if(!$target) { return $target }
-  const $sources = $arguments;
+function recursiveAssign($target, ...$sources) {
   if(!$target) { return $target}
   iterateSources: 
   for(const $source of $sources) {
@@ -104,26 +100,13 @@ function recursiveAssign() {
     for(const [
       $sourcePropertyKey, $sourcePropertyValue
     ] of Object.entries($source)) {
-      const typeOfSourcePropertyValue = typeOf($sourcePropertyValue);
       const typeOfTargetPropertyValue = typeOf($target[$sourcePropertyKey]);
-      if(typeOfTargetPropertyValue === 'undefined') {
-        if(typeOfSourcePropertyValue === 'array') {
-          $target[$sourcePropertyKey] = $sourcePropertyValue;
-        }
-        else if(typeOfSourcePropertyValue === 'object') {
-          $target[$sourcePropertyKey] = Object.assign({}, $sourcePropertyValue);
-        }
-        else {
-          $target[$sourcePropertyKey] = $sourcePropertyValue;
-        }
-      }
-      else if(typeOfSourcePropertyValue === 'array') {
-        $target[$sourcePropertyKey] = $sourcePropertyValue;
-      }
-      else if(typeOfSourcePropertyValue === 'object') {
-        $target[$sourcePropertyKey] = recursiveAssign(
-          $target[$sourcePropertyKey], $sourcePropertyValue
-        );
+      const typeOfSourcePropertyValue = typeOf($sourcePropertyValue);
+      if(
+        typeOfTargetPropertyValue === 'object' &&
+        typeOfSourcePropertyValue === 'object'
+      ) {
+        $target[$sourcePropertyKey] = recursiveAssign($target[$sourcePropertyKey], $sourcePropertyValue);
       }
       else {
         $target[$sourcePropertyKey] = $sourcePropertyValue;
@@ -133,38 +116,28 @@ function recursiveAssign() {
   return $target
 }
 
-function recursiveAssignConcat() {
-  const $arguments = [...arguments];
-  const $target = $arguments.shift();
-  if(!$target) { return $target }
-  const $sources = $arguments;
+function recursiveAssignConcat($target, ...$sources) {
   if(!$target) { return $target}
   iterateSources: 
   for(const $source of $sources) {
+    if(!$source) continue iterateSources
     iterateSourceEntries: 
     for(const [
       $sourcePropertyKey, $sourcePropertyValue
     ] of Object.entries($source)) {
-      const typeOfSourcePropertyValue = typeOf($sourcePropertyValue);
       const typeOfTargetPropertyValue = typeOf($target[$sourcePropertyKey]);
-      if(typeOfTargetPropertyValue === 'undefined') {
-        if(typeOfSourcePropertyValue === 'array') {
-          $target[$sourcePropertyKey] = Array.prototype.concat([], $sourcePropertyValue);
-        }
-        else if(typeOfSourcePropertyValue === 'object') {
-          $target[$sourcePropertyKey] = Object.assign({}, $sourcePropertyValue);
-        }
-        else {
-          $target[$sourcePropertyKey] = $sourcePropertyValue;
-        }
+      const typeOfSourcePropertyValue = typeOf($sourcePropertyValue);
+      if( 
+        typeOfTargetPropertyValue === 'object' &&
+        typeOfSourcePropertyValue === 'object'
+      ) {
+        $target[$sourcePropertyKey] = recursiveAssignConcat($target[$sourcePropertyKey], $sourcePropertyValue);
       }
-      else if(typeOfSourcePropertyValue === 'array') {
+      else if(
+        typeOfTargetPropertyValue === 'array' &&
+        typeOfSourcePropertyValue === 'array'
+      ) {
         $target[$sourcePropertyKey] = $target[$sourcePropertyKey].concat($sourcePropertyValue);
-      }
-      else if(typeOfSourcePropertyValue === 'object') {
-        $target[$sourcePropertyKey] = recursiveAssignConcat(
-          $target, $sourcePropertyValue
-        );
       }
       else {
         $target[$sourcePropertyKey] = $sourcePropertyValue;
@@ -183,6 +156,44 @@ function recursiveFreeze($target) {
   return Object.freeze($target)
 }
 
+const Primitives = {
+  'string': String, 
+  'number': Number, 
+  'boolean': Boolean, 
+  'bigint': BigInt, 
+  'undefined': undefined,
+  'null': null,
+};
+const PrimitiveKeys = Object.keys(Primitives);
+const PrimitiveValues = Object.values(Primitives);
+const Objects = {
+  'object': Object,
+  'array': Array,
+};
+const ObjectKeys = Object.keys(Objects);
+const ObjectValues = Object.values(Objects);
+const Types = Object.assign({}, Primitives, Objects);
+const TypeKeys = Object.keys(Types);
+const TypeValues = Object.values(Types);
+const TypeMethods = [
+ Primitives.String, Primitives.Number, Primitives.Boolean, 
+ Objects.Object, Objects.Array
+];
+
+var index$1 = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  ObjectKeys: ObjectKeys,
+  ObjectValues: ObjectValues,
+  Objects: Objects,
+  PrimitiveKeys: PrimitiveKeys,
+  PrimitiveValues: PrimitiveValues,
+  Primitives: Primitives,
+  TypeKeys: TypeKeys,
+  TypeMethods: TypeMethods,
+  TypeValues: TypeValues,
+  Types: Types
+});
+
 var index = /*#__PURE__*/Object.freeze({
   __proto__: null,
   expandEvents: expandEvents,
@@ -191,7 +202,8 @@ var index = /*#__PURE__*/Object.freeze({
   recursiveAssign: recursiveAssign,
   recursiveAssignConcat: recursiveAssignConcat,
   recursiveFreeze: recursiveFreeze,
-  typeOf: typeOf
+  typeOf: typeOf,
+  variables: index$1
 });
 
 var Settings$1 = ($settings = {}) => {
