@@ -47,18 +47,7 @@ Assigns:
    - evoking **`this.#assign` or `this.#deassign`** *with* `$targetElement.target`;  
    - assigning **`true` or `false`** *to* `$targetElement.enable`;  
    - pushing enabled/disabled `$targetElement`s to `this.#enabled`/`this.#disabled`. 
- - Defines `this.#enable` as:  
-   - `true` when:  
-     - `$enable` is `true`,
-     - there are no disabled `$targetElement`s,
-     - and there is at least one enabled `$targetElement`.  
-   - `false` when:  
-     - `$enable` is `false`, 
-     - there are no enabled `$targetElement`s,
-     - and there is at least one disabled `$targetElement`.  
-   - `null` when: 
-     - there are no disabled and no enabled `$targetElements`, 
-     - or when there is one or more disabled `$targetElements` and one or more enabled `$targetElements`.   
+ - Assign `$enable` to `this.#enable`.  
 #### `EventDefinition.enable` `$enable` Argument
 **Type**: `boolean`  
 **Required**: `true`  
@@ -84,7 +73,7 @@ Stored value is
 **Descript**:  
 Stored value is [`EventDefinition.constructor` `$context` Argument](#eventdefinitionconstructor-context-argument)
 ### `EventDefinition.#enable`  Property
-**Type**: `boolean` \| `null`  
+**Type**: `boolean`  
 **Descript**:  
 Stored value defined by [`EventDefinition.enable`](#eventdefinitionenable-property)
 ### `EventDefinition.#path` Property

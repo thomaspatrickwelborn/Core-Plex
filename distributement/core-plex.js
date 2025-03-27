@@ -928,22 +928,7 @@ class EventDefinition {
         catch($err) { enabled.push($targetElement); }
       }
     }
-    if((
-      $enable === true && 
-      disabled.length === 0 &&
-      enabled.length > 0
-    ) || (
-      $enable === false && 
-      enabled.length === 0 && 
-      disabled.length > 0
-    ) || (
-      disabled.length === 0 &&
-      enabled.length === 0
-    )) { this.#enable = $enable; }
-    else if(
-      disabled.length > 0 &&
-      enabled.length > 0
-    ) { this.#enable = null; }
+    this.#enable = $enable;
   }
   get enabled() { return this.#enabled }
   get disabled() { return this.#disabled }
