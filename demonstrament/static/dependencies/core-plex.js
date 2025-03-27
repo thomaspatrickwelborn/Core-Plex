@@ -53,6 +53,24 @@ function expandEvents($propEvents) {
   return propEvents
 }
 
+function isPropertyDefinition($propertyDefinition) {
+  if(
+    Object.getOwnPropertyDescriptor($propertyDefinition, 'type') &&
+    (
+      TypeValues.includes($propertyDefinition.type) ||
+      TypeKeys.includes($propertyDefinition.type)
+    ) || (
+      typeof $propertyDefinition.type === 'object' &&
+      Object.getOwnPropertyDescriptor($propertyDefinition.type, 'value') &&
+      (
+        TypeValues.includes($propertyDefinition.type.value) ||
+        TypeKeys.includes($propertyDefinition.type.value)
+      )
+    )
+  ) { return true } 
+  else { return false }
+}
+
 const Options = {
   depth: 0,
   maxDepth: 10,
@@ -147,6 +165,10 @@ function recursiveAssignConcat($target, ...$sources) {
   return $target
 }
 
+var index$2 = {
+  quotationEscape: /\.(?=(?:[^"]*"[^"]*")*[^"]*$)/,
+};
+
 function recursiveFreeze($target) {
   for(const [$propertyKey, $propertyValue] of Object.entries($target)) {
     if($propertyValue && typeof $propertyValue === 'object') {
@@ -154,6 +176,19 @@ function recursiveFreeze($target) {
     }
   }
   return Object.freeze($target)
+}
+
+function typedObjectLiteral($object) {
+  if(typeOf($object) === 'object') { return {} }
+  else if(typeOf($object) === 'array') { return [] }
+  else if(typeOf($object) === 'string') { return (
+    $object === 'object'
+  ) ? {} : (
+    $object === 'array'
+  ) ? []
+    : undefined
+  }
+  else { return undefined }
 }
 
 const Primitives = {
@@ -198,11 +233,14 @@ var index = /*#__PURE__*/Object.freeze({
   __proto__: null,
   expandEvents: expandEvents,
   impandEvents: impandEvents,
+  isPropertyDefinition: isPropertyDefinition,
   propertyDirectory: propertyDirectory,
   recursiveAssign: recursiveAssign,
   recursiveAssignConcat: recursiveAssignConcat,
   recursiveFreeze: recursiveFreeze,
+  regularExpressions: index$2,
   typeOf: typeOf,
+  typedObjectLiteral: typedObjectLiteral,
   variables: index$1
 });
 

@@ -1,4 +1,4 @@
-import typeOf from '../typeOf/index.js'
+import typeOf from '../type-of/index.js'
 export default function recursiveAssignConcat($target, ...$sources) {
   if(!$target) { return $target}
   iterateSources: 
