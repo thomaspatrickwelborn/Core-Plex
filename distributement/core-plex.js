@@ -1167,8 +1167,13 @@ class Core extends EventTarget {
       [settings.propertyDefinitions.reenableEvents]: {
         enumerable: false, writable: false, 
         value: function reenableEvents() {
-          $target[settings.propertyDefinitions.disableEvents](arguments[0]);
-          $target[settings.propertyDefinitions.enableEvents](arguments[0]);
+          const reenableEvents = $target[settings.propertyDefinitions.getEvents](arguments[0]);
+          for(const $reenableEvent of reenableEvents) {
+            $reenableEvent.enable = false;
+          }
+          for(const $reenableEvent of reenableEvents) {
+            $reenableEvent.enable = true;
+          }
           return $target
         },
       },
