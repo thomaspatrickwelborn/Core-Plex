@@ -35,7 +35,6 @@ export default class EventDefinition {
   set enable($enable) {
     if(![true, false].includes($enable)) { return }
     const targets = this.#targets
-    if(targets.length === 0) { return }
     const enabled = this.#enabled
     const disabled = this.#disabled
     enabled.length = 0
@@ -50,11 +49,9 @@ export default class EventDefinition {
           this.#assign(target)
           $targetElement.enable = $enable
           enabled.push($targetElement)
+          
         }
-        catch($err) {
-          throw $err
-          disabled.push($targetElement)
-        }
+        catch($err) { disabled.push($targetElement) }
       }
       else if($enable === false) {
         try {
@@ -119,7 +116,7 @@ export default class EventDefinition {
       iterateTargetPaths: 
       for(const $targetPath of targetPaths) {
         const pretargetElement = pretargets.find(
-          ($pretarget) => $pretarget?.path === $targetPath
+          ($pretarget) => $pretarget.path === $targetPath
         )
         let target = this.#context
         let targetElement
@@ -171,7 +168,10 @@ export default class EventDefinition {
   }
   get #methods() { return this.settings.methods }
   get #propertyDirectory() {
-    return propertyDirectory(this.#context, this.settings.propertyDirectory)
+    const propertyDirectorySettings = ({
+      accessors: this.settings.accessors
+    }, this.settings.propertyDirectory)
+    return propertyDirectory(this.#context, propertyDirectorySettings)
   }
   emit() {
     const targets = this.#targets
