@@ -1,3 +1,4 @@
+import accessors from './accessors/index.js'
 import { impandEvents, expandEvents } from './pand-events/index.js'
 import isPropertyDefinition from './is-property-definition/index.js'
 import propertyDirectory from './property-directory/index.js'
@@ -10,6 +11,7 @@ import typeOf from './type-of/index.js'
 import * as variables from './variables/index.js'
 
 export {
+  accessors, 
   impandEvents, expandEvents, 
   isPropertyDefinition, 
   propertyDirectory, 

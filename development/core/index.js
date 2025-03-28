@@ -1,4 +1,4 @@
-import { expandEvents, propertyDirectory } from '../coutil/index.js'
+import { expandEvents, recursiveAssign } from '../coutil/index.js'
 import Settings from './settings/index.js'
 import EventDefinition from './event-definition/index.js'
 export default class Core extends EventTarget {
@@ -11,7 +11,7 @@ export default class Core extends EventTarget {
       [settings.propertyDefinitions.getEvents]: {
         enumerable: false, writable: false, 
         value: function getEvents() {
-          if(arguments.length === 0) { return events }
+          if(arguments[0] === undefined) { return events }
           const getEvents = []
           const $filterEvents = [].concat(arguments[0])
           iterateFilterEvents: 
@@ -51,7 +51,14 @@ export default class Core extends EventTarget {
           let $addEvents = expandEvents(arguments[0])
           iterateAddEvents: 
           for(let $addEvent of $addEvents) {
-            const event = Object.assign({}, settings, $addEvent)
+            const event = {}
+            for(const $settingKey of [
+              'accessors', 'assign', 'deassign', 'transsign', 'propertyDirectory'
+            ]) {
+              const settingValue = settings[$settingKey]
+              if(settingValue !== undefined) { event[$settingKey] = settingValue }
+            }
+            recursiveAssign(event, $addEvent)
             const eventDefinition = new EventDefinition(event, $target)
             events.push(eventDefinition)
           }
@@ -62,11 +69,7 @@ export default class Core extends EventTarget {
       [settings.propertyDefinitions.removeEvents]: {
         enumerable: false, writable: false, 
         value: function removeEvents() {
-          let $events
-          if(arguments.length === 0) { $events = $target[settings.propertyDefinitions.getEvents]() }
-          else if(arguments.length === 1) {
-            $events = $target[settings.propertyDefinitions.getEvents](arguments[0])
-          }
+          const $events = $target[settings.propertyDefinitions.getEvents](arguments[0])
           if($events.length === 0) return $target
           let eventsIndex = events.length - 1
           while(eventsIndex > -1) {
@@ -84,9 +87,8 @@ export default class Core extends EventTarget {
       [settings.propertyDefinitions.enableEvents]: {
         enumerable: false, writable: false, 
         value: function enableEvents() {
-          let $events
-          if(arguments.length === 0) { $events = events }
-          else { $events = $target[settings.propertyDefinitions.getEvents](arguments[0]) }
+          const $events = $target[settings.propertyDefinitions.getEvents](arguments[0])
+          if($events.length === 0) return $target
           iterateEvents: for(const $event of $events) { $event.enable = true }
           return $target
         },
@@ -95,35 +97,27 @@ export default class Core extends EventTarget {
       [settings.propertyDefinitions.disableEvents]: {
         enumerable: false, writable: false, 
         value: function disableEvents() {
-          let $events
-          if(arguments.length === 0) { $events = events }
-          else { $events = $target[settings.propertyDefinitions.getEvents](arguments[0]) }
+          const $events = $target[settings.propertyDefinitions.getEvents](arguments[0])
+          if($events.length === 0) return $target
           iterateEvents: for(const $event of $events) { $event.enable = false }
           return $target
         },
       },
-      // Reenable Events
+      // // Reenable Events
       [settings.propertyDefinitions.reenableEvents]: {
         enumerable: false, writable: false, 
         value: function reenableEvents() {
-          const reenableEvents = $target[settings.propertyDefinitions.getEvents](arguments[0])
-          for(const $reenableEvent of reenableEvents) {
-            $reenableEvent.enable = false
-          }
-          for(const $reenableEvent of reenableEvents) {
-            $reenableEvent.enable = true
+          const $events = $target[settings.propertyDefinitions.getEvents](arguments[0])
+          for(const $event of $events) {
+            $event.enable = false
+            $event.enable = true
           }
           return $target
         },
       },
     })
     if(settings.events) { $target[settings.propertyDefinitions.addEvents](settings.events) }
-    if(settings.enableEvents === true) {
-      $target[settings.propertyDefinitions.enableEvents]()
-    }
-    else if(typeof settings.enableEvents === 'object') {
-      $target[settings.propertyDefinitions.enableEvents](settings.enableEvents)
-    }
+    if(settings.enableEvents === true) { $target[settings.propertyDefinitions.enableEvents]() }
     return $target
   }
   constructor($settings = {}) {

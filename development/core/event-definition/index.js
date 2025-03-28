@@ -35,7 +35,6 @@ export default class EventDefinition {
   set enable($enable) {
     if(![true, false].includes($enable)) { return }
     const targets = this.#targets
-    if(targets.length === 0) { return }
     const enabled = this.#enabled
     const disabled = this.#disabled
     enabled.length = 0
@@ -50,11 +49,9 @@ export default class EventDefinition {
           this.#assign(target)
           $targetElement.enable = $enable
           enabled.push($targetElement)
+          
         }
-        catch($err) {
-          throw $err
-          disabled.push($targetElement)
-        }
+        catch($err) { disabled.push($targetElement) }
       }
       else if($enable === false) {
         try {
@@ -72,10 +69,9 @@ export default class EventDefinition {
   get #target() { return this.settings.target }
   get #targets() {
     const pretargets = this.#_targets
-    let propertyDirectory = this.#propertyDirectory
     const targetPaths = []
     const targets = []
-    if(this.path === ':scope') {
+     if(this.path === this.settings.propertyDirectory.scopeKey) {
       const pretargetElement = pretargets.find(
         ($pretarget) => $pretarget?.path === this.path
       )
@@ -111,6 +107,7 @@ export default class EventDefinition {
       const propertyPathMatcher = outmatch(this.path, {
         separator: '.',
       })
+      const propertyDirectory = this.#propertyDirectory
       iteratePropertyPaths: 
       for(const $propertyPath of propertyDirectory) {
         const propertyPathMatch = propertyPathMatcher($propertyPath)
@@ -119,7 +116,7 @@ export default class EventDefinition {
       iterateTargetPaths: 
       for(const $targetPath of targetPaths) {
         const pretargetElement = pretargets.find(
-          ($pretarget) => $pretarget?.path === $targetPath
+          ($pretarget) => $pretarget.path === $targetPath
         )
         let target = this.#context
         let targetElement
@@ -128,9 +125,9 @@ export default class EventDefinition {
         iterateTargetPathKeys: 
         while(pathKeysIndex < pathKeys.length) {
           let pathKey = pathKeys[pathKeysIndex]
+          if(target === undefined) { continue iterateTargetPathKeys }
           iterateTargetAccessors: 
           for(const $targetAccessor of this.settings.accessors) {
-            if(target === undefined) { break iterateTargetAccessors }
             target = $targetAccessor(target, pathKey)
             if(target !== undefined) { break iterateTargetAccessors }
           }
@@ -149,6 +146,13 @@ export default class EventDefinition {
           }
         }
         if(targetElement !== undefined) { targets.push(targetElement) }
+      }
+      if(this.path.charAt(0) === '*') {
+        targets.unshift({
+          path: null,
+          target: this.#context,
+          enable: false,
+        })
       }
     }
     this.#_targets = targets
@@ -171,7 +175,10 @@ export default class EventDefinition {
   }
   get #methods() { return this.settings.methods }
   get #propertyDirectory() {
-    return propertyDirectory(this.#context, this.settings.propertyDirectory)
+    const propertyDirectorySettings = ({
+      accessors: this.settings.accessors
+    }, this.settings.propertyDirectory)
+    return propertyDirectory(this.#context, propertyDirectorySettings)
   }
   emit() {
     const targets = this.#targets
