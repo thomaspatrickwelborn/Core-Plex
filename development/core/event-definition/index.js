@@ -7,8 +7,10 @@ export default class EventDefinition {
   #listener
   #enable = false
   #path
-  #enabled = []
-  #disabled = []
+  #assigned = []
+  #deassigned = []
+  #transsigned = []
+  #nontranssigned = []
   #_targets = []
   #_assign
   #_deassign
@@ -35,10 +37,10 @@ export default class EventDefinition {
   set enable($enable) {
     if(![true, false].includes($enable)) { return }
     const targets = this.#targets
-    const enabled = this.#enabled
-    const disabled = this.#disabled
-    enabled.length = 0
-    disabled.length = 0
+    const assigned = this.#assigned
+    const deassigned = this.#deassigned
+    assigned.length = 0
+    deassigned.length = 0
     iterateTargetElements: 
     for(const $targetElement of targets) {
       const { path, target, enable } = $targetElement
@@ -48,24 +50,24 @@ export default class EventDefinition {
         try {
           this.#assign(target)
           $targetElement.enable = $enable
-          enabled.push($targetElement)
+          assigned.push($targetElement)
           
         }
-        catch($err) { disabled.push($targetElement) }
+        catch($err) { deassigned.push($targetElement) }
       }
       else if($enable === false) {
         try {
           this.#deassign(target)
           $targetElement.enable = $enable
-          disabled.push($targetElement)
+          deassigned.push($targetElement)
         }
-        catch($err) { enabled.push($targetElement) }
+        catch($err) { assigned.push($targetElement) }
       }
     }
     this.#enable = $enable
   }
-  get enabled() { return this.#enabled }
-  get disabled() { return this.#disabled }
+  get assigned() { return this.#assigned }
+  get deassigned() { return this.#deassigned }
   get #target() { return this.settings.target }
   get #targets() {
     const pretargets = this.#_targets
@@ -182,10 +184,18 @@ export default class EventDefinition {
   }
   emit() {
     const targets = this.#targets
+    const transsigned = this.#transsigned
+    const nontranssigned = this.#nontranssigned
+    transsigned.length = 0
+    nontranssigned.length = 0
     iterateTargetElements: 
     for(const $targetElement of targets) {
       const { target } = $targetElement
-      this.#transsign(target, ...arguments)
+      try {
+        this.#transsign(target, ...arguments)
+        transsigned.push($targetElement)
+      }
+      catch($err) { nontranssigned.push($targetElement) }
     }
     return this
   }

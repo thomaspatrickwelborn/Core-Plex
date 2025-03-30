@@ -11,7 +11,7 @@ export default class Core extends EventTarget {
       [settings.propertyDefinitions.getEvents]: {
         enumerable: false, writable: false, 
         value: function getEvents() {
-          if(arguments[0] === undefined) { return events }
+          if(!arguments[0]) { return events }
           const getEvents = []
           const $filterEvents = [].concat(arguments[0])
           iterateFilterEvents: 
@@ -103,7 +103,7 @@ export default class Core extends EventTarget {
           return $target
         },
       },
-      // // Reenable Events
+      // Reenable Events
       [settings.propertyDefinitions.reenableEvents]: {
         enumerable: false, writable: false, 
         value: function reenableEvents() {
@@ -111,6 +111,18 @@ export default class Core extends EventTarget {
           for(const $event of $events) {
             $event.enable = false
             $event.enable = true
+          }
+          return $target
+        },
+      },
+      // Emit Events
+      [settings.propertyDefinitions.emitEvents]: {
+        enumerable: false, writable: false, 
+        value: function emitEvents($filterEvents, ...$eventParameters) {
+          const $events = $target[settings.propertyDefinitions.getEvents]($filterEvents)
+          console.log($events)
+          for(const $event of $events) {
+            $event.emit(...$eventParameters)
           }
           return $target
         },

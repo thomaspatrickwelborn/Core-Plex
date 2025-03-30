@@ -270,6 +270,7 @@ var Settings$1 = ($settings = {}) => {
       enableEvents: 'enableEvents',
       disableEvents: 'disableEvents',
       reenableEvents: 'reenableEvents',
+      emitEvents: 'emitEvents',
     },
   };
   for(const [$settingKey, $settingValue] of Object.entries($settings)) {
@@ -884,8 +885,10 @@ class EventDefinition {
   #listener
   #enable = false
   #path
-  #enabled = []
-  #disabled = []
+  #assigned = []
+  #deassigned = []
+  #transsigned = []
+  #nontranssigned = []
   #_targets = []
   #_assign
   #_deassign
@@ -912,10 +915,10 @@ class EventDefinition {
   set enable($enable) {
     if(![true, false].includes($enable)) { return }
     const targets = this.#targets;
-    const enabled = this.#enabled;
-    const disabled = this.#disabled;
-    enabled.length = 0;
-    disabled.length = 0;
+    const assigned = this.#assigned;
+    const deassigned = this.#deassigned;
+    assigned.length = 0;
+    deassigned.length = 0;
     iterateTargetElements: 
     for(const $targetElement of targets) {
       const { path, target, enable } = $targetElement;
@@ -925,24 +928,24 @@ class EventDefinition {
         try {
           this.#assign(target);
           $targetElement.enable = $enable;
-          enabled.push($targetElement);
+          assigned.push($targetElement);
           
         }
-        catch($err) { disabled.push($targetElement); }
+        catch($err) { deassigned.push($targetElement); }
       }
       else if($enable === false) {
         try {
           this.#deassign(target);
           $targetElement.enable = $enable;
-          disabled.push($targetElement);
+          deassigned.push($targetElement);
         }
-        catch($err) { enabled.push($targetElement); }
+        catch($err) { assigned.push($targetElement); }
       }
     }
     this.#enable = $enable;
   }
-  get enabled() { return this.#enabled }
-  get disabled() { return this.#disabled }
+  get assigned() { return this.#assigned }
+  get deassigned() { return this.#deassigned }
   get #target() { return this.settings.target }
   get #targets() {
     const pretargets = this.#_targets;
@@ -1059,10 +1062,18 @@ class EventDefinition {
   }
   emit() {
     const targets = this.#targets;
+    const transsigned = this.#transsigned;
+    const nontranssigned = this.#nontranssigned;
+    transsigned.length = 0;
+    nontranssigned.length = 0;
     iterateTargetElements: 
     for(const $targetElement of targets) {
       const { target } = $targetElement;
-      this.#transsign(target, ...arguments);
+      try {
+        this.#transsign(target, ...arguments);
+        transsigned.push($targetElement);
+      }
+      catch($err) { nontranssigned.push($targetElement); }
     }
     return this
   }
@@ -1078,7 +1089,7 @@ class Core extends EventTarget {
       [settings.propertyDefinitions.getEvents]: {
         enumerable: false, writable: false, 
         value: function getEvents() {
-          if(arguments[0] === undefined) { return events }
+          if(!arguments[0]) { return events }
           const getEvents = [];
           const $filterEvents = [].concat(arguments[0]);
           iterateFilterEvents: 
@@ -1170,7 +1181,7 @@ class Core extends EventTarget {
           return $target
         },
       },
-      // // Reenable Events
+      // Reenable Events
       [settings.propertyDefinitions.reenableEvents]: {
         enumerable: false, writable: false, 
         value: function reenableEvents() {
@@ -1178,6 +1189,18 @@ class Core extends EventTarget {
           for(const $event of $events) {
             $event.enable = false;
             $event.enable = true;
+          }
+          return $target
+        },
+      },
+      // Emit Events
+      [settings.propertyDefinitions.emitEvents]: {
+        enumerable: false, writable: false, 
+        value: function emitEvents($filterEvents, ...$eventParameters) {
+          const $events = $target[settings.propertyDefinitions.getEvents]($filterEvents);
+          console.log($events);
+          for(const $event of $events) {
+            $event.emit(...$eventParameters);
           }
           return $target
         },
