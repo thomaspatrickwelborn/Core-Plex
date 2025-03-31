@@ -53,7 +53,7 @@ export default class Core extends EventTarget {
           for(let $addEvent of $addEvents) {
             const event = {}
             for(const $settingKey of [
-              'accessors', 'assign', 'deassign', 'transsign', 'propertyDirectory'
+              'accessors', 'assign', 'deassign', 'propertyDirectory'
             ]) {
               const settingValue = settings[$settingKey]
               if(settingValue !== undefined) { event[$settingKey] = settingValue }
@@ -111,18 +111,6 @@ export default class Core extends EventTarget {
           for(const $event of $events) {
             $event.enable = false
             $event.enable = true
-          }
-          return $target
-        },
-      },
-      // Emit Events
-      [settings.propertyDefinitions.emitEvents]: {
-        enumerable: false, writable: false, 
-        value: function emitEvents($filterEvents, ...$eventParameters) {
-          const $events = $target[settings.propertyDefinitions.getEvents]($filterEvents)
-          console.log($events)
-          for(const $event of $events) {
-            $event.emit(...$eventParameters)
           }
           return $target
         },

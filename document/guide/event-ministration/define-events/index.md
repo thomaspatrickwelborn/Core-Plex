@@ -86,7 +86,7 @@ Optional [`EventDefinition` `Settings`](../../api/core/event-definition/settings
 #### **All event targets** use `on`, `off`, `emit` signment methods.  
 ```
 const application = Object.assign(Core.implement(new EventEmitter(), {
-  assign: 'on', deassign: 'off', transsign: 'emit'
+  assign: 'on', deassign: 'off', 
 }), {
   propertyA: new EventEmitter(),
   propertyB: [new EventEmitter()]
@@ -105,11 +105,11 @@ const application = Object.assign(Core.implement(new EventEmitter(), { // Event 
     path: ':scope', type: 'application:event', listener: eventLogA, // Event Emitter
   }, {
     path: 'propertyA', type: 'application:event', listener: eventLogB,
-    assign: 'addEventListener', deassign: 'removeEventListener', transsign: 'dispatchEvent', // Event Target
+    assign: 'addEventListener', deassign: 'removeEventListener', // Event Target
   }, {
     path: 'propertyB.[0-9]', type: 'application:event', listener: eventLogB, // Event Emitter
   }],
-  assign: 'on', deassign: 'off', transsign: 'emit',
+  assign: 'on', deassign: 'off',
 }), {
   propertyA: new EventTarget(), // Event Target
   propertyB: [new EventEmitter()] // Event Emitter
@@ -121,7 +121,7 @@ const application = Object.assign(Core.implement(new EventEmitter(), { // Event 
 class Application extends Core {
   constructor($settings) {
     super(Object.assign({
-      assign: 'addListener', deassign: 'removeListener', transsign: 'broadcast',
+      assign: 'addListener', deassign: 'removeListener', 
       methods: {
         assign: {
           addListener: function addListener($eventDefinition, $target) {
@@ -133,11 +133,6 @@ class Application extends Core {
         deassign: {
           removeListener: function removeListener($eventDefinition, $target) {
             return $target['removeListener'](type)
-          },
-        },
-        transsign: {
-          broadcast: function($eventDefinition, $target, $type, $data) {
-            return $target['broadcastEvent']($type, $data)
           },
         },
       }

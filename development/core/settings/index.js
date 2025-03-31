@@ -9,7 +9,6 @@ export default ($settings = {}) => {
       enableEvents: 'enableEvents',
       disableEvents: 'disableEvents',
       reenableEvents: 'reenableEvents',
-      emitEvents: 'emitEvents',
     },
   }
   for(const [$settingKey, $settingValue] of Object.entries($settings)) {

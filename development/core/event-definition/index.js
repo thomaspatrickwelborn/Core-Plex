@@ -9,12 +9,9 @@ export default class EventDefinition {
   #path
   #assigned = []
   #deassigned = []
-  #transsigned = []
-  #nontranssigned = []
   #_targets = []
   #_assign
   #_deassign
-  #_transsign
   constructor($settings, $context) { 
     if(!$settings || !$context) { return this }
     this.#settings = Settings($settings)
@@ -35,7 +32,6 @@ export default class EventDefinition {
   }
   get enable() { return this.#enable }
   set enable($enable) {
-    if(![true, false].includes($enable)) { return }
     const targets = this.#targets
     const assigned = this.#assigned
     const deassigned = this.#deassigned
@@ -53,7 +49,7 @@ export default class EventDefinition {
           assigned.push($targetElement)
           
         }
-        catch($err) { deassigned.push($targetElement) }
+        catch($err) { console.error($err) }
       }
       else if($enable === false) {
         try {
@@ -61,7 +57,7 @@ export default class EventDefinition {
           $targetElement.enable = $enable
           deassigned.push($targetElement)
         }
-        catch($err) { assigned.push($targetElement) }
+        catch($err) { console.error($err) }
       }
     }
     this.#enable = $enable
@@ -73,22 +69,7 @@ export default class EventDefinition {
     const pretargets = this.#_targets
     const targetPaths = []
     const targets = []
-     if(this.path === this.settings.propertyDirectory.scopeKey) {
-      const pretargetElement = pretargets.find(
-        ($pretarget) => $pretarget?.path === this.path
-      )
-      if(pretargetElement !== undefined) {
-        targets.push(pretargetElement)
-      }
-      else if(pretargetElement === undefined) {
-        targets.push({
-          path: this.path,
-          target: this.#context,
-          enable: false,
-        })
-      }
-    }
-    else if(this.#target !== undefined) {
+    if(this.#target) {
       for(const $target of [].concat(this.#target)) {
         const pretargetElement = pretargets.find(
           ($pretarget) => $pretarget?.path === this.path
@@ -115,6 +96,7 @@ export default class EventDefinition {
         const propertyPathMatch = propertyPathMatcher($propertyPath)
         if(propertyPathMatch === true) { targetPaths.push($propertyPath) }
       }
+      if(this.path.charAt(0) === this.#scopeKey) { targetPaths.unshift(this.#scopeKey) }
       iterateTargetPaths: 
       for(const $targetPath of targetPaths) {
         const pretargetElement = pretargets.find(
@@ -127,7 +109,7 @@ export default class EventDefinition {
         iterateTargetPathKeys: 
         while(pathKeysIndex < pathKeys.length) {
           let pathKey = pathKeys[pathKeysIndex]
-          if(target === undefined) { continue iterateTargetPathKeys }
+          if(pathKey === this.#scopeKey) { continue iterateTargetPathKeys }
           iterateTargetAccessors: 
           for(const $targetAccessor of this.settings.accessors) {
             target = $targetAccessor(target, pathKey)
@@ -139,7 +121,7 @@ export default class EventDefinition {
           if(target === pretargetElement?.target) {
             targetElement = pretargetElement
           }
-          else {
+          else if(typeof target === 'object') {
             targetElement = {
               path: $targetPath,
               target: target,
@@ -149,17 +131,11 @@ export default class EventDefinition {
         }
         if(targetElement !== undefined) { targets.push(targetElement) }
       }
-      if(this.path.charAt(0) === '*') {
-        targets.unshift({
-          path: null,
-          target: this.#context,
-          enable: false,
-        })
-      }
     }
     this.#_targets = targets
     return this.#_targets
   }
+  get #scopeKey() { return this.settings.scopeKey }
   get #assign() {
     if(this.#_assign !== undefined) { return this.#_assign }
     this.#_assign = this.settings.methods.assign[this.settings.assign].bind(null, this)
@@ -170,33 +146,11 @@ export default class EventDefinition {
     this.#_deassign = this.settings.methods.deassign[this.settings.deassign].bind(null, this)
     return this.#_deassign
   }
-  get #transsign() {
-    if(this.#_transsign !== undefined) { return this.#_transsign }
-    this.#_transsign = this.settings.methods.transsign[this.settings.transsign].bind(null, this)
-    return this.#_transsign
-  }
   get #methods() { return this.settings.methods }
   get #propertyDirectory() {
     const propertyDirectorySettings = ({
       accessors: this.settings.accessors
     }, this.settings.propertyDirectory)
     return propertyDirectory(this.#context, propertyDirectorySettings)
-  }
-  emit() {
-    const targets = this.#targets
-    const transsigned = this.#transsigned
-    const nontranssigned = this.#nontranssigned
-    transsigned.length = 0
-    nontranssigned.length = 0
-    iterateTargetElements: 
-    for(const $targetElement of targets) {
-      const { target } = $targetElement
-      try {
-        this.#transsign(target, ...arguments)
-        transsigned.push($targetElement)
-      }
-      catch($err) { nontranssigned.push($targetElement) }
-    }
-    return this
   }
 }
