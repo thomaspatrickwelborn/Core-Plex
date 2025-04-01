@@ -9,6 +9,11 @@
 | [**API**](./document/api/index.md) | [**Guide**](./document/guide/index.md) |
 | :-- | :-- |
 
+## ❖&ensp;Illustrations
+ - [Implementation](#implementation)
+ - [Inheritance](#implementation)
+ - [Instantiation](#inheritance)
+
 ## ❖&ensp;In Practice
  - [MVC Framework](https://www.npmjs.com/package/mvc-framework) 
    - [`MVCFrameworkCore` (extends Core-Plex `Core`)](https://github.com/thomaspatrickwelborn/MVC-Framework/blob/master/development/core/index.js)
