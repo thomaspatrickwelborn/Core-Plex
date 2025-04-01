@@ -1,14 +1,13 @@
 # ⁘&ensp;Core-Plex
 &ensp;❖&ensp;**Event Listener Management System**  
 &ensp;&ensp;&ensp;&ensp;⟐&ensp;**Select Event-Targetable Properties With Path Notation**  
-&ensp;&ensp;&ensp;&ensp;⟐&ensp;**Enable & Disable Event Listeners, Dispatch Events**  
+&ensp;&ensp;&ensp;&ensp;⟐&ensp;**Enable & Disable Event Listeners**  
 &ensp;&ensp;&ensp;&ensp;⟐&ensp;**Browser & NodeJS Compatibility**  
 
 &ensp;⬗&ensp;[**Objecture**](https://www.npmjs.com/package/objecture) - **Object Watcher, Property Manager**  
 
 | [**API**](./document/api/index.md) | [**Guide**](./document/guide/index.md) |
 | :-- | :-- |
-
 
 ## ❖&ensp;In Practice
  - [MVC Framework](https://www.npmjs.com/package/mvc-framework) 
@@ -28,7 +27,7 @@
 &ensp;&ensp;&ensp;⋄&ensp;Custom event target API support for anything else.    
 
 ## ❖&ensp;Impetus
-&ensp;&ensp;&ensp;⋄&ensp;Managing event listener addition/removal/dispatch is necessary for *most* application development.  
+&ensp;&ensp;&ensp;⋄&ensp;Managing event listener addition/removal is necessary for *most* application development.  
 &ensp;&ensp;&ensp;⋄&ensp;Add/Remove event listener statements are *usually* disparately located throughout codebases.  
 &ensp;&ensp;&ensp;⋄&ensp;Event assignment/deassignment/transsignment *differentiate* based on event-targetable class prototype.  
 &ensp;&ensp;&ensp;⋄&ensp;Maintaining event listener scope for complementary addition/removal can be challenging.  
@@ -194,19 +193,6 @@ const app = Core.implement(Object.assign(new EventTarget(), {
   },
   enableEvents: true
 })
-```
-**...then `dispatchEvent` from `target` properties.**    
-```
-for(const $eventDefinition of app.getEvents([
-  { path: ':scope' },
-  { path: 'propertyA' },
-  { path: 'propertyB.propertyC.propertyD' },
-  { path: 'propertyE.[0-9].propertyF' },
-])) {
-  $eventDefinition.emit(
-    new CustomEvent('customEvent', { detail: $eventDefinition })
-  )
-}
 ```
 
 ## ❖&ensp;Inheritance

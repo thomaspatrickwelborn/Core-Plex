@@ -66,7 +66,7 @@ const coreSettings = {
 ### Automatic `EventTarget` Signment
 Default [`Core` `Settings`](../../api/core/settings/index.md) and [EventDefinition Settings](../../api/core/event-definition/settings/index.md) automatically sign event listeners for `EventTarget` instances.   
 
-#### **All event targets use `addEventListener`, `removeEventListener`, `dispatchEvent` methods**.  
+#### **All event targets use `addEventListener`, `removeEventListener`**.  
 ```
 const application = Object.assign(new Core(), {
   propertyA: new EventTarget(),
@@ -98,7 +98,7 @@ application.addEvents({
 })
 .enableEvents()
 ```
-#### **Some event targets** use `on`, `off`, `emit`, **remainder event targets** use `addEventListener`, `removeEventListener`, `dispatchEvent`.  
+#### **Some event targets** use `on`, `off`, `emit`, **remainder event targets** use `addEventListener`, `removeEventListener`.  
 ```
 const application = Object.assign(Core.implement(new EventEmitter(), { // Event Emitter
   events: [{
