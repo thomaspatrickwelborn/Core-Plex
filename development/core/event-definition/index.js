@@ -96,7 +96,7 @@ export default class EventDefinition {
         const propertyPathMatch = propertyPathMatcher($propertyPath)
         if(propertyPathMatch === true) { targetPaths.push($propertyPath) }
       }
-      if(this.path.charAt(0) === this.#scopeKey) { targetPaths.unshift(this.#scopeKey) }
+      if(this.path.match(`${this.#scopeKey}`)) { targetPaths.unshift(this.#scopeKey) }
       iterateTargetPaths: 
       for(const $targetPath of targetPaths) {
         const pretargetElement = pretargets.find(
@@ -109,7 +109,7 @@ export default class EventDefinition {
         iterateTargetPathKeys: 
         while(pathKeysIndex < pathKeys.length) {
           let pathKey = pathKeys[pathKeysIndex]
-          if(pathKey === this.#scopeKey) { continue iterateTargetPathKeys }
+          if(pathKey === this.#scopeKey) { break iterateTargetPathKeys }
           iterateTargetAccessors: 
           for(const $targetAccessor of this.settings.accessors) {
             target = $targetAccessor(target, pathKey)
