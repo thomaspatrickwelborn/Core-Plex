@@ -2,8 +2,13 @@ const defaultAccessor = ($target, $property) => {
   if($property === undefined) { return $target }
   else { return $target[$property] }
 };
+const getAccessor = ($target, $property) => {
+  if($property === undefined) { return $target }
+  else { return $target.get($property) }
+};
 var accessors = {
   default: defaultAccessor,
+  get: getAccessor,
 };
 
 function impandEvents($propEvents) {
@@ -811,7 +816,7 @@ var Settings = ($settings = {}) => {
     enable: false,
     accessors: [accessors.default],
     propertyDirectory: { scopeKey: ':scope', maxDepth: 10 },
-    assign: 'addEventListener', deassign: 'removeEventListener',
+    assign: 'addEventListener', deassign: 'removeEventListener', transsign: 'dispatchEvent',
     bindListener: true,
     scopeKey: ':scope',
     methods: {
@@ -846,6 +851,16 @@ var Settings = ($settings = {}) => {
           return $target['off'](type, listener)
         },
       },
+      transsign: {
+        // Event Target Dispatch Event
+        dispatchEvent: function dispatchEvent($eventDefinition, $target, $event) {
+          return $target['dispatchEvent']($event)
+        },
+        // Event Emitter Emit
+        emit: function emit($eventDefinition, $target, $type, ...$arguments) {
+          return $target['emit']($type, ...$arguments)
+        },
+      },
     },
   };
   for(const [$settingKey, $settingValue] of Object.entries($settings)) {
@@ -877,9 +892,12 @@ class EventDefinition {
   #path
   #assigned = []
   #deassigned = []
+  #transsigned = []
+  #nontranssigned = []
   #_targets = []
   #_assign
   #_deassign
+  #_transsign
   constructor($settings, $context) { 
     if(!$settings || !$context) { return this }
     this.#settings = Settings($settings);
@@ -1014,12 +1032,34 @@ class EventDefinition {
     this.#_deassign = this.settings.methods.deassign[this.settings.deassign].bind(null, this);
     return this.#_deassign
   }
+  get #transsign() {
+    if(this.#_transsign !== undefined) { return this.#_transsign }
+    this.#_transsign = this.settings.methods.transsign[this.settings.transsign].bind(null, this);
+    return this.#_transsign
+  }
   get #methods() { return this.settings.methods }
   get #propertyDirectory() {
     const propertyDirectorySettings = ({
       accessors: this.settings.accessors
     }, this.settings.propertyDirectory);
     return propertyDirectory(this.#context, propertyDirectorySettings)
+  }
+  emit() {
+    const targets = this.#targets;
+    const transsigned = this.#transsigned;
+    const nontranssigned = this.#nontranssigned;
+    transsigned.length = 0;
+    nontranssigned.length = 0;
+    iterateTargetElements: 
+    for(const $targetElement of targets) {
+      const { target } = $targetElement;
+      try {
+        this.#transsign(target, ...arguments);
+        transsigned.push($targetElement);
+      }
+      catch($err) { nontranssigned.push($targetElement); }
+    }
+    return this
   }
 }
 
@@ -1075,7 +1115,7 @@ class Core extends EventTarget {
           for(let $addEvent of $addEvents) {
             const event = {};
             for(const $settingKey of [
-              'accessors', 'assign', 'deassign', 'propertyDirectory'
+              'accessors', 'assign', 'deassign', 'transsign', 'propertyDirectory'
             ]) {
               const settingValue = settings[$settingKey];
               if(settingValue !== undefined) { event[$settingKey] = settingValue; }
@@ -1133,6 +1173,18 @@ class Core extends EventTarget {
           for(const $event of $events) {
             $event.enable = false;
             $event.enable = true;
+          }
+          return $target
+        },
+      },
+      // Emit Events
+      [settings.propertyDefinitions.emitEvents]: {
+        enumerable: false, writable: false, 
+        value: function emitEvents($filterEvents, ...$eventParameters) {
+          const $events = $target[settings.propertyDefinitions.getEvents]($filterEvents);
+          console.log($events);
+          for(const $event of $events) {
+            $event.emit(...$eventParameters);
           }
           return $target
         },

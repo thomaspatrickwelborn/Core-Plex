@@ -9,9 +9,12 @@ export default class EventDefinition {
   #path
   #assigned = []
   #deassigned = []
+  #transsigned = []
+  #nontranssigned = []
   #_targets = []
   #_assign
   #_deassign
+  #_transsign
   constructor($settings, $context) { 
     if(!$settings || !$context) { return this }
     this.#settings = Settings($settings)
@@ -146,11 +149,33 @@ export default class EventDefinition {
     this.#_deassign = this.settings.methods.deassign[this.settings.deassign].bind(null, this)
     return this.#_deassign
   }
+  get #transsign() {
+    if(this.#_transsign !== undefined) { return this.#_transsign }
+    this.#_transsign = this.settings.methods.transsign[this.settings.transsign].bind(null, this)
+    return this.#_transsign
+  }
   get #methods() { return this.settings.methods }
   get #propertyDirectory() {
     const propertyDirectorySettings = ({
       accessors: this.settings.accessors
     }, this.settings.propertyDirectory)
     return propertyDirectory(this.#context, propertyDirectorySettings)
+  }
+  emit() {
+    const targets = this.#targets
+    const transsigned = this.#transsigned
+    const nontranssigned = this.#nontranssigned
+    transsigned.length = 0
+    nontranssigned.length = 0
+    iterateTargetElements: 
+    for(const $targetElement of targets) {
+      const { target } = $targetElement
+      try {
+        this.#transsign(target, ...arguments)
+        transsigned.push($targetElement)
+      }
+      catch($err) { nontranssigned.push($targetElement) }
+    }
+    return this
   }
 }

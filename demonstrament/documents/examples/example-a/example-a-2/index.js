@@ -54,7 +54,7 @@ const core = Core.implement(watchers, {
   assign: 'on', deassign: 'off', 
 })
 core.getEvents().forEach(($eventDefinition) => {
-  $eventDefinition.enabled.forEach(($enabledEvent) => console.log(JSON.stringify({
+  $eventDefinition.assigned.forEach(($enabledEvent) => console.log(JSON.stringify({
     enable: $enabledEvent.enable,
     path: $enabledEvent.path,
   }, null, 2)))

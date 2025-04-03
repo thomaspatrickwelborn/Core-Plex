@@ -4,7 +4,7 @@ export default ($settings = {}) => {
     enable: false,
     accessors: [accessors.default],
     propertyDirectory: { scopeKey: ':scope', maxDepth: 10 },
-    assign: 'addEventListener', deassign: 'removeEventListener',
+    assign: 'addEventListener', deassign: 'removeEventListener', transsign: 'dispatchEvent',
     bindListener: true,
     scopeKey: ':scope',
     methods: {
@@ -37,6 +37,16 @@ export default ($settings = {}) => {
         off: function off($eventDefinition, $target) {
           const { type, listener } = $eventDefinition
           return $target['off'](type, listener)
+        },
+      },
+      transsign: {
+        // Event Target Dispatch Event
+        dispatchEvent: function dispatchEvent($eventDefinition, $target, $event) {
+          return $target['dispatchEvent']($event)
+        },
+        // Event Emitter Emit
+        emit: function emit($eventDefinition, $target, $type, ...$arguments) {
+          return $target['emit']($type, ...$arguments)
         },
       },
     },
