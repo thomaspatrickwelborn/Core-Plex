@@ -3,6 +3,7 @@ const defaultAccessor = ($target, $property) => {
   else { return $target[$property] }
 };
 const getAccessor = ($target, $property) => {
+  console.log($target, $property);
   if($property === undefined) { return $target }
   else { return $target.get($property) }
 };
@@ -275,6 +276,7 @@ var Settings$1 = ($settings = {}) => {
       enableEvents: 'enableEvents',
       disableEvents: 'disableEvents',
       reenableEvents: 'reenableEvents',
+      emitEvents: 'emitEvents',
     },
   };
   for(const [$settingKey, $settingValue] of Object.entries($settings)) {
