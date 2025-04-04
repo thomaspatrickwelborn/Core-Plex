@@ -1,7 +1,7 @@
 # ⁘&ensp;Core-Plex
 &ensp;❖&ensp;**Event Listener Management System**  
 &ensp;&ensp;&ensp;&ensp;⟐&ensp;**Select Event-Targetable Properties With Path Notation**  
-&ensp;&ensp;&ensp;&ensp;⟐&ensp;**Enable & Disable Event Listeners**  
+&ensp;&ensp;&ensp;&ensp;⟐&ensp;**Enable & Disable Event Listeners, Dispatch Events**  
 &ensp;&ensp;&ensp;&ensp;⟐&ensp;**Browser & NodeJS Compatibility**  
 
 &ensp;⬗&ensp;[**Objecture**](https://www.npmjs.com/package/objecture) - **Object Watcher, Property Manager**  
