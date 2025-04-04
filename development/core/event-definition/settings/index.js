@@ -3,7 +3,7 @@ export default ($settings = {}) => {
   const Settings = {
     enable: false,
     accessors: [accessors.default],
-    propertyDirectory: { scopeKey: ':scope', maxDepth: 10 },
+    propertyDirectory: { scopeKey: $settings.scopeKey, maxDepth: 10 },
     assign: 'addEventListener', deassign: 'removeEventListener', transsign: 'dispatchEvent',
     bindListener: true,
     scopeKey: ':scope',

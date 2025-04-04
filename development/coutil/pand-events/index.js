@@ -15,7 +15,7 @@ function impandEvents($propEvents) {
   return propEvents
 }
 
-function expandEvents($propEvents) {
+function expandEvents($propEvents, $scopeKey = ':scope') {
   if(
     Array.isArray($propEvents) ||
     $propEvents === undefined
@@ -25,10 +25,10 @@ function expandEvents($propEvents) {
   for(const [
     $propEventSettings, $propEventListener
   ] of Object.entries($propEvents)) {
-    const propEventSettings = $propEventSettings.split(' ')
+    const propEventSettings = $propEventSettings.trim().split(' ')
     let path, type, listener, options
     if(propEventSettings.length === 1) {
-      path = ':scope'
+      path = $scopeKey
       type = propEventSettings[0]
     }
     else if(propEventSettings.length > 1) {

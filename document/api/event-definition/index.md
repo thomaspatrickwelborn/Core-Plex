@@ -122,6 +122,15 @@ Stored value is bound function defined by `EventDefinition.#deassign` getter.
 **Returns**: `EventDefinition.#_deassign`  
 **Descript**:  
 Assigns function from `this.settings.methods.deassign` to `this.#_deassign` bound with `this` as first argument.   
+### `EventDefinition.#_transsign` Property
+**Type**: `function`  
+**Descript**:  
+Stored value is bound function defined by `EventDefinition.#transsign` getter.  
+### `EventDefinition.#transsign` Property
+**Type**: `get`  
+**Returns**: `EventDefinition.#_transsign`  
+**Descript**:  
+Assigns function from `this.settings.methods.transsign` to `this.#_transsign` bound with `this` as first argument.   
 ### `EventDefinition.#methods` Property
 **Type**: `get`  
 **Returns**: `this.settings.methods`  

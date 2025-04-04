@@ -8,7 +8,7 @@
 **Descript**:  
 Method assigns `$settings` argument properties to `Settings` property and returns to [`EventDefinition.constructor`](../index.md#constructor-method) invocation. 
 Properties describe: 
- - how events `assign` (e.g. `addEventListener`, `on`, `once`), `deassign` (e.g. `removeEventListener`, `off`) from event targets;  
+ - how events `assign` (e.g. `addEventListener`, `on`, `once`), `deassign` (e.g. `removeEventListener`, `off`), and `transsign` (e.g. `dispatchEvent`, `emit`) from event targets and event types;  
  - how event targets are accessed - either `path` notation with customizable accessor API (`accessors`) or direct `target`/`array[target]`; 
  - and how event targets are `enabled` where `true` indicates events *assigned* to targets while `false` indicates events *deassigned* from targets.  
 ### `$settings` Argument
@@ -26,6 +26,7 @@ Properties describe:
   // ...
   assign: string,
   deassign: string,
+  transsign: string,
   accessors: array[function],
   methods: {
     assign: {
@@ -37,6 +38,10 @@ Properties describe:
       removeEventListener: function,
       off: function,
     },
+    transsign: {
+      dispatchEvent: function,
+      emit: function,
+    },
   },
 }
 ```
@@ -45,7 +50,7 @@ Properties describe:
 
 **Optional `$settings` Properties**  
  - `$settings.$target`, `$settings.$enable`,  
- - `$settings.assign`, `$settings.deassign`, `$settings.accessors`, and `$settings.methods`.  
+ - `$settings.assign`, `$settings.deassign`, `$settings.transsign`, `$settings.accessors`, and `$settings.methods`.  
 
 **Custom-assign `Settings` properties from complementary `$settings` properties.**  
  - e.g. Define `$settings.useCapture` and assign value to `Settings.useCapture`.  
@@ -110,6 +115,13 @@ Function evoked when some event of `EventDefinition.type` occurs.
 **Descript**:  
 `deassign` describes which event definition method class function to evoke during target event deassignment.  
 
+### `$settings.transsign` Property
+**Type**: `string`  
+**Required**: `false`  
+**Default**:  `dispatchEvent`  
+**Descript**:  
+`transsign` describes which event definition method class function to evoke during target event dispatch.  
+
 ### `$settings.accessors` Property
 **Type**: `array[function]`  
 **Required**: `false`  
@@ -135,13 +147,19 @@ Function evoked when some event of `EventDefinition.type` occurs.
     removeEventListener: function removeEventListener($eventDefinition, $target) { ... },
     off: function off($eventDefinition, $target) { ... },
   },
+  transsign: {
+    dispatchEvent: function dispatchEvent($eventDefinition, $target, $event) { ... },
+    emit: function emit($eventDefinition, $target, $type, ...$arguments) { ... },
+    send: function send($eventDefinition, $target, $data) { ... },
+  },
 }
 ```
 **Descript**:  
-There are three event definition method classes: `assign`, `deassign`. Each method class function evokes a target's event signment with arguments `$eventDefinition`, `$target`, others. Event definition methods may be replaced *and* **alternate** event definition methods may be applied. For example, to overwrite `assign.once`:  
+There are three event definition method classes: `assign`, `deassign`, `transsign`. Each method class function evokes a target's event signment with arguments `$eventDefinition`, `$target`, others. Event definition methods may be replaced *and* **alternate** event definition methods may be applied. For example, to overwrite `assign.once` and add `transsign.broadcast`:  
 ```
 { methods: {
   assign: { once: function once($eventDefinition, $target) { ... } } },
+  transsign: { broadcast: function broadcast($eventDefinition, $target, ...$arguments) { ... } } }
 }
 ```
 
@@ -219,4 +237,32 @@ function off($eventDefinition, $target) {
 `off` adds an event listener to a target with paramtered `type`, `listener` properties.  
  - [Node EventEmitter `off`](https://nodejs.org/api/events.html#emitteroffeventname-listener)
 
+
+#### `$settings.methods.transsign.dispatchEvent` Property
+**Type**:  `function`  
+**Required**: `false`  
+**Default**:  
+```
+function dispatchEvent($eventDefinition, $target, $event) {
+  return $target['dispatchEvent']($event)
+}
+```
+**Descript**:  
+`dispatchEvent` emits an `Event` instance.  
+ - [Browser EventTarget `dispatchEvent`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent)
+ - [Node EventTarget `dispatchEvent`](https://nodejs.org/api/events.html#eventtargetdispatcheventevent)
+
+
+#### `$settings.methods.transsign.emit` Property
+**Type**:  `function`  
+**Required**: `false`  
+**Default**:  
+```
+function emit($eventDefinition, $target, $type, ...$arguments) {
+  return $target['emit']($type, ...$arguments)
+}
+```
+**Descript**:  
+`emit` emits an event type with other arguments.  
+ - [Node EventEmitter `emit`](https://nodejs.org/api/events.html#emitteremiteventname-args)
 

@@ -48,7 +48,7 @@ export default class Core extends EventTarget {
         enumerable: false, writable: false, 
         value: function addEvents() {
           if(!arguments.length) { return $target }
-          let $addEvents = expandEvents(arguments[0])
+          let $addEvents = expandEvents(arguments[0], settings.scopeKey)
           iterateAddEvents: 
           for(let $addEvent of $addEvents) {
             const event = {}
@@ -120,7 +120,6 @@ export default class Core extends EventTarget {
         enumerable: false, writable: false, 
         value: function emitEvents($filterEvents, ...$eventParameters) {
           const $events = $target[settings.propertyDefinitions.getEvents]($filterEvents)
-          console.log($events)
           for(const $event of $events) {
             $event.emit(...$eventParameters)
           }

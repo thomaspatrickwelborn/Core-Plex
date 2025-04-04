@@ -11,7 +11,7 @@ Properties describe:
  - which `events` added initially; 
  - whether initial events are `enabled`; 
  - public method names (`propertyDefinitions`); 
- - target event method names (`assign`, `deassign`) applied as default to all new `EventDeifnition` class instances (overwritable by `EventDefinition` settings).  
+ - target event method names (`assign`, `deassign`, `transsign`) applied as default to all new `EventDeifnition` class instances (overwritable by `EventDefinition` settings).  
 ### `$settings` Argument
 **Type**: `object`  
 **Descript**:  
@@ -29,6 +29,7 @@ Properties describe:
   },
   assign: string, 
   deassign: string, 
+  transsign: string, 
 }
 ```
  - Required `$settings` Properties
@@ -124,3 +125,10 @@ Specify alternate name of default `EventDefinition.assign` method. May be furthe
 **Default**: 'removeEventListener'  
 **Descript**:  
 Specify alternate name of default `EventDefinition.deassign` method. May be further overwritten by `EventDefinition` settings. 
+
+### `$settings.transsign` Property
+**Type**: `string`  
+**Required**: `false`  
+**Default**: 'dispatchEvent'  
+**Descript**:  
+Specify alternate name of default `EventDefinition.transsign` method. May be further overwritten by `EventDefinition` settings. 

@@ -70,7 +70,6 @@ export default class EventDefinition {
   get #target() { return this.settings.target }
   get #targets() {
     const pretargets = this.#_targets
-    const targetPaths = []
     const targets = []
     if(this.#target) {
       for(const $target of [].concat(this.#target)) {
@@ -90,49 +89,67 @@ export default class EventDefinition {
       }
     }
     else if(typeOf(this.path) === 'string') {
-      const propertyPathMatcher = outmatch(this.path, {
-        separator: '.',
-      })
-      const propertyDirectory = this.#propertyDirectory
-      iteratePropertyPaths: 
-      for(const $propertyPath of propertyDirectory) {
-        const propertyPathMatch = propertyPathMatcher($propertyPath)
-        if(propertyPathMatch === true) { targetPaths.push($propertyPath) }
-      }
-      if(this.path.match(`${this.#scopeKey}`)) { targetPaths.unshift(this.#scopeKey) }
-      iterateTargetPaths: 
-      for(const $targetPath of targetPaths) {
-        const pretargetElement = pretargets.find(
-          ($pretarget) => $pretarget.path === $targetPath
-        )
-        let target = this.#context
-        let targetElement
-        const pathKeys = $targetPath.split('.')
-        let pathKeysIndex = 0
-        iterateTargetPathKeys: 
-        while(pathKeysIndex < pathKeys.length) {
-          let pathKey = pathKeys[pathKeysIndex]
-          if(pathKey === this.#scopeKey) { break iterateTargetPathKeys }
-          iterateTargetAccessors: 
-          for(const $targetAccessor of this.settings.accessors) {
-            target = $targetAccessor(target, pathKey)
-            if(target !== undefined) { break iterateTargetAccessors }
-          }
-          pathKeysIndex++
+      const targetPaths = []
+      if(this.path === this.#scopeKey) {
+        const targetElement = {
+          path: this.path,
+          target: this.#context,
+          enable: false,
         }
-        if(target !== undefined) {
-          if(target === pretargetElement?.target) {
-            targetElement = pretargetElement
+        targets.push(targetElement)
+      }
+      else {
+        if(this.settings.propertyDirectory) {
+          const propertyDirectory = this.#propertyDirectory
+          const propertyPathMatcher = outmatch(this.path, {
+            separator: '.',
+          })
+          iteratePropertyPaths: 
+          for(const $propertyPath of propertyDirectory) {
+            const propertyPathMatch = propertyPathMatcher($propertyPath)
+            if(propertyPathMatch === true) { targetPaths.push($propertyPath) }
           }
-          else if(typeof target === 'object') {
-            targetElement = {
-              path: $targetPath,
-              target: target,
-              enable: false,
+          if(this.path.charAt(0) === '*') {
+            targetPaths.unshift(this.#scopeKey)
+          }
+        }
+        else {
+          targetPaths.push(this.path)
+        }
+        iterateTargetPaths: 
+        for(const $targetPath of targetPaths) {
+          const pretargetElement = pretargets.find(
+            ($pretarget) => $pretarget.path === $targetPath
+          )
+          let target = this.#context
+          let targetElement
+          const pathKeys = $targetPath.split('.')
+          let pathKeysIndex = 0
+          iterateTargetPathKeys: 
+          while(pathKeysIndex < pathKeys.length) {
+            let pathKey = pathKeys[pathKeysIndex]
+            if(pathKey === this.#scopeKey) { break iterateTargetPathKeys }
+            iterateTargetAccessors: 
+            for(const $targetAccessor of this.settings.accessors) {
+              target = $targetAccessor(target, pathKey)
+              if(target !== undefined) { break iterateTargetAccessors }
+            }
+            pathKeysIndex++
+          }
+          if(target !== undefined) {
+            if(target === pretargetElement?.target) {
+              targetElement = pretargetElement
+            }
+            else if(typeof target === 'object') {
+              targetElement = {
+                path: $targetPath,
+                target: target,
+                enable: false,
+              }
             }
           }
+          if(targetElement !== undefined) { targets.push(targetElement) }
         }
-        if(targetElement !== undefined) { targets.push(targetElement) }
       }
     }
     this.#_targets = targets
@@ -156,6 +173,7 @@ export default class EventDefinition {
   }
   get #methods() { return this.settings.methods }
   get #propertyDirectory() {
+    if(!this.settings.propertyDirectory) { return null }
     const propertyDirectorySettings = ({
       accessors: this.settings.accessors
     }, this.settings.propertyDirectory)
