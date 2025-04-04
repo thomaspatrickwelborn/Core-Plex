@@ -3,7 +3,6 @@ const defaultAccessor = ($target, $property) => {
   else { return $target[$property] }
 };
 const getAccessor = ($target, $property) => {
-  console.log($target, $property);
   if($property === undefined) { return $target }
   else { return $target.get($property) }
 };
