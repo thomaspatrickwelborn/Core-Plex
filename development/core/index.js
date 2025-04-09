@@ -7,7 +7,6 @@ export default class Core extends EventTarget {
     const settings = Settings($settings)
     const events = []
     Object.defineProperties($target, {
-      // Get Events
       [settings.propertyDefinitions.getEvents]: {
         enumerable: false, writable: false, 
         value: function getEvents() {
@@ -43,7 +42,6 @@ export default class Core extends EventTarget {
           return getEvents
         }
       },
-      // Add Events
       [settings.propertyDefinitions.addEvents]: {
         enumerable: false, writable: false, 
         value: function addEvents() {
@@ -65,7 +63,6 @@ export default class Core extends EventTarget {
           return $target
         },
       },
-      // Remove Events
       [settings.propertyDefinitions.removeEvents]: {
         enumerable: false, writable: false, 
         value: function removeEvents() {
@@ -83,7 +80,6 @@ export default class Core extends EventTarget {
           return $target
         }
       },
-      // Enable Events
       [settings.propertyDefinitions.enableEvents]: {
         enumerable: false, writable: false, 
         value: function enableEvents() {
@@ -93,7 +89,6 @@ export default class Core extends EventTarget {
           return $target
         },
       },
-      // Disable Events
       [settings.propertyDefinitions.disableEvents]: {
         enumerable: false, writable: false, 
         value: function disableEvents() {
@@ -103,7 +98,6 @@ export default class Core extends EventTarget {
           return $target
         },
       },
-      // Reenable Events
       [settings.propertyDefinitions.reenableEvents]: {
         enumerable: false, writable: false, 
         value: function reenableEvents() {
@@ -115,7 +109,6 @@ export default class Core extends EventTarget {
           return $target
         },
       },
-      // Emit Events
       [settings.propertyDefinitions.emitEvents]: {
         enumerable: false, writable: false, 
         value: function emitEvents($filterEvents, ...$eventParameters) {

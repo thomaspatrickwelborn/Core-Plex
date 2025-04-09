@@ -52,7 +52,7 @@ export default class EventDefinition {
           assigned.push($targetElement)
           
         }
-        catch($err) { console.error($err) }
+        catch($err) { if(this.settings.errorLog) { console.error($err) } }
       }
       else if($enable === false) {
         try {
@@ -60,7 +60,7 @@ export default class EventDefinition {
           $targetElement.enable = $enable
           deassigned.push($targetElement)
         }
-        catch($err) { console.error($err) }
+        catch($err) { if(this.settings.errorLog) { console.error($err) } }
       }
     }
     this.#enable = $enable
@@ -131,7 +131,8 @@ export default class EventDefinition {
             if(pathKey === this.#scopeKey) { break iterateTargetPathKeys }
             iterateTargetAccessors: 
             for(const $targetAccessor of this.settings.accessors) {
-              target = $targetAccessor(target, pathKey)
+              try { target = $targetAccessor(target, pathKey) }
+              catch($err) { if(this.settings.errorLog) { console.error($err) } }
               if(target !== undefined) { break iterateTargetAccessors }
             }
             pathKeysIndex++

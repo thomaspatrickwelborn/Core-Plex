@@ -20,6 +20,7 @@ const app = Core.implement(Object.assign(new EventTarget(), {
   }]
 }), {
   events: {
+    ':scope': ($event) => console.log($event.type, $event.detail),
     'customEvent': ($event) => console.log($event.type, $event.detail),
     'propertyA customEvent': ($event) => console.log($event.type, $event.detail),
     'propertyB.propertyC.propertyD customEvent': ($event) => console.log($event.type, $event.detail),
