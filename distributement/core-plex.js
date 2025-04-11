@@ -214,7 +214,6 @@ const Primitives = {
   'string': String, 
   'number': Number, 
   'boolean': Boolean, 
-  'bigint': BigInt, 
   'undefined': undefined,
   'null': null,
 };
@@ -836,7 +835,7 @@ var Settings = ($settings = {}) => {
           const { type, listener } = $eventDefinition;
           return $target['once'](type, listener)
         },
-      },  
+      }, 
       deassign: {
         removeEventListener: function removeEventListener($eventDefinition, $target) {
           const { type, listener, settings } = $eventDefinition;

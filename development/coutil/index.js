@@ -6,7 +6,7 @@ import recursiveAssign from './recursive-assign/index.js'
 import recursiveAssignConcat from './recursive-assign-concat/index.js'
 import regularExpressions from './regular-expressions/index.js'
 import recursiveFreeze from './recursive-freeze/index.js'
-import typedObjectLiteral from './typedObjectLiteral/index.js'
+import typedObjectLiteral from './typed-object-literal/index.js'
 import typeOf from './type-of/index.js'
 import * as variables from './variables/index.js'
 
