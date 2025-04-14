@@ -11,23 +11,6 @@ var accessors = {
   get: getAccessor,
 };
 
-function impandEvents($propEvents) {
-  if(!Array.isArray($propEvents)) { return $propEvents }
-  const propEvents = {};
-  iteratePropEvents: 
-  for(const $propEvent of $propEvents) {
-    const { path, type, listener, options } = $propEvent;
-    const propEventSettings = `${$path} ${$type}`;
-    if(options !== undefined) {
-      propEvents[propEventSettings] = [listener, options];
-    }
-    else {
-      propEvents[propEventSettings] = listener;
-    }
-  }
-  return propEvents
-}
-
 function expandEvents($propEvents, $scopeKey = ':scope') {
   if(
     Array.isArray($propEvents) ||
@@ -64,6 +47,68 @@ function expandEvents($propEvents, $scopeKey = ':scope') {
     propEvents.push(propEvent);
   }
   return propEvents
+}
+
+const typeOf = ($data) => Object
+  .prototype
+  .toString
+  .call($data).slice(8, -1).toLowerCase();
+
+function typedObjectLiteral($value) {
+  let _typedObjectLiteral;
+  const typeOfValue = typeOf($value);
+  if(typeOfValue === 'object') { _typedObjectLiteral = {}; }
+  else if(typeOfValue === 'array') { _typedObjectLiteral = []; }
+  else if(typeOfValue === 'string') {
+    if($value === 'object') { _typedObjectLiteral = {}; }
+    else if($value === 'array') { _typedObjectLiteral = []; }
+  }
+  else { _typedObjectLiteral = undefined; }
+  return _typedObjectLiteral
+}
+
+function createSubtarget($sourceValue, $path) {
+  const subpaths = $path.split('.');
+  let subpathIndex = 0;
+  const subtarget = {};
+  let subtargetTerminal = subtarget;
+  for(const $subpath of subpaths) {
+    if(subpathIndex === subpaths.length - 1) {
+      if($sourceValue && typeof $sourceValue === 'object') {
+        subtargetTerminal[$subpath] = expandTree($sourceValue, $path);
+      }
+      else {
+        subtargetTerminal[$subpath] = $sourceValue;
+      }
+    }
+    else {
+      subtargetTerminal[$subpath] = {};
+      subtargetTerminal = subtargetTerminal[$subpath];
+    }
+    subpathIndex++;
+  }
+  return subtarget
+}
+
+function expandTree($source, $path) {
+  const target = {};
+  const typeofSource = typeof $source;
+  const typeofPath = typeof $path;
+  if($source && typeofSource === 'object') {
+    for(const [$sourceKey, $sourceValue] of Object.entries($source)) {
+      if(typeofPath === 'function') {
+        $path(target, $sourceKey, $sourceValue);
+      }
+      else {
+        const subtarget = createSubtarget($sourceValue, $path);
+        target[$sourceKey] = subtarget;
+      }
+    }
+  }
+  else {
+    Object.assign(target, createSubtarget($source, $path));
+  }
+  return target
 }
 
 function isPropertyDefinition($propertyDefinition) {
@@ -122,11 +167,6 @@ function propertyDirectory($object, $options) {
   }
   return _propertyDirectory
 }
-
-const typeOf = ($data) => Object
-  .prototype
-  .toString
-  .call($data).slice(8, -1).toLowerCase();
 
 function recursiveAssign($target, ...$sources) {
   if(!$target) { return $target}
@@ -197,19 +237,6 @@ function recursiveFreeze($target) {
   return Object.freeze($target)
 }
 
-function typedObjectLiteral($value) {
-  let _typedObjectLiteral;
-  const typeOfValue = typeOf($value);
-  if(typeOfValue === 'object') { _typedObjectLiteral = {}; }
-  else if(typeOfValue === 'array') { _typedObjectLiteral = []; }
-  else if(typeOfValue === 'string') {
-    if($value === 'object') { _typedObjectLiteral = {}; }
-    else if($value === 'array') { _typedObjectLiteral = []; }
-  }
-  else { _typedObjectLiteral = undefined; }
-  return _typedObjectLiteral
-}
-
 const Primitives = {
   'string': String, 
   'number': Number, 
@@ -251,7 +278,7 @@ var index = /*#__PURE__*/Object.freeze({
   __proto__: null,
   accessors: accessors,
   expandEvents: expandEvents,
-  impandEvents: impandEvents,
+  expandTree: expandTree,
   isPropertyDefinition: isPropertyDefinition,
   propertyDirectory: propertyDirectory,
   recursiveAssign: recursiveAssign,
