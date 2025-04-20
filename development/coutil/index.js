@@ -1,7 +1,6 @@
 import accessors from './accessors/index.js'
 import expandEvents from './expand-events/index.js'
 import expandTree from './expand-tree/index.js'
-import isPropertyDefinition from './is-property-definition/index.js'
 import propertyDirectory from './property-directory/index.js'
 import recursiveAssign from './recursive-assign/index.js'
 import recursiveAssignConcat from './recursive-assign-concat/index.js'
@@ -15,7 +14,6 @@ export {
   accessors, 
   expandEvents, 
   expandTree, 
-  isPropertyDefinition, 
   propertyDirectory, 
   recursiveAssign, 
   recursiveAssignConcat, 

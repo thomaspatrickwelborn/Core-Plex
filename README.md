@@ -4,7 +4,7 @@
 &ensp;&ensp;&ensp;&ensp;⟐&ensp;**Enable & Disable Event Listeners, Dispatch Events**  
 &ensp;&ensp;&ensp;&ensp;⟐&ensp;**Browser & NodeJS Compatibility**  
 
-&ensp;⬗&ensp;[**Objecture**](https://www.npmjs.com/package/objecture) - **Object Watcher, Property Manager**  
+&ensp;❂&ensp;[**Objecture**](https://www.npmjs.com/package/objecture) - **Object Watcher, Property Manager**  
 
 | [**API**](./document/api/index.md) | [**Guide**](./document/guide/index.md) |
 | :-- | :-- |
