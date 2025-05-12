@@ -197,12 +197,10 @@ const Options = {
   depth: 0,
   maxDepth: 10,
   accessors: [accessors.default],
-  values: false,
 };
 function propertyDirectory($object, $options) {
   const _propertyDirectory = [];
   const options = Object.assign({}, Options, $options);
-  const { accessors, depth, maxDepth, values } = options;
   options.depth++;
   if(options.depth > options.maxDepth) { return _propertyDirectory }
   iterateAccessors: 
@@ -211,8 +209,7 @@ function propertyDirectory($object, $options) {
     if(!object) continue iterateAccessors
     iterateObjectProperties: 
     for(const [$key, $value] of Object.entries(object)) {
-      if(values) { _propertyDirectory.push([$key, $value]); }
-      else { _propertyDirectory.push($key); }
+      _propertyDirectory.push($key);
       if(
         typeof $value === 'object' &&
         $value !== null &&
@@ -227,8 +224,7 @@ function propertyDirectory($object, $options) {
           else {
             path = [$key, $subtarget].join('.');
           }
-          if(values) { _propertyDirectory.push([path, $value]); }
-          else { _propertyDirectory.push(path); }
+          _propertyDirectory.push(path);
         }
       }
     }
