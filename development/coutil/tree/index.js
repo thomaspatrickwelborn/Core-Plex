@@ -1,28 +1,25 @@
 import * as path from '../path/index.js'
 import typedObjectLiteral from '../typed-object-literal/index.js'
 import regularExpressions from '../regular-expressions/index.js'
-function get($path, $value) {
+function get($path, $source) {
   const subpaths = $path.split(new RegExp(regularExpressions.quotationEscape))
   const key = subpaths.pop()
-  const tree = $value
-  let treeNode = tree
-  for(const $subpath of subpaths) {
-    treeNode = treeNode[$subpath]
-  }
-  return treeNode[key]
+  let subtarget = $source
+  for(const $subpath of subpaths) { subtarget = subtarget[$subpath] }
+  return subtarget[key]
 }
-function set($path, $value) {
+function set($path, $source) {
   const {
     keypaths, key, typeofRoot
   } = path.parse($path)
-  const tree = typedObjectLiteral(typeofRoot)
-  let treeNode = tree
+  const target = typedObjectLiteral(typeofRoot)
+  let subtarget = target
   for(const $subpath of keypaths) {
-    if(Number($subpath)) { treeNode[$subpath] = [] }
-    else { treeNode[$subpath] = {} }
-    treeNode = treeNode[$subpath]
+    if(Number($subpath)) { subtarget[$subpath] = [] }
+    else { subtarget[$subpath] = {} }
+    subtarget = subtarget[$subpath]
   }
-  treeNode[key] = $value
-  return tree
+  subtarget[key] = $source
+  return target
 }
 export { get, set }

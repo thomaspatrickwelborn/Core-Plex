@@ -1,4 +1,5 @@
 import regularExpressions from '../regular-expressions/index.js'
+import typeOf from '../type-of/index.js'
 function subpaths($path) {
   return $path.split(
     new RegExp(regularExpressions.quotationEscape)
@@ -9,15 +10,11 @@ function keypaths($path) {
   _subpaths.pop()
   return _subpaths
 }
-function key($path) {
-  return subpaths($path).pop()
-}
-function root($path) {
-  return subpaths($path).shift()
-}
-function typeofRoot($path) {
-  return (Number(root($path))) ? 'array' : 'object'
-}
+function key($path) { return subpaths($path).pop() }
+function root($path) { return subpaths($path).shift() }
+function typeofRoot($path) { return (
+  Number(root($path))
+) ? 'array' : 'object' }
 function parse($path) {
   return {
     subpaths: subpaths($path),
