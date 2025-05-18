@@ -1,7 +1,6 @@
 export default {
   active: true,
   name: 'Index',
-  // path: '/examples/example-b',
   source: 'documents/examples/example-b',
   target: 'localhost/examples/example-b',
   ignore: ['./example-b-*/'],

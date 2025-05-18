@@ -5,8 +5,8 @@ export default function typedObjectLiteral($value) {
   if(typeOfValue === 'object') { _typedObjectLiteral = {} }
   else if(typeOfValue === 'array') { _typedObjectLiteral = [] }
   else if(typeOfValue === 'string') {
-    if($value === 'object') { _typedObjectLiteral = {} }
-    else if($value === 'array') { _typedObjectLiteral = [] }
+    if($value?.toLowerCase() === 'object') { _typedObjectLiteral = {} }
+    else if($value?.toLowerCase() === 'array') { _typedObjectLiteral = [] }
   }
   else { _typedObjectLiteral = undefined }
   return _typedObjectLiteral

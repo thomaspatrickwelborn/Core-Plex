@@ -46,13 +46,13 @@ export default class Core extends EventTarget {
         enumerable: false, writable: false, 
         value: function addEvents() {
           if(!arguments.length) { return $target }
-          let $addEvents = expandEvents(arguments[0], settings.scopeKey)
+          let $addEvents = expandEvents(arguments[0], settings.propertyDirectory.scopeKey)
           let $enableEvents = arguments[1] || false
           iterateAddEvents: 
           for(let $addEvent of $addEvents) {
             const event = {}
             for(const $settingKey of [
-              'accessors', 'assign', 'deassign', 'transsign', 'propertyDirectory'
+              'assign', 'deassign', 'transsign', 'propertyDirectory'
             ]) {
               const settingValue = settings[$settingKey]
               if(settingValue !== undefined) { event[$settingKey] = settingValue }

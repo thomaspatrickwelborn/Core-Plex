@@ -41,15 +41,18 @@ export default {
     config: '$socket.js',
     source: 'documents',
     target: 'localhost',
+    logErrors: true,
   },
   routers: {
     config: '$router.js',
     source: 'documents',
     target: 'localhost',
+    logErrors: true,
   },
   documents: {
     config: '$document.js',
     source: 'documents',
     target: 'localhost',
+    logErrors: true,
   },
 }

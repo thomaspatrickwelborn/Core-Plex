@@ -11,7 +11,8 @@ export default function propertyDirectory($object, $options) {
   if(options.depth > options.maxDepth) { return _propertyDirectory }
   iterateAccessors: 
   for(const $accessor of options.accessors) {
-    const object = $accessor($object)
+    const accessor = $accessor.bind($object)
+    const object = accessor($object)
     if(!object) continue iterateAccessors
     iterateObjectProperties: 
     for(const [$key, $value] of Object.entries(object)) {

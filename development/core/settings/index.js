@@ -1,7 +1,13 @@
+import { accessors } from '../../coutil/index.js'
 export default ($settings = {}) => {
   const Settings = {
     events: {},
     enableEvents: false,
+    propertyDirectory: {
+      accessors: [accessors.default],
+      scopeKey: ':scope', 
+      maxDepth: 10,
+    },
     propertyDefinitions: {
       getEvents: 'getEvents',
       addEvents: 'addEvents',
@@ -15,6 +21,7 @@ export default ($settings = {}) => {
   for(const [$settingKey, $settingValue] of Object.entries($settings)) {
     switch($settingKey) {
       case 'propertyDefinitions':
+      case 'propertyDirectory':
         Settings[$settingKey] = Object.assign(Settings[$settingKey], $settingValue)
         break
       default: 

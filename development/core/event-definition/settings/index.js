@@ -2,11 +2,8 @@ import { accessors, recursiveAssign, typeOf } from '../../../coutil/index.js'
 export default ($settings = {}) => {
   const Settings = {
     enable: false,
-    accessors: [accessors.default],
-    propertyDirectory: { scopeKey: $settings.scopeKey, maxDepth: 10 },
     assign: 'addEventListener', deassign: 'removeEventListener', transsign: 'dispatchEvent',
     bindListener: true,
-    scopeKey: ':scope',
     errorLog: false,
     methods: {
       assign: {
@@ -47,13 +44,6 @@ export default ($settings = {}) => {
   }
   for(const [$settingKey, $settingValue] of Object.entries($settings)) {
     switch($settingKey) {
-      case 'propertyDirectory':
-        Settings[$settingKey] = Object.assign(Settings[$settingKey], $settingValue)
-        break
-      case 'accessors':
-        Settings[$settingKey] = $settingValue
-        Settings.propertyDirectory[$settingKey] = $settingValue
-        break
       case 'methods': 
         Settings[$settingKey] = recursiveAssign(Settings[$settingKey], $settingValue)
         break
