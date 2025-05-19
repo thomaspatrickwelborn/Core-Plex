@@ -7,7 +7,7 @@ export default [{
   // treeshake: {
   //   correctVarValueBeforeDeclaration: true,
   // },
-  treeshake: false,
+  treeshake: true,
   output: [
     {
       file: '../distributement/core-plex.js',
