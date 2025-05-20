@@ -52,7 +52,7 @@ export default class Core extends EventTarget {
           for(let $addEvent of $addEvents) {
             const event = {}
             for(const $settingKey of [
-              'assign', 'deassign', 'transsign', 'propertyDirectory'
+              'assign', 'deassign', 'transsign', 'propertyDirectory', 'bindListener'
             ]) {
               const settingValue = settings[$settingKey]
               if(settingValue !== undefined) { event[$settingKey] = settingValue }

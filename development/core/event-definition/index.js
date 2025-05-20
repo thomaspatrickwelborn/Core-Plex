@@ -23,11 +23,24 @@ export default class EventDefinition {
       'deassigned': { value: deassigned },
       'transsigned': { value: transsigned },
       'listener':  { configurable: true, get() {
+        const typeOfListener = typeOf(settings.listener)
         let listener 
-        if(settings.bindListener === true) {
-          listener = settings.listener.bind(this.#context)
+        if(typeOfListener === 'string') {
+          let listenerTarget = $context
+          iterateListenerPathKeys: 
+          for(const $pathKey of settings.listener.split('.')) {
+            const value = listenerTarget[$pathKey]
+            if(value !== undefined) { listenerTarget = listenerTarget[$pathKey] }
+            else { break iterateListenerPathKeys }
+          }
+          if(typeOf(listenerTarget) === 'function') {
+            listener = listenerTarget
+          }
         }
         else { listener = settings.listener }
+        if(settings.bindListener === true) {
+          listener = listener.bind(this.#context)
+        }
         Object.defineProperty(this, 'listener', { value: listener })
         return listener
       } }
