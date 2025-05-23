@@ -89,7 +89,7 @@ var regularExpressions = {
   quotationEscape: /\.(?=(?:[^"]*"[^"]*")*[^"]*$)/,
 };
 
-const typeOf = ($data) => Object
+var typeOf = ($data) => Object
   .prototype
   .toString
   .call($data).slice(8, -1).toLowerCase();
@@ -122,13 +122,15 @@ function parse($path) {
 function typedObjectLiteral($value) {
   let _typedObjectLiteral;
   const typeOfValue = typeOf($value);
-  if(typeOfValue === 'object') { _typedObjectLiteral = {}; }
-  else if(typeOfValue === 'array') { _typedObjectLiteral = []; }
-  else if(typeOfValue === 'string') {
-    if($value?.toLowerCase() === 'object') { _typedObjectLiteral = {}; }
-    else if($value?.toLowerCase() === 'array') { _typedObjectLiteral = []; }
+  if(typeOfValue === 'string') {
+    const value = $value.toLowerCase();
+    if(value === 'object') { _typedObjectLiteral = {}; }
+    else if(value === 'array') { _typedObjectLiteral = []; }
   }
-  else { _typedObjectLiteral = undefined; }
+  else  {
+    if(typeOfValue === 'object') { _typedObjectLiteral = {}; }
+    else if(typeOfValue === 'array') { _typedObjectLiteral = []; }
+  }
   return _typedObjectLiteral
 }
 
@@ -286,6 +288,41 @@ function recursiveAssignConcat($target, ...$sources) {
   return $target
 }
 
+function recursiveGetOwnPropertyDescriptor($properties, $propertyKey) {
+  const propertyDescriptor = Object.getOwnPropertyDescriptor($properties, $propertyKey);
+  if(['array', 'object'].includes(typeOf(propertyDescriptor.value))) {
+    propertyDescriptor.value = recursiveGetOwnPropertyDescriptors(propertyDescriptor.value);
+  }
+  return propertyDescriptor
+}
+
+function recursiveGetOwnPropertyDescriptors($properties) {
+  const propertyDescriptors = {};
+  for(const $propertyKey of Object.keys($properties)) {
+    propertyDescriptors[$propertyKey] = recursiveGetOwnPropertyDescriptor($properties, $propertyKey);
+  }
+  return propertyDescriptors
+}
+
+function recursiveDefineProperty($target, $property, $propertyDescriptor) {
+  if(['array', 'object'].includes(typeOf($propertyDescriptor.value))) {
+    $target[$propertyKey] = recursiveDefineProperties(typedObjectLiteral($propertyDescriptor.value), $propertyDescriptor);
+  }
+  else {
+    Object.defineProperty($target, $propertyKey, $propertyDescriptor);
+  }
+  return $target
+}
+
+function recursiveDefineProperties($target, $propertyDescriptors) {
+  for(const [
+    $propertyKey, $propertyDescriptor
+  ] of Object.entries($propertyDescriptors)) {
+    recursiveDefineProperty($target, $propertyKey, $propertyDescriptor);
+  }
+  return $target
+}
+
 function recursiveFreeze($target) {
   for(const [$propertyKey, $propertyValue] of Object.entries($target)) {
     if($propertyValue && typeof $propertyValue === 'object') {
@@ -304,7 +341,11 @@ var index = /*#__PURE__*/Object.freeze({
   propertyDirectory: propertyDirectory,
   recursiveAssign: recursiveAssign,
   recursiveAssignConcat: recursiveAssignConcat,
+  recursiveDefineProperties: recursiveDefineProperties,
+  recursiveDefineProperty: recursiveDefineProperty,
   recursiveFreeze: recursiveFreeze,
+  recursiveGetOwnPropertyDescriptor: recursiveGetOwnPropertyDescriptor,
+  recursiveGetOwnPropertyDescriptors: recursiveGetOwnPropertyDescriptors,
   regularExpressions: regularExpressions,
   typeOf: typeOf,
   typedObjectLiteral: typedObjectLiteral,

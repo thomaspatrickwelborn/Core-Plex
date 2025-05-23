@@ -1,6 +1,4 @@
-const typeOf = ($data) => Object
+export default ($data) => Object
   .prototype
   .toString
   .call($data).slice(8, -1).toLowerCase()
-
-export default typeOf
