@@ -3,4 +3,4 @@ console.log(
   "\n", "Example A.6.",
   "\n", "------------",
 )
-import { Core } from '/dependencies/core-plex.js'
+import Core from '/dependencies/core-plex.js'

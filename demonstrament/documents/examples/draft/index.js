@@ -1,4 +1,4 @@
-import { Core } from '/dependencies/core-plex.js'
+import Core from '/dependencies/core-plex.js'
 const application = {
   parentElement: document.querySelector('body'),
   templates: {

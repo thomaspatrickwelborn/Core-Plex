@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url'
 import path from 'path'
 import * as inspector from 'node:inspector/promises'
 import chokidar from 'chokidar'
-import { Core } from '../../../../../distributement/core-plex.js'
+import Core from '../../../../../distributement/core-plex.js'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 inspector.open()

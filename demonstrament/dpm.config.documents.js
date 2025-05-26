@@ -53,6 +53,6 @@ export default {
     config: '$document.js',
     source: 'documents',
     target: 'localhost',
-    logErrors: false,
+    logErrors: true,
   },
 }

@@ -3,7 +3,7 @@ console.log(
   "\n", "Example A.1.",
   "\n", "------------",
 )
-import { Core } from '/dependencies/core-plex.js'
+import Core from '/dependencies/core-plex.js'
 const app = {
   parentElement: document.querySelector('body'),
   template: `

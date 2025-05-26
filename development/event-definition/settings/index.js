@@ -1,4 +1,5 @@
-import { accessors, recursiveAssign, typeOf } from '../../../coutil/index.js'
+import accessors from '../../accessors/index.js'
+import { recursiveAssign, typeOf } from 'recourse'
 export default ($settings = {}) => {
   const Settings = {
     enable: false,

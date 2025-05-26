@@ -1,4 +1,4 @@
-import { accessors } from '../../coutil/index.js'
+import accessors from '../accessors/index.js'
 export default ($settings = {}) => {
   const Settings = {
     events: {},

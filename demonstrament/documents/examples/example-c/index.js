@@ -1,7 +1,4 @@
-import { Coutil } from '/dependencies/core-plex.js'
-const {
-  expandTree, isPropertyDefinition, typedObjectLiteral, typeOf, variables
-} = Coutil
+import { expandTree } from '/dependencies/recourse.js'
 const expandedTree = expandTree({
   propertyA: {
     propertyB: {

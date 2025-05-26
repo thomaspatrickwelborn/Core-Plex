@@ -3,7 +3,7 @@ console.log(
   "\n", "Example A.4.",
   "\n", "------------",
 )
-import { Core } from '/dependencies/core-plex.js'
+import Core from '/dependencies/core-plex.js'
 class CustomCore extends Core {
   constructor($settings, $properties = {}) {
     super($settings)

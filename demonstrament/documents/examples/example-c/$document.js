@@ -4,7 +4,7 @@ export default {
   // path: '/examples/example-c',
   source: 'documents/examples/example-c',
   target: 'localhost/examples/example-c',
-  ignore: ['./example-c-*/'],
+  ignore: [],
   main: 'index.html',
   pilers: {
     sans: [{
@@ -27,6 +27,22 @@ export default {
       input: 'favicon.ico',
       output: 'favicon.ico',
       watch: ['favicon.ico'],
+      ignore: [],
+    }, {
+      name: 'SimulePiler',
+      type: 'simules',
+      outputType: 'path',
+      input: '../../../../node_modules/recourse/distributement/recourse.js',
+      output: '../../../static/dependencies/recourse.js',
+      watch: ['../../../../node_modules/recourse/distributement/recourse.js'],
+      ignore: [],
+    }, {
+      name: 'SimulePiler',
+      type: 'simules',
+      outputType: 'path',
+      input: '../../../../node_modules/recourse/distributement/recourse.js.map',
+      output: '../../../static/dependencies/recourse.js.map',
+      watch: ['../../../../node_modules/recourse/distributement/recourse.js.map'],
       ignore: [],
     }],
     styles: [{

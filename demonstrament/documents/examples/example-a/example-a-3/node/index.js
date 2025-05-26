@@ -3,7 +3,7 @@ console.log(
   "\n", "Example A.3. (Node)",
   "\n", "-------------------",
 )
-import { Core } from '../../../../../../distributement/core-plex.js'
+import Core from '../../../../../../distributement/core-plex.js'
 const app = Core.implement(Object.assign(new EventTarget(), {
   propertyA: new EventTarget(),
   propertyB: {

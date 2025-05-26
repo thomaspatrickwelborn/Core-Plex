@@ -3,7 +3,7 @@ console.log(
   "\n", "Example B.1.",
   "\n", "------------",
 )
-import { Core } from '/dependencies/core-plex.js'
+import Core from '/dependencies/core-plex.js'
 function listenerLogA($event) { console.log("listenerLogA", $event.detail.type, $event.detail.path) }
 function listenerLogB($event) { console.log("listenerLogB", $event.detail.type, $event.detail.path) }
 const application = Core.implement(Object.defineProperties(new EventTarget(), {

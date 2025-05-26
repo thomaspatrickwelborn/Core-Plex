@@ -1,6 +1,6 @@
 import outmatch from 'outmatch'
 import Settings from './settings/index.js'
-import { typeOf, propertyDirectory } from '../../coutil/index.js'
+import { typeOf, propertyDirectory } from 'recourse'
 export default class EventDefinition {
   #context
   #enable = false
