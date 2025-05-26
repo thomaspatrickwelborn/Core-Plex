@@ -18,6 +18,7 @@ export default ($settings = {}) => {
       emitEvents: 'emitEvents',
     },
   }
+  iterateSettingEntries: 
   for(const [$settingKey, $settingValue] of Object.entries($settings)) {
     switch($settingKey) {
       case 'propertyDefinitions':

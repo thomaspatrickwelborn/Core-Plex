@@ -7,8 +7,15 @@ const EcosystemConfig = {
       watch: [
         "index.js",
         "package.json",
-        "**/*.js"
+        "**/*.js",
+        "../node_modules/recourse/development",
       ],
+      ignoreWatch: [
+        "!../node_modules/recourse/development",
+      ],
+      watch_options: {
+        followSymLinks: true,
+      },
       args: "rollup --config rollup.config.js",
       execMode: "fork"
     },
