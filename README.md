@@ -56,7 +56,7 @@ npm install core-plex
 ## ❖&ensp;Importation
 `Core` Class is an ES Module exported from `core-plex`.  
 ```
-import { Core } from 'core-plex'
+import Core from 'core-plex'
 ```
 
 ## ❖&ensp;Implementation
@@ -65,7 +65,7 @@ Manage events for properties on **provided `$target`**.
 [Example A.1. Code](./demonstrament/documents/examples/example-a/example-a-1/index.js)  
 **`Core.implement` adds, enables `click` events...**  
 ```
-import { Core } from 'core-plex'
+import Core from 'core-plex'
 Core.implement(app, {
   events: {
     'qs.app click': function appClick($event) {
@@ -126,7 +126,7 @@ const app = {
 **Core ministrates Chokidar watcher events.**  
 ```
 import chokidar from 'chokidar'
-import { Core } from 'core-plex'
+import Core from 'core-plex'
 const watchers = {
   styleWatcher: chokidar.watch(path.join(__dirname, 'some-files/index.css')),
   scriptWatcher: chokidar.watch(path.join(__dirname, 'some-files/index.js')),
@@ -175,7 +175,7 @@ const core = Core.implement(watchers, {
 [Example A.3. Node Code](./demonstrament/documents/examples/example-a/example-a-3/node/index.js)  
 **Add, enable `target` property events with `Core.implement`...**  
 ```
-import { Core } from 'core-plex'
+import Core from 'core-plex'
 const app = Core.implement(Object.assign(new EventTarget(), {
   propertyA: new EventTarget(),
   propertyB: {
@@ -207,7 +207,7 @@ Manage events for properties on **new extended Core instance**.
 [Example A.4. Code](./demonstrament/documents/examples/example-a/example-a-4/index.js)  
 `CustomCore` accepts a `$properties` argument that populates instance with nested `CustomCore` instances.  
 ```
-import { Core } from 'core-plex'
+import Core from 'core-plex'
 class CustomCore extends Core {
   constructor($settings, $properties = {}) {
     super($settings)
@@ -268,7 +268,7 @@ Manage events for properties defined on **Core instance events**.
 [Example A.5. Code](./demonstrament/documents/examples/example-a/example-a-5/index.js)  
 ```
 import chokidar from 'chokidar'
-import { Core } from 'core-plex'
+import Core from 'core-plex'
 const styleWatcher = chokidar.watch(path.join(__dirname, 'some-files/index.css'))
 const scriptWatcher = chokidar.watch(path.join(__dirname, 'some-files/index.js'))
 const structWatcher = chokidar.watch(path.join(__dirname, 'some-files/index.html'))
