@@ -877,7 +877,7 @@ class EventDefinition {
             if(propertyPathMatch === true) { targetPaths.push([$propertyPath, $propertyValue]); }
           }
           if(this.path.charAt(0) === '*') {
-            targetPaths.unshift(this.#scopeKey);
+            targetPaths.unshift([this.#scopeKey, this.#context]);
           }
         }
         else {
