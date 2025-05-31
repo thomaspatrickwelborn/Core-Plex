@@ -1,5 +1,5 @@
 import accessors from '../../accessors/index.js'
-import { recursiveAssign, typeOf } from 'recourse'
+import { assign, typeOf } from 'recourse'
 export default ($settings = {}) => {
   const Settings = {
     enable: false,
@@ -46,7 +46,7 @@ export default ($settings = {}) => {
   for(const [$settingKey, $settingValue] of Object.entries($settings)) {
     switch($settingKey) {
       case 'methods': 
-        Settings[$settingKey] = recursiveAssign(Settings[$settingKey], $settingValue)
+        Settings[$settingKey] = assign(Settings[$settingKey], $settingValue)
         break
       case 'enableEvents': break
       default: 

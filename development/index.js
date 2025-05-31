@@ -1,4 +1,4 @@
-import { recursiveAssign } from 'recourse'
+import { assign } from 'recourse'
 import expandEvents from './expand-events/index.js'
 import Settings from './settings/index.js'
 import EventDefinition from './event-definition/index.js'
@@ -58,7 +58,7 @@ export default class Core extends EventTarget {
               const settingValue = settings[$settingKey]
               if(settingValue !== undefined) { event[$settingKey] = settingValue }
             }
-            recursiveAssign(event, $addEvent)
+            assign(event, $addEvent)
             const eventDefinition = new EventDefinition(event, $target)
             if($enableEvents) { eventDefinition.enable = true }
             events.push(eventDefinition)
