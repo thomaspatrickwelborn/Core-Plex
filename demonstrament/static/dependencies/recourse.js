@@ -254,14 +254,10 @@ function assignConcat($target, ...$sources) {
   return $target
 }
 
-var Settings = {
-  depth: 0,
-  path: null,
-  ancestors: [],
-};
-
 var Options$1 = {
+  ancestors: [],
   delimiter: '.',
+  depth: 0,
   frozen: false,
   maxDepth: 10,
   nonenumerable: true,
@@ -271,7 +267,7 @@ var Options$1 = {
 };
 
 function getOwnPropertyDescriptor($properties, $propertyKey, $options) {
-  const options = Object.assign({}, Settings, Options$1, $options, {
+  const options = Object.assign({}, Options$1, $options, {
     ancestors: Object.assign([], $options.ancestors)
   });
   const propertyDescriptor = Object.getOwnPropertyDescriptor($properties, $propertyKey);
@@ -293,7 +289,7 @@ function getOwnPropertyDescriptor($properties, $propertyKey, $options) {
 
 function getOwnPropertyDescriptors($properties, $options) {
   const propertyDescriptors = {};
-  const options = Object.assign({}, Settings, Options$1, $options);
+  const options = Object.assign({}, Options$1, $options);
   if(options.depth >= options.maxDepth) { return propertyDescriptors }
   else { options.depth++; }
   for(const [$propertyKey, $propertyDescriptor] of Object.entries(Object.getOwnPropertyDescriptors($properties))) {
