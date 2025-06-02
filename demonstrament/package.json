@@ -14,8 +14,8 @@
     "example-a-5": "nodemon ./documents/examples/example-a/example-a-5/index.js --watch ./documents/examples/example-a/example-a-5/index.js"
   },
   "dependencies": {
-    "document-process-manager": "^1.5.0",
-    "recourse": "^1.2.0"
+    "document-process-manager": "^1.6.0",
+    "recourse": "^1.2.1"
   },
   "devDependencies": {
     "chokidar": "^4.0.3",
