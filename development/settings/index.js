@@ -3,7 +3,7 @@ export default ($settings = {}) => {
   const Settings = {
     events: {},
     enableEvents: false,
-    propertyDirectory: {
+    compandTree: {
       accessors: [accessors.default],
       scopeKey: ':scope', 
       maxDepth: 10,
@@ -22,7 +22,7 @@ export default ($settings = {}) => {
   for(const [$settingKey, $settingValue] of Object.entries($settings)) {
     switch($settingKey) {
       case 'propertyDefinitions':
-      case 'propertyDirectory':
+      case 'compandTree':
         Settings[$settingKey] = Object.assign(Settings[$settingKey], $settingValue)
         break
       default: 

@@ -134,8 +134,8 @@ Assigns function from `this.settings.methods.transsign` to `this.#_transsign` bo
 ### `EventDefinition.#methods` Property
 **Type**: `get`  
 **Returns**: `this.settings.methods`  
-### `EventDefinition.#propertyDirectory` Property
+### `EventDefinition.#compandTree` Property
 **Type**: `get`  
-**Returns**: `propertyDirectory`  
+**Returns**: `compandTree`  
 **Descript**:  
-Returns invocation of `propertyDirectory` with `this.#context`, `this.settings.propertyDirectory` parameters.  
+Returns invocation of `compandTree` with `this.#context`, `this.settings.compandTree` parameters.  

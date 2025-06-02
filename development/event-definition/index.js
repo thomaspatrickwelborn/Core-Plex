@@ -1,6 +1,6 @@
 import outmatch from 'outmatch'
 import Settings from './settings/index.js'
-import { typeOf, propertyDirectory } from 'recourse'
+import { typeOf, compandTree } from 'recourse'
 export default class EventDefinition {
   #context
   #enable = false
@@ -111,13 +111,13 @@ export default class EventDefinition {
         targets.push(targetElement)
       }
       else {
-        if(this.settings.propertyDirectory) {
-          const propertyDirectory = this.#propertyDirectory
+        if(this.settings.compandTree) {
+          const compandTree = this.#compandTree
           const propertyPathMatcher = outmatch(this.path, {
             separator: '.',
           })
           iteratePropertyPaths: 
-          for(const [$propertyPath, $propertyValue] of propertyDirectory) {
+          for(const [$propertyPath, $propertyValue] of compandTree) {
             const propertyPathMatch = propertyPathMatcher($propertyPath)
             if(propertyPathMatch === true) { targetPaths.push([$propertyPath, $propertyValue]) }
           }
@@ -154,7 +154,7 @@ export default class EventDefinition {
     this.#_targets = targets
     return this.#_targets
   }
-  get #scopeKey() { return this.settings.propertyDirectory.scopeKey }
+  get #scopeKey() { return this.settings.compandTree.scopeKey }
   get #assign() {
     if(this.#_assign !== undefined) { return this.#_assign }
     this.#_assign = this.settings.methods.assign[this.settings.assign].bind(null, this)
@@ -170,10 +170,10 @@ export default class EventDefinition {
     this.#_transsign = this.settings.methods.transsign[this.settings.transsign].bind(null, this)
     return this.#_transsign
   }
-  get #propertyDirectory() {
-    if(!this.settings.propertyDirectory) { return null }
-    const propertyDirectorySettings = Object.assign(this.settings.propertyDirectory, { values: true })
-    return propertyDirectory(this.#context, propertyDirectorySettings)
+  get #compandTree() {
+    if(!this.settings.compandTree) { return null }
+    const compandTreeSettings = Object.assign(this.settings.compandTree, { values: true })
+    return compandTree(this.#context, compandTreeSettings)
   }
   emit() {
     const targets = this.#targets
