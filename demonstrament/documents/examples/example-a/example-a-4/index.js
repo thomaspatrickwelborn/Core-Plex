@@ -4,6 +4,9 @@ console.log(
   "\n", "------------",
 )
 import Core from '/dependencies/core-plex.js'
+const completedEventsSetA = []
+const completedEventsSetB = []
+const completedEventsSetC = []
 class CustomCore extends Core {
   constructor($settings, $properties = {}) {
     super($settings)
@@ -29,11 +32,24 @@ class CustomCore extends Core {
     if($settings.enableEvents === true) { this.enableEvents() }
   }
 }
+
 const customCore = new CustomCore({
   events: {
-    'propertyA customEvent': ($event) => console.log($event.type, $event.detail),
-    'propertyA.propertyB customEvent': ($event) => console.log($event.type, $event.detail),
-    'propertyD.[0-9] customEvent': ($event) => console.log($event.type, $event.detail),
+    'propertyA customEvent': ($event) => {
+        console.log($event.type, $event.detail)
+        completedEventsSetA.push($event)
+        return 
+      },
+    'propertyA.propertyB customEvent': ($event) => {
+        console.log($event.type, $event.detail)
+        completedEventsSetB.push($event)
+        return 
+      },
+    'propertyD.[0-9] customEvent': ($event) => {
+        console.log($event.type, $event.detail)
+        completedEventsSetC.push($event)
+        return 
+      },
   },
   enableEvents: true,
 }, {
@@ -55,3 +71,11 @@ customCore.getEvents().forEach(
     new CustomEvent('customEvent', { detail: $eventDefinition })
   )
 )
+console.log("completedEventsSetA", completedEventsSetA.length, completedEventsSetA)
+console.log("completedEventsSetB", completedEventsSetB.length, completedEventsSetB)
+console.log("completedEventsSetC", completedEventsSetC.length, completedEventsSetC)
+console.log("pass", (
+  completedEventsSetA.length === 1 &&
+  completedEventsSetB.length === 1 &&
+  completedEventsSetC.length === 3
+))

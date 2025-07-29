@@ -1,4 +1,3 @@
-import accessors from '../../accessors/index.js'
 import { assign, typeOf } from 'recourse'
 export default ($settings = {}) => {
   const Settings = {
@@ -6,6 +5,8 @@ export default ($settings = {}) => {
     assign: 'addEventListener', deassign: 'removeEventListener', transsign: 'dispatchEvent',
     bindListener: true,
     errorLog: false,
+    scopeKey: ':scope',
+    pathMatch: true,
     methods: {
       assign: {
         addEventListener: function addEventListener($eventDefinition, $target) {

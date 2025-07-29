@@ -4,6 +4,10 @@ console.log(
   "\n", "----------------------",
 )
 import Core from '/dependencies/core-plex.js'
+const completedEventsSetA = []
+const completedEventsSetB = []
+const completedEventsSetC = []
+const completedEventsSetD = []
 const app = Core.implement(Object.assign(new EventTarget(), {
   propertyA: new EventTarget(),
   propertyB: {
@@ -20,10 +24,22 @@ const app = Core.implement(Object.assign(new EventTarget(), {
   }]
 }), {
   events: {
-    'customEvent': ($event) => console.log($event.type, $event.detail),
-    'propertyA customEvent': ($event) => console.log($event.type, $event.detail),
-    'propertyB.propertyC.propertyD customEvent': ($event) => console.log($event.type, $event.detail),
-    'propertyE.[0-9].propertyF customEvent': ($event) => console.log($event.type, $event.detail),
+    'customEvent': ($event) => {
+      console.log($event.type, $event.detail)
+      completedEventsSetA.push($event)
+    },
+    'propertyA customEvent': ($event) => {
+      console.log($event.type, $event.detail)
+      completedEventsSetB.push($event)
+    },
+    'propertyB.propertyC.propertyD customEvent': ($event) => {
+      console.log($event.type, $event.detail)
+      completedEventsSetC.push($event)
+    },
+    'propertyE.[0-9].propertyF customEvent': ($event) => {
+      console.log($event.type, $event.detail)
+      completedEventsSetD.push($event)
+    },
   },
   enableEvents: true
 })
@@ -38,3 +54,14 @@ for(const $eventDefinition of app.getEvents([
     new CustomEvent('customEvent', { detail: $eventDefinition })
   )
 }
+
+console.log("completedEventsSetA", completedEventsSetA.length, completedEventsSetA)
+console.log("completedEventsSetB", completedEventsSetB.length, completedEventsSetB)
+console.log("completedEventsSetC", completedEventsSetC.length, completedEventsSetC)
+console.log("completedEventsSetD", completedEventsSetD.length, completedEventsSetD)
+console.log("pass", (
+  completedEventsSetA.length === 1 &&
+  completedEventsSetB.length === 1 &&
+  completedEventsSetC.length === 1 &&
+  completedEventsSetD.length === 3
+))

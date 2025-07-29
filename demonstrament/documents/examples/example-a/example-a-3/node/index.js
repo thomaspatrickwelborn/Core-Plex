@@ -4,6 +4,13 @@ console.log(
   "\n", "-------------------",
 )
 import Core from '../../../../../../distributement/core-plex.js'
+const completed = {
+  ':scope': [],
+  'customEvent': [],
+  'propertyA customEvent': [],
+  'propertyB.propertyC.propertyD customEvent': [],
+  'propertyE.[0-9].propertyF customEvent': [],
+}
 const app = Core.implement(Object.assign(new EventTarget(), {
   propertyA: new EventTarget(),
   propertyB: {
@@ -20,11 +27,26 @@ const app = Core.implement(Object.assign(new EventTarget(), {
   }]
 }), {
   events: {
-    ':scope': ($event) => console.log($event.type, $event.detail),
-    'customEvent': ($event) => console.log($event.type, $event.detail),
-    'propertyA customEvent': ($event) => console.log($event.type, $event.detail),
-    'propertyB.propertyC.propertyD customEvent': ($event) => console.log($event.type, $event.detail),
-    'propertyE.[0-9].propertyF customEvent': ($event) => console.log($event.type, $event.detail),
+    ':scope customEvent': ($event) => {
+      console.log(':scope', $event.type, $event.detail)
+      completed[':scope'].push($event)
+    },
+    'customEvent': ($event) => {
+      console.log('customEvent', $event.type, $event.detail)
+      completed['customEvent'].push($event)
+    },
+    'propertyA customEvent': ($event) => {
+      console.log('propertyA customEvent', $event.type, $event.detail)
+      completed['propertyA customEvent'].push($event)
+    },
+    'propertyB.propertyC.propertyD customEvent': ($event) => {
+      console.log('propertyB.propertyC.propertyD customEvent', $event.type, $event.detail)
+      completed['propertyB.propertyC.propertyD customEvent'].push($event)
+    },
+    'propertyE.[0-9].propertyF customEvent': ($event) => {
+      console.log('propertyE.[0-9].propertyF customEvent', $event.type, $event.detail)
+      completed['propertyE.[0-9].propertyF customEvent'].push($event)
+    },
   },
   enableEvents: true
 })
@@ -39,5 +61,16 @@ for(const $eventDefinition of app.getEvents([
     new CustomEvent('customEvent', { detail: $eventDefinition })
   )
 }
+const { promise, resolve } = Promise.withResolvers()
+setTimeout(resolve, 1000)
 console.log(app)
 console.log(app.getEvents())
+await promise
+console.log(completed)
+console.log("pass", (
+  completed[':scope'].length === 2 &&
+  completed['customEvent'].length === 2 &&
+  completed['propertyA customEvent'].length === 1 &&
+  completed['propertyB.propertyC.propertyD customEvent'].length === 1 &&
+  completed['propertyE.[0-9].propertyF customEvent'].length === 3
+))

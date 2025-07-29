@@ -4,6 +4,12 @@ console.log(
   "\n", "------------",
 )
 import Core from '/dependencies/core-plex.js'
+import { Recourse } from '/dependencies/recourse.js'
+const completed = {
+  appClick: [],
+  menuButtonClick: [],
+  sectionButtonClick: [],
+}
 const app = {
   parentElement: document.querySelector('body'),
   template: `
@@ -35,21 +41,33 @@ const app = {
   }
 }
 Core.implement(app, {
+  enableEvents: true,
   events: {
     'qs.app click': function appClick($event) {
-      console.log($event.type, $event.currentTarget.tagName)
+      console.log("appClick", $event)
+      completed.appClick.push($event)
      },
     'qs.menuButton.[0-9] click': function menuButtonClick($event) {
-      console.log($event.type, $event.currentTarget.innerText)
+      console.log("menuButtonClick", $event)
+      completed.menuButtonClick.push($event)
     },
     'qs.sectionButton.[0-9] click': function sectionButtonClick($event) {
-      console.log($event.type, $event.currentTarget.innerText)
+      console.log("sectionButtonClick", $event)
+      completed.sectionButtonClick.push($event)
     },
   },
 })
-.render()
+app.render()
 app
 .getEvents()
-.forEach(($eventDefinition) => $eventDefinition.emit(
-  new CustomEvent('click')
+.forEach(($eventDefinition) => {
+  $eventDefinition.emit(new CustomEvent('click'))
+})
+console.log(`appClick`, completed.appClick.length, completed.appClick)
+console.log(`menuButtonClick`, completed.menuButtonClick.length, completed.menuButtonClick)
+console.log(`sectionButtonClick`, completed.sectionButtonClick.length, completed.sectionButtonClick)
+console.log("pass", (
+  completed.appClick.length === 1 &&
+  completed.menuButtonClick.length === 3 &&
+  completed.sectionButtonClick.length === 3
 ))

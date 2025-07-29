@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "document-process-manager": "^1.6.0",
-    "recourse": "^1.2.1"
+    "recourse": "^1.3.0"
   },
   "devDependencies": {
     "chokidar": "^4.0.3",

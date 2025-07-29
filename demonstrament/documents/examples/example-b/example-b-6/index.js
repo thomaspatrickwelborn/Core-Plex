@@ -164,10 +164,11 @@ console.log('Remove All Events')
 console.log(`application.removeEvents()`)
 application.removeEvents()
 console.log('-----')
+const subpassA = (application.getEvents().length === 0)
 console.log(
   '\n', `application.getEvents().length === 0`,
   '\n', `${application.getEvents().length} === ${0}`, 
-  '\n', application.getEvents().length === 0,
+  '\n', subpassA,
 )
 
 application.addEvents(events)
@@ -194,8 +195,10 @@ application.removeEvents([
   { path: 'propertyD.[0-9].propertyE' },
 ])
 console.log('-----')
+const subpassB = (application.getEvents().length === 0)
 console.log(
   '\n', `application.getEvents().length === 0`,
   '\n', `${application.getEvents().length} === ${0}`, 
-  '\n', application.getEvents().length === 0,
+  '\n', subpassB,
 )
+console.log("pass", (subpassA && subpassB))

@@ -1,10 +1,8 @@
-import accessors from '../accessors/index.js'
 export default ($settings = {}) => {
   const Settings = {
     events: {},
     enableEvents: false,
-    compandTree: {
-      accessors: [accessors.default],
+    compand: {
       scopeKey: ':scope', 
       maxDepth: 10,
     },
@@ -22,7 +20,7 @@ export default ($settings = {}) => {
   for(const [$settingKey, $settingValue] of Object.entries($settings)) {
     switch($settingKey) {
       case 'propertyDefinitions':
-      case 'compandTree':
+      case 'compand':
         Settings[$settingKey] = Object.assign(Settings[$settingKey], $settingValue)
         break
       default: 

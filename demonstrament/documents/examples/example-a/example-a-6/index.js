@@ -4,6 +4,9 @@ console.log(
   "\n", "------------",
 )
 import Core from '/dependencies/core-plex.js'
+const completed = {
+  '**CustomEvent': []
+}
 const application = Object.assign(new EventTarget(), {
   propertyA: Object.assign(new EventTarget(), {
     propertyB: Object.assign(new EventTarget(), {
@@ -30,7 +33,10 @@ const application = Object.assign(new EventTarget(), {
 })
 Core.implement(application, {
   events: {
-    '** customEvent': function($event) { console.log($event.type, $event.currentTarget) }
+    '** customEvent': function($event) {
+      console.log($event.type, $event.currentTarget)
+      completed['**CustomEvent'].push($event)
+     }
   },
   enableEvents: true, 
 })
@@ -44,3 +50,4 @@ application
     $event.target.dispatchEvent(new CustomEvent('customEvent'))
   })
 })
+console.log("pass", (completed['**CustomEvent'].length === 10))

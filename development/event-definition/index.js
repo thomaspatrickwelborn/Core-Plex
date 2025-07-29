@@ -1,6 +1,5 @@
-import outmatch from 'outmatch'
 import Settings from './settings/index.js'
-import { typeOf, compandTree } from 'recourse'
+import { typeOf, compand, get } from 'recourse'
 export default class EventDefinition {
   #context
   #enable = false
@@ -92,7 +91,7 @@ export default class EventDefinition {
         if(pretargetElement !== undefined) {
           targets.push(pretargetElement)
         }
-        else if(pretargetElement === undefined) {ptargets.push({
+        else if(pretargetElement === undefined) { targets.push({
             path: this.path,
             target: $target,
             enable: false,
@@ -102,31 +101,12 @@ export default class EventDefinition {
     }
     else if(typeOf(this.path) === 'string') {
       const targetPaths = []
-      if(this.path === this.#scopeKey) {
-        const targetElement = {
-          path: this.path,
-          target: this.#context,
-          enable: false,
-        }
-        targets.push(targetElement)
-      }
-      else {
-        if(this.settings.compandTree) {
-          const compandTree = this.#compandTree
-          const propertyPathMatcher = outmatch(this.path, {
-            separator: '.',
-          })
-          iteratePropertyPaths: 
-          for(const [$propertyPath, $propertyValue] of compandTree) {
-            const propertyPathMatch = propertyPathMatcher($propertyPath)
-            if(propertyPathMatch === true) { targetPaths.push([$propertyPath, $propertyValue]) }
-          }
-          if(this.path.charAt(0) === '*') {
-            targetPaths.unshift([this.#scopeKey, this.#context])
-          }
-        }
-        else {
-          targetPaths.push(this.path)
+      if(this.settings.pathMatch) {
+        targetPaths.push(...get(this.#context, this.path, {
+          nonenumerable: true, pathMatch: true
+        }))
+        if(this.path.charAt(0) === '*') {
+          targetPaths.unshift([this.#scopeKey, this.#context])
         }
         iterateTargetPaths: 
         for(const [$targetPath, $targetValue] of targetPaths) {
@@ -150,11 +130,19 @@ export default class EventDefinition {
           if(targetElement !== undefined) { targets.push(targetElement) }
         }
       }
+      if(this.path === this.#scopeKey) {
+        const targetElement = {
+          path: this.path,
+          target: this.#context,
+          enable: false,
+        }
+        targets.push(targetElement)
+      }
     }
     this.#_targets = targets
     return this.#_targets
   }
-  get #scopeKey() { return this.settings.compandTree.scopeKey }
+  get #scopeKey() { return this.settings.scopeKey }
   get #assign() {
     if(this.#_assign !== undefined) { return this.#_assign }
     this.#_assign = this.settings.methods.assign[this.settings.assign].bind(null, this)
@@ -169,11 +157,6 @@ export default class EventDefinition {
     if(this.#_transsign !== undefined) { return this.#_transsign }
     this.#_transsign = this.settings.methods.transsign[this.settings.transsign].bind(null, this)
     return this.#_transsign
-  }
-  get #compandTree() {
-    if(!this.settings.compandTree) { return null }
-    const compandTreeSettings = Object.assign(this.settings.compandTree, { values: true })
-    return compandTree(this.#context, compandTreeSettings)
   }
   emit() {
     const targets = this.#targets
