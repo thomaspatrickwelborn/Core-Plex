@@ -6,6 +6,7 @@ export default ($settings = {}) => {
     bindListener: true,
     errorLog: false,
     scopeKey: ':scope',
+    // pathMatch: false,
     pathMatch: true,
     methods: {
       assign: {

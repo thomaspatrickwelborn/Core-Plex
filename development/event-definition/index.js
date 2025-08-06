@@ -23,7 +23,7 @@ export default class EventDefinition {
       'transsigned': { value: transsigned },
       'listener':  { configurable: true, get() {
         const typeOfListener = typeOf(settings.listener)
-        let listener 
+        let listener
         if(typeOfListener === 'string') {
           let listenerTarget = $context
           iterateListenerPathKeys: 
@@ -100,11 +100,20 @@ export default class EventDefinition {
       }
     }
     else if(typeOf(this.path) === 'string') {
+      // Refactoring
       const targetPaths = []
       if(this.settings.pathMatch) {
         targetPaths.push(...get(this.#context, this.path, {
-          nonenumerable: true, pathMatch: true
+          pathMatch: this.settings.pathMatch, nonenumerable: true
         }))
+      }
+      else {
+        targetPaths.push([
+          this.path, get(this.#context, this.path, {
+            pathMatch: this.settings.pathMatch, nonenumerable: true
+          })
+        ])
+      }
         if(this.path.charAt(0) === '*') {
           targetPaths.unshift([this.#scopeKey, this.#context])
         }
@@ -129,7 +138,7 @@ export default class EventDefinition {
           }
           if(targetElement !== undefined) { targets.push(targetElement) }
         }
-      }
+      // }
       if(this.path === this.#scopeKey) {
         const targetElement = {
           path: this.path,
