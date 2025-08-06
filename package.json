@@ -1,6 +1,6 @@
 {
   "name": "core-plex",
-  "version": "4.3.2",
+  "version": "4.3.3",
   "description": "⁘ Core-Plex \n ❖ **Store & Access Event Definitions From Single API**\n ❖ **Enable & Disable Event Listeners, Dispatch Events**",
   "homepage": "https://github.com/thomaspatrickwelborn/Core-Plex#readme",
   "bugs": {
@@ -11,15 +11,19 @@
     "url": "git+https://github.com/thomaspatrickwelborn/Core-Plex.git"
   },
   "keywords": [
-    "object watcher", "property watcher",
-    "object listener", "property listener", 
-    "object monitor", "property monitor",
-    "object observer", "property observer",
+    "object watcher",
+    "property watcher",
+    "object listener",
+    "property listener",
+    "object monitor",
+    "property monitor",
+    "object observer",
+    "property observer",
     "event listener management",
-    "event listener mapping system", 
-    "event listener storage system", 
-    "event listener enable/disable system", 
-    "event listener enabler/disabler", 
+    "event listener mapping system",
+    "event listener storage system",
+    "event listener enable/disable system",
+    "event listener enabler/disabler",
     "event listener aggregator"
   ],
   "license": "ISC",
@@ -27,9 +31,9 @@
   "type": "module",
   "exports": {
     ".": "./distributement/core-plex.js",
-    "./development": "./development/index.js", 
-    "./distributement/core-plex.js": "./distributement/core-plex.js", 
-    "./distributement/core-plex.min.js": "./distributement/core-plex.min.js" 
+    "./development": "./development/index.js",
+    "./distributement/core-plex.js": "./distributement/core-plex.js",
+    "./distributement/core-plex.min.js": "./distributement/core-plex.min.js"
   },
   "scripts": {
     "demonstrate:start": "concurrently \"npm run start --workspace development\" \"npm run start --workspace demonstrament\"",
