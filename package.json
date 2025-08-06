@@ -1,6 +1,6 @@
 {
   "name": "core-plex",
-  "version": "4.3.0",
+  "version": "4.3.1",
   "description": "⁘ Core-Plex \n ❖ **Store & Access Event Definitions From Single API**\n ❖ **Enable & Disable Event Listeners, Dispatch Events**",
   "homepage": "https://github.com/thomaspatrickwelborn/Core-Plex#readme",
   "bugs": {
