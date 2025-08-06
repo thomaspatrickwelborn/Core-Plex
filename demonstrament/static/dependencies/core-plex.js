@@ -786,8 +786,11 @@ function entities($source, $type, $options = {}) {
   const getters = new Tensors(options.getters, options.typeValidators);
   const source = getters.cess($source);
   if(!source) { return sourceEntities }
+  // NONENUMERABLE
   const propertyDescriptorKeys = (typeOf(source) === 'map')
     ? source.keys()
+    : (nonenumerable) 
+    ? Object.keys(Object.getOwnPropertyDescriptors(source))
     : Object.keys(source);
     // : Object.keys(Object.getOwnPropertyDescriptors(source))
   iterateSourcePropertyDescriptors: 
@@ -796,11 +799,6 @@ function entities($source, $type, $options = {}) {
       $propertyKey = parseInt($propertyKey, 10);
     }
     const value = getters.cess($source, $propertyKey);
-    // const propertyDescriptor = getOwnPropertyDescriptor(
-    //   $source, $propertyKey, Object.assign(
-    //     {}, options, { recurse: false }
-    // ))
-    // if(!propertyDescriptor) { continue iterateSourcePropertyDescriptors }
     const propertyDescriptor = getOwnPropertyDescriptor(
       $source, $propertyKey, Object.assign(
         {}, options, { recurse: false }
